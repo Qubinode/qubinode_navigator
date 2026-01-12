@@ -62,7 +62,7 @@ jsonschema-specifications==2025.9.1
 keyring==25.7.0
 langchain==0.3.27
 langchain-community==0.3.31
-langchain-core==0.3.81
+langchain-core==0.3.82
 langchain-text-splitters==0.3.11
 langsmith==0.6.0
 litellm==1.80.11
