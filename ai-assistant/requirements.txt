@@ -65,7 +65,7 @@ langchain-community==0.3.31
 langchain-core==0.3.82
 langchain-text-splitters==0.3.11
 langsmith==0.6.2
-litellm==1.80.15
+litellm==1.81.0
 lupa==2.6
 markdown-it-py==4.0.0
 markupsafe==3.0.3
