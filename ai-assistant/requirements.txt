@@ -73,7 +73,7 @@ marshmallow==3.26.2
 mcp==1.25.0
 mdurl==0.1.2
 more-itertools==10.8.0
-multidict==6.7.0
+multidict==6.7.1
 mypy-extensions==1.1.0
 numpy==2.4.1
 openai==2.15.0
