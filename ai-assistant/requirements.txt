@@ -124,7 +124,7 @@ secretstorage==3.5.0
 shellingham==1.5.4
 sniffio==1.3.1
 sortedcontainers==2.4.0
-sqlalchemy==2.0.45
+sqlalchemy==2.0.46
 sse-starlette==3.2.0
 starlette==0.50.0
 structlog==25.5.0
