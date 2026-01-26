@@ -70,7 +70,7 @@ lupa==2.6
 markdown-it-py==4.0.0
 markupsafe==3.0.3
 marshmallow==3.26.2
-mcp==1.25.0
+mcp==1.26.0
 mdurl==0.1.2
 more-itertools==10.8.0
 multidict==6.7.0
