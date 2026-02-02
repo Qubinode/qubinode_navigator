@@ -837,7 +837,7 @@ async def orchestrator_status():
             "openai": bool(os.getenv("OPENAI_API_KEY")),
             "ollama": bool(os.getenv("OLLAMA_BASE_URL")),
         }
-        status["mcp_url"] = os.getenv("QUBINODE_MCP_URL", "http://localhost:8890/mcp")
+        status["mcp_url"] = os.getenv("QUBINODE_MCP_URL", "http://localhost:8889/sse")
         status["model_format_note"] = "PydanticAI uses provider:model format (e.g., google-gla:gemini-2.0-flash)"
 
         # Add agent context status

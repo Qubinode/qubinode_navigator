@@ -545,6 +545,7 @@ start_ai_assistant() {
         -e AIRFLOW_API_URL=http://host.containers.internal:8888 \
         -e AIRFLOW_DAGS_PATH=/app/airflow/dags \
         -e PROJECT_ROOT=/app \
+        -e QUBINODE_MCP_URL=http://host.containers.internal:8889/sse \
         ${AIRFLOW_USER:+-e AIRFLOW_USER="${AIRFLOW_USER}"} \
         ${AIRFLOW_PASSWORD:+-e AIRFLOW_PASSWORD="${AIRFLOW_PASSWORD}"} \
         ${OPENROUTER_API_KEY:+-e OPENROUTER_API_KEY="${OPENROUTER_API_KEY}"} \
@@ -818,6 +819,7 @@ restart_ai_assistant_with_credentials() {
         -e AIRFLOW_API_URL=http://localhost:8888 \
         -e AIRFLOW_DAGS_PATH=/app/airflow/dags \
         -e PROJECT_ROOT=/app \
+        -e QUBINODE_MCP_URL=http://localhost:8889/sse \
         -e AIRFLOW_USER="${AIRFLOW_USER}" \
         -e AIRFLOW_PASSWORD="${AIRFLOW_PASSWORD}" \
         ${OPENROUTER_API_KEY:+-e OPENROUTER_API_KEY="${OPENROUTER_API_KEY}"} \
@@ -2283,6 +2285,28 @@ bootstrap_rag_knowledge_base() {
         log_warning "Airflow API not ready, skipping RAG bootstrap"
         return 0
     fi
+
+    # Unpause critical DAGs so they can be triggered
+    log_info "Unpausing critical DAGs..."
+    local critical_dags=(
+        rag_bootstrap
+        rag_document_ingestion
+        freeipa_deployment
+        generic_vm_deployment
+        smoke_test_dag
+        infrastructure_health_check
+    )
+    for dag_id in "${critical_dags[@]}"; do
+        if curl -s -X PATCH \
+            -u "admin:admin" \
+            -H "Content-Type: application/json" \
+            "http://localhost:${AIRFLOW_PORT}/api/v1/dags/${dag_id}" \
+            -d '{"is_paused": false}' | grep -q '"is_paused":false\|"is_paused": false'; then
+            log_success "Unpaused DAG: ${dag_id}"
+        else
+            log_warning "Could not unpause DAG: ${dag_id} (may not exist yet)"
+        fi
+    done
 
     # Trigger the rag_bootstrap DAG
     log_info "Triggering RAG bootstrap DAG to ingest ADRs, DAG examples, and documentation..."

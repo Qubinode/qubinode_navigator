@@ -113,7 +113,7 @@ def create_mcp_connection(url: Optional[str] = None) -> Optional["MCPServerHTTP"
     """
     Create connection to Qubinode CE-MCP server (ADR-0064).
 
-    The CE-MCP server at localhost:8890 provides 4 meta-tools:
+    The CE-MCP server at localhost:8889 provides 4 meta-tools:
     - discover_tools: Find available tools by category
     - run_code: Execute Python code in sandboxed environment
     - summarize_data: Reduce large outputs for context efficiency
@@ -134,7 +134,7 @@ def create_mcp_connection(url: Optional[str] = None) -> Optional["MCPServerHTTP"
         logger.warning("MCP not available - agent will run without MCP tools")
         return None
 
-    mcp_url = url or os.getenv("QUBINODE_MCP_URL", "http://localhost:8890/mcp")
+    mcp_url = url or os.getenv("QUBINODE_MCP_URL", "http://localhost:8889/sse")
     return MCPServerHTTP(url=mcp_url)
 
 
