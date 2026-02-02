@@ -135,7 +135,7 @@ def create_mcp_connection(url: Optional[str] = None) -> Optional["MCPServerHTTP"
         return None
 
     mcp_url = url or os.getenv("QUBINODE_MCP_URL", "http://localhost:8890/mcp")
-    return MCPServerHTTP(mcp_url)
+    return MCPServerHTTP(url=mcp_url)
 
 
 def confidence_validator(min_confidence: float = 0.6):
