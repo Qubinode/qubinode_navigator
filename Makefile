@@ -50,7 +50,7 @@ INSTALL_PATH = ~/.ansible-navigator.yml  # Navigator configuration destination
 SOURCE_FILE = ~/qubinode_navigator/ansible-navigator/release-ansible-navigator.yml  # Navigator config source
 
 # 📊 COMMAND DEFINITIONS (build automation commands):
-INSTALL_ANSIBLE_NAVIGATOR := uv pip install ansible-navigator>=25.5.0  # Install navigator with minimum version
+INSTALL_ANSIBLE_NAVIGATOR := uv pip install --system ansible-navigator>=25.5.0  # Install navigator with minimum version
 BUILD_CMD := tag=$(TAG) && cd ~/qubinode_navigator/ansible-builder/ && ansible-builder build -f execution-environment.yml -t qubinode-installer:$${tag} -v 3  # Build execution environment
 COPY_NAVIGATOR_CMD := cp $(SOURCE_FILE) $(INSTALL_PATH)  # Copy navigator configuration
 PODMAN_LOGIN := podman login registry.redhat.io  # Authenticate with Red Hat registry

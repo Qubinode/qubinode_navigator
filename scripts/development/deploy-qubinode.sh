@@ -942,7 +942,7 @@ deploy_airflow_services() {
     if ! command -v podman-compose &> /dev/null; then
         log_info "Installing podman-compose for Airflow..."
         ensure_uv
-        if ! uv pip install podman-compose; then
+        if ! uv pip install --system podman-compose; then
             log_warning "Failed to install podman-compose, skipping Airflow deployment"
             return 1
         fi
@@ -1660,13 +1660,13 @@ configure_navigator() {
 
         # Install Python requirements
         ensure_uv
-        sudo -E uv pip install -r requirements.txt || {
+        sudo -E uv pip install --system -r requirements.txt || {
             log_warning "Failed to install Python requirements"
         }
 
         # Install passlib for Ansible password_hash filter
         log_info "Ensuring passlib is installed for password hashing..."
-        sudo -E uv pip install passlib || {
+        sudo -E uv pip install --system passlib || {
             log_warning "Failed to install passlib, password operations may fail"
         }
 
