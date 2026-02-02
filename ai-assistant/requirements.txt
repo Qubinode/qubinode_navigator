@@ -80,6 +80,10 @@ numpy==2.4.1
 openai==2.15.0
 openapi-pydantic==0.5.1
 opentelemetry-api==1.39.1
+opentelemetry-exporter-prometheus==0.60b1
+opentelemetry-instrumentation==0.60b1
+opentelemetry-sdk==1.39.1
+opentelemetry-semantic-conventions==0.60b1
 orjson==3.11.5
 packaging==25.0
 pathable==0.4.4
@@ -90,14 +94,14 @@ portalocker==3.2.0
 prometheus-client==0.24.1
 propcache==0.4.1
 protobuf==6.33.4
-psutil==7.2.1
+psutil==7.2.2
 py-key-value-aio[disk,keyring,memory,redis]==0.3.0
 py-key-value-shared==0.3.0
 pycparser==2.23
 pydantic[email]==2.12.4
 pydantic-core==2.41.5
 pydantic-settings==2.12.0
-pydocket==0.17.1
+pydocket==0.16.6
 pygments==2.19.2
 pyjwt[crypto]==2.10.1
 pyperclip==1.11.0
@@ -138,6 +142,7 @@ uvicorn[standard]==0.40.0
 uvloop==0.22.1
 watchfiles==1.1.1
 websockets==15.0.1
+wrapt==1.17.3
 yarl==1.22.0
 zipp==3.23.0
 zstandard==0.25.0
