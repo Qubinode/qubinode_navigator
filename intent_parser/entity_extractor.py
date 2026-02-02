@@ -100,9 +100,7 @@ def _extract_vm_params(text: str) -> Dict[str, Any]:
 
     # "info/details/status/delete vm <name>"
     m = re.search(
-        r"\b(?:info|details?|status|describe|delete|remove|destroy|terminate)\s+"
-        r"(?:about\s+|for\s+|of\s+)?(?:the\s+)?(?:vm|virtual\s+machine)\s+"
-        r"[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
+        r"\b(?:info|details?|status|describe|delete|remove|destroy|terminate)\s+" r"(?:about\s+|for\s+|of\s+)?(?:the\s+)?(?:vm|virtual\s+machine)\s+" r"[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
         text,
         re.I,
     )
@@ -242,8 +240,7 @@ def _extract_dag_params(text: str) -> Dict[str, Any]:
 
     # "dag info/details/status <dag_id>" - command word then dag_id
     m = re.search(
-        r"\b(?:dag|workflow)\s+(?:info|details?|status|describe)\s+"
-        r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
+        r"\b(?:dag|workflow)\s+(?:info|details?|status|describe)\s+" r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
         text,
         re.I,
     )
@@ -255,8 +252,7 @@ def _extract_dag_params(text: str) -> Dict[str, Any]:
 
     # "info/details about dag <dag_id>"
     m = re.search(
-        r"\b(?:info|details?|describe)\s+(?:about\s+|for\s+|of\s+)?(?:dag|workflow)\s+"
-        r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
+        r"\b(?:info|details?|describe)\s+(?:about\s+|for\s+|of\s+)?(?:dag|workflow)\s+" r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
         text,
         re.I,
     )
@@ -288,8 +284,7 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
 
     # "trigger/run/execute dag <dag_id>"
     m = re.search(
-        r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?(?:dag|workflow)\s+"
-        r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
+        r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?(?:dag|workflow)\s+" r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
         text,
         re.I,
     )
