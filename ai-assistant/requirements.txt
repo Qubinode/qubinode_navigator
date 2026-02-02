@@ -84,7 +84,7 @@ opentelemetry-exporter-prometheus==0.60b1
 opentelemetry-instrumentation==0.60b1
 opentelemetry-sdk==1.39.1
 opentelemetry-semantic-conventions==0.60b1
-orjson==3.11.5
+orjson==3.11.6
 packaging==25.0
 pathable==0.4.4
 pathvalidate==3.3.1
