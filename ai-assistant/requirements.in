@@ -8,6 +8,7 @@ uvicorn[standard]
 pydantic>=2.0
 
 # AI/ML frameworks - let pip-compile resolve compatible versions
+pydantic-ai>=0.8.0,<1.0.0
 langchain>=0.3.0,<0.4.0
 langchain-community>=0.3.0,<0.4.0
 langchain-core>=0.3.0,<0.4.0

@@ -74,7 +74,7 @@ jobs:
       - name: Test MCP Server Import
         run: |
           cd "${{ matrix.mcp-server.path }}"
-          python -c "import $(basename ${{ matrix.mcp-server.server }} .py); print('✅ ${{ matrix.mcp-server.name }} imports successfully')"
+          PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}.." python -c "import $(basename ${{ matrix.mcp-server.server }} .py); print('✅ ${{ matrix.mcp-server.name }} imports successfully')"
 
       - name: Validate FastMCP Migration
         run: |
@@ -104,7 +104,7 @@ jobs:
       - name: Test MCP Tool Discovery
         run: |
           cd "${{ matrix.mcp-server.path }}"
-          python << 'PYTHON_SCRIPT'
+          PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}.." python << 'PYTHON_SCRIPT'
           import sys
           from pathlib import Path
 
