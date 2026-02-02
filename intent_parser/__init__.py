@@ -24,6 +24,7 @@ class IntentParser:
     def __init__(self) -> None:
         """Initialize the parser and register all handlers."""
         from .handlers import register_all_handlers
+
         register_all_handlers()
 
     async def process(self, text: str) -> IntentResult:

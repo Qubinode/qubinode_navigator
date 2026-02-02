@@ -19,9 +19,7 @@ try:
     import os
 
     # Add airflow scripts to path if not already there
-    _scripts_dir = os.path.join(
-        os.path.dirname(__file__), "..", "..", "airflow", "scripts"
-    )
+    _scripts_dir = os.path.join(os.path.dirname(__file__), "..", "..", "airflow", "scripts")
     _scripts_dir = os.path.normpath(_scripts_dir)
     if _scripts_dir not in sys.path:
         sys.path.insert(0, _scripts_dir)
@@ -41,10 +39,7 @@ except ImportError as e:
 
 
 def _unavailable_msg(operation: str) -> str:
-    return (
-        f"Error: VM {operation} is not available. "
-        "The Airflow MCP backend could not be loaded."
-    )
+    return f"Error: VM {operation} is not available. The Airflow MCP backend could not be loaded."
 
 
 async def handle_vm_list(params: Dict) -> str:

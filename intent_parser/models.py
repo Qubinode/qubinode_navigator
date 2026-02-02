@@ -50,13 +50,15 @@ class IntentCategory(str, Enum):
 
 
 # Categories that require write access
-WRITE_CATEGORIES = frozenset({
-    IntentCategory.VM_CREATE,
-    IntentCategory.VM_DELETE,
-    IntentCategory.DAG_TRIGGER,
-    IntentCategory.RAG_INGEST,
-    IntentCategory.TROUBLESHOOT_LOG,
-})
+WRITE_CATEGORIES = frozenset(
+    {
+        IntentCategory.VM_CREATE,
+        IntentCategory.VM_DELETE,
+        IntentCategory.DAG_TRIGGER,
+        IntentCategory.RAG_INGEST,
+        IntentCategory.TROUBLESHOOT_LOG,
+    }
+)
 
 
 class ParsedIntent(BaseModel):

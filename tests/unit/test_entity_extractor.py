@@ -110,9 +110,7 @@ class TestRAGEntityExtraction:
         assert params.get("query") == "DNS configuration"
 
     def test_rag_query_knowledge_base(self):
-        params = extract(
-            "query the knowledge base for FreeIPA setup", IntentCategory.RAG_QUERY
-        )
+        params = extract("query the knowledge base for FreeIPA setup", IntentCategory.RAG_QUERY)
         assert "FreeIPA setup" in params.get("query", "")
 
     def test_rag_query_how_to(self):
@@ -152,9 +150,7 @@ class TestTroubleshootEntityExtraction:
         assert "vm won't boot" in params.get("symptom", "")
 
     def test_error_message_quoted(self):
-        params = extract(
-            'diagnose error "connection refused"', IntentCategory.TROUBLESHOOT_DIAGNOSE
-        )
+        params = extract('diagnose error "connection refused"', IntentCategory.TROUBLESHOOT_DIAGNOSE)
         assert params.get("error_message") == "connection refused"
 
     def test_affected_resource(self):
@@ -176,21 +172,15 @@ class TestLineageEntityExtraction:
     """Test lineage parameter extraction."""
 
     def test_lineage_dag_id(self):
-        params = extract(
-            "lineage for dag freeipa_deploy", IntentCategory.LINEAGE_DAG
-        )
+        params = extract("lineage for dag freeipa_deploy", IntentCategory.LINEAGE_DAG)
         assert params.get("dag_id") == "freeipa_deploy"
 
     def test_lineage_depth(self):
-        params = extract(
-            "lineage for dag freeipa_deploy depth=3", IntentCategory.LINEAGE_DAG
-        )
+        params = extract("lineage for dag freeipa_deploy depth=3", IntentCategory.LINEAGE_DAG)
         assert params.get("depth") == 3
 
     def test_blast_radius_dag_id(self):
-        params = extract(
-            "blast radius for dag vm_creation", IntentCategory.LINEAGE_BLAST_RADIUS
-        )
+        params = extract("blast radius for dag vm_creation", IntentCategory.LINEAGE_BLAST_RADIUS)
         assert params.get("dag_id") == "vm_creation"
 
     def test_blast_radius_task_id(self):

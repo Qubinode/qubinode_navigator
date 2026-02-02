@@ -17,9 +17,7 @@ try:
     import sys
     import os
 
-    _scripts_dir = os.path.join(
-        os.path.dirname(__file__), "..", "..", "airflow", "scripts"
-    )
+    _scripts_dir = os.path.join(os.path.dirname(__file__), "..", "..", "airflow", "scripts")
     _scripts_dir = os.path.normpath(_scripts_dir)
     if _scripts_dir not in sys.path:
         sys.path.insert(0, _scripts_dir)
@@ -37,10 +35,7 @@ except ImportError as e:
 
 
 def _unavailable_msg(operation: str) -> str:
-    return (
-        f"Error: RAG {operation} is not available. "
-        "The Airflow MCP backend could not be loaded."
-    )
+    return f"Error: RAG {operation} is not available. The Airflow MCP backend could not be loaded."
 
 
 async def handle_rag_query(params: Dict) -> str:

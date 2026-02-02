@@ -91,7 +91,8 @@ def _extract_vm_params(text: str) -> Dict[str, Any]:
     # "vm named X" / "vm called X"
     m = re.search(
         r"\bvm\s+(?:named|called)\s+[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         params["name"] = m.group(1).strip("\"'")
@@ -102,7 +103,8 @@ def _extract_vm_params(text: str) -> Dict[str, Any]:
         r"\b(?:info|details?|status|describe|delete|remove|destroy|terminate)\s+"
         r"(?:about\s+|for\s+|of\s+)?(?:the\s+)?(?:vm|virtual\s+machine)\s+"
         r"[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         params["name"] = m.group(1).strip("\"'")
@@ -111,7 +113,8 @@ def _extract_vm_params(text: str) -> Dict[str, Any]:
     # "vm info/status/details <name>" pattern
     m = re.search(
         r"\bvm\s+(?:info|details?|status)\s+[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         params["name"] = m.group(1).strip("\"'")
@@ -120,7 +123,8 @@ def _extract_vm_params(text: str) -> Dict[str, Any]:
     # "<action> <name> vm"
     m = re.search(
         r"\b(?:delete|remove|destroy|terminate)\s+[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?\s+vm\b",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         params["name"] = m.group(1).strip("\"'")
@@ -129,15 +133,31 @@ def _extract_vm_params(text: str) -> Dict[str, Any]:
     # Last word that looks like a VM name after "vm"
     m = re.search(
         r"\bvm\s+[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         name = m.group(1).strip("\"'")
         # Filter out common non-name words
         if name.lower() not in {
-            "info", "details", "status", "list", "create", "delete",
-            "named", "called", "is", "the", "a", "an", "with",
-            "name", "image", "memory", "cpus", "disk",
+            "info",
+            "details",
+            "status",
+            "list",
+            "create",
+            "delete",
+            "named",
+            "called",
+            "is",
+            "the",
+            "a",
+            "an",
+            "with",
+            "name",
+            "image",
+            "memory",
+            "cpus",
+            "disk",
         }:
             params["name"] = name
 
@@ -151,14 +171,16 @@ def _extract_vm_create(text: str) -> Dict[str, Any]:
     # Image: "with image X" / "using X image" / "image=X"
     m = re.search(
         r"\b(?:with\s+)?image\s+[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         params["image"] = m.group(1)
 
     m = re.search(
         r"\busing\s+[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?\s+image\b",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         params["image"] = m.group(1)
@@ -203,8 +225,18 @@ def _extract_dag_params(text: str) -> Dict[str, Any]:
     params = {}
 
     _skip_words = {
-        "info", "details", "status", "list", "trigger", "run",
-        "named", "called", "the", "a", "execute", "start",
+        "info",
+        "details",
+        "status",
+        "list",
+        "trigger",
+        "run",
+        "named",
+        "called",
+        "the",
+        "a",
+        "execute",
+        "start",
         "describe",
     }
 
@@ -212,7 +244,8 @@ def _extract_dag_params(text: str) -> Dict[str, Any]:
     m = re.search(
         r"\b(?:dag|workflow)\s+(?:info|details?|status|describe)\s+"
         r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         dag_id = m.group(1).strip("\"'")
@@ -224,7 +257,8 @@ def _extract_dag_params(text: str) -> Dict[str, Any]:
     m = re.search(
         r"\b(?:info|details?|describe)\s+(?:about\s+|for\s+|of\s+)?(?:dag|workflow)\s+"
         r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         dag_id = m.group(1).strip("\"'")
@@ -235,7 +269,8 @@ def _extract_dag_params(text: str) -> Dict[str, Any]:
     # "dag <dag_id>" / "dag named <dag_id>" / "workflow <dag_id>"
     m = re.search(
         r"\b(?:dag|workflow)\s+(?:named|called|id)?\s*[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         dag_id = m.group(1).strip("\"'")
@@ -255,7 +290,8 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
     m = re.search(
         r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?(?:dag|workflow)\s+"
         r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         dag_id = m.group(1).strip("\"'")
@@ -266,7 +302,8 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
     if "dag_id" not in params:
         m = re.search(
             r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
-            text, re.I,
+            text,
+            re.I,
         )
         if m:
             dag_id = m.group(1).strip("\"'")
@@ -277,7 +314,8 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
     if "dag_id" not in params:
         m = re.search(
             r"\b(?:trigger|run|execute|start)\s+[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?\s+(?:dag|workflow)\b",
-            text, re.I,
+            text,
+            re.I,
         )
         if m:
             params["dag_id"] = m.group(1).strip("\"'")
@@ -286,6 +324,7 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
     m = re.search(r"\b(?:conf|config|configuration)\s*=?\s*(\{[^}]+\})", text, re.I)
     if m:
         import json
+
         try:
             params["conf"] = json.loads(m.group(1))
         except json.JSONDecodeError:
@@ -301,7 +340,9 @@ def _extract_rag_query(text: str) -> Dict[str, Any]:
     # The query is often the main text after removing the command prefix
     cleaned = re.sub(
         r"^(?:search|query|find|lookup)\s+(?:the\s+)?(?:rag|knowledge\s+base|docs?|documentation)\s*(?:for|about)?\s*",
-        "", text, flags=re.I,
+        "",
+        text,
+        flags=re.I,
     ).strip()
 
     if cleaned and cleaned != text.strip():
@@ -338,7 +379,8 @@ def _extract_rag_ingest(text: str) -> Dict[str, Any]:
     # doc_type
     m = re.search(
         r"\b(?:type|doc_type)\s*=?\s*[\"']?(\w+)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         params["doc_type"] = m.group(1)
@@ -373,9 +415,7 @@ def _extract_troubleshoot(text: str) -> Dict[str, Any]:
             break
 
     # Extract symptom - the main description after the command word
-    cleaned = re.sub(
-        r"^(?:diagnose|troubleshoot|debug|fix)\s+", "", text, flags=re.I
-    ).strip()
+    cleaned = re.sub(r"^(?:diagnose|troubleshoot|debug|fix)\s+", "", text, flags=re.I).strip()
     if cleaned and cleaned != text.strip():
         params["symptom"] = cleaned
 
@@ -387,7 +427,8 @@ def _extract_troubleshoot(text: str) -> Dict[str, Any]:
     # Extract resource names
     m = re.search(
         r"\b(?:vm|dag|resource)\s+[\"']?([a-zA-Z][a-zA-Z0-9._-]*)[\"']?",
-        text, re.I,
+        text,
+        re.I,
     )
     if m:
         name = m.group(1)
@@ -416,8 +457,7 @@ def _extract_troubleshoot_history(text: str) -> Dict[str, Any]:
         params["component"] = m.group(1)
 
     # only_successful
-    if re.search(r"\b(?:successful|success|solved|fixed)\s+only\b", text, re.I) or \
-       re.search(r"\bonly\s+(?:successful|success|solved|fixed)\b", text, re.I):
+    if re.search(r"\b(?:successful|success|solved|fixed)\s+only\b", text, re.I) or re.search(r"\bonly\s+(?:successful|success|solved|fixed)\b", text, re.I):
         params["only_successful"] = True
 
     return params
