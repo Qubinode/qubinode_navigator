@@ -5,7 +5,6 @@ Tests handler registration, routing, error handling, and read-only mode.
 Uses mock handlers (no backend needed).
 """
 
-import os
 import pytest
 
 from intent_parser.models import IntentCategory, IntentResult

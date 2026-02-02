@@ -6,7 +6,7 @@ import logging
 import os
 from typing import Callable, Awaitable, Dict, Optional
 
-from .models import IntentCategory, IntentResult, ParsedIntent, WRITE_CATEGORIES
+from .models import IntentCategory, IntentResult, WRITE_CATEGORIES
 from .classifier import classify
 from .entity_extractor import extract
 

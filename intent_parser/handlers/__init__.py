@@ -6,8 +6,6 @@ Each handler module registers its functions with the router on import.
 
 import logging
 
-from ..router import register
-from ..models import IntentCategory
 
 logger = logging.getLogger("intent-parser.handlers")
 

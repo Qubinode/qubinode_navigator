@@ -5,8 +5,6 @@ Covers parameter extraction for VMs, DAGs, RAG queries,
 numeric values, and domain names.
 """
 
-import pytest
-
 from intent_parser.entity_extractor import extract
 from intent_parser.models import IntentCategory
 
