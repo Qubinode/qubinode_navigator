@@ -119,7 +119,7 @@ py-key-value-aio[disk,keyring,memory,redis]==0.3.0
 py-key-value-shared==0.3.0
 pyasn1==0.6.2
 pyasn1-modules==0.4.2
-pycparser==2.23
+pycparser==3.0
 pydantic[email]==2.12.4
 pydantic-ai==0.8.1
 pydantic-ai-slim[ag-ui,anthropic,bedrock,cli,cohere,evals,google,groq,huggingface,mcp,mistral,openai,retries,temporal,vertexai]==0.8.1
