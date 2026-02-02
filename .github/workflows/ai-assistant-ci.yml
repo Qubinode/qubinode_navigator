@@ -51,25 +51,22 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Cache Python dependencies
-        uses: actions/cache@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('ai-assistant/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          enable-cache: true
 
       - name: Install AI Assistant dependencies
         run: |
           cd ai-assistant
-          pip install -r requirements.txt
-          pip install pytest-cov
+          uv pip install --system -r requirements.txt
+          uv pip install --system pytest-cov
 
       - name: Validate dependencies
         run: |
           cd ai-assistant
           echo "🔍 Validating dependency compatibility..."
-          pip check
+          uv pip check --system
           echo "✅ All dependencies are compatible"
 
       - name: Run AI Assistant tests
@@ -99,15 +96,20 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install plugin framework dependencies
         run: |
-          pip install pytest-cov pytest-mock
-          pip install -r requirements.txt
+          uv pip install --system pytest-cov pytest-mock
+          uv pip install --system -r requirements.txt
 
       - name: Validate dependencies
         run: |
           echo "🔍 Validating dependency compatibility..."
-          pip check
+          uv pip check --system
           echo "✅ All dependencies are compatible"
 
       - name: Run AI Assistant plugin tests
@@ -416,6 +418,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -588,7 +595,7 @@ jobs:
           done
 
           # Install benchmarking tools
-          pip install requests
+          uv pip install --system requests
 
           # Create benchmark script
           cat > benchmark.py << 'EOF'
@@ -736,6 +743,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -800,7 +812,7 @@ jobs:
           echo "========================================"
 
           cd ai-assistant
-          pip install pyyaml
+          uv pip install --system pyyaml
 
           # Run the RAG document preparation script
           python scripts/prepare-rag-docs.py || echo "RAG preparation failed, creating minimal docs"
@@ -1182,10 +1194,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install dependencies
         run: |
-          pip install pyyaml requests
-          cd ai-assistant && pip install -r requirements.txt
+          uv pip install --system pyyaml requests
+          cd ai-assistant && uv pip install --system -r requirements.txt
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

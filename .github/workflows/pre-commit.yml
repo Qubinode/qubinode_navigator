@@ -37,10 +37,15 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install pre-commit
         run: |
-          pip install pre-commit
-          pip install pylint pylint-airflow apache-airflow==2.10.4
+          uv pip install --system pre-commit
+          uv pip install --system pylint pylint-airflow apache-airflow==2.10.4
 
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
@@ -98,12 +103,17 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install dependencies
         run: |
-          pip install apache-airflow==2.10.4
-          pip install apache-airflow-providers-postgres
-          pip install pylint pylint-airflow airflint
-          pip install pyyaml
+          uv pip install --system apache-airflow==2.10.4
+          uv pip install --system apache-airflow-providers-postgres
+          uv pip install --system pylint pylint-airflow airflint
+          uv pip install --system pyyaml
 
       - name: Run Qubinode DAG linter
         run: |

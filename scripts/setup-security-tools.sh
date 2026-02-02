@@ -105,14 +105,17 @@ install_precommit() {
         return 0
     fi
 
-    if command_exists pip3; then
+    if command_exists uv; then
+        uv pip install pre-commit
+        echo "✅ pre-commit installed via uv"
+    elif command_exists pip3; then
         pip3 install --user pre-commit
         echo "✅ pre-commit installed via pip3"
     elif command_exists pip; then
         pip install --user pre-commit
         echo "✅ pre-commit installed via pip"
     else
-        echo "❌ pip/pip3 not found. Install Python package manager first."
+        echo "❌ uv/pip/pip3 not found. Install Python package manager first."
         exit 1
     fi
 }

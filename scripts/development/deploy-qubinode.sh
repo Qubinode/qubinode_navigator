@@ -61,6 +61,14 @@ setup_qubinode_home() {
 
 setup_qubinode_home
 
+# Ensure uv is available for fast Python package management
+ensure_uv() {
+    if ! command -v uv &> /dev/null; then
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+}
+
 # Validate we're in the right repository
 if [[ ! -d "$QUBINODE_HOME/airflow" ]] || [[ ! -d "$QUBINODE_HOME/ai-assistant" ]]; then
     echo "ERROR: Cannot find qubinode_navigator repository root"
@@ -933,7 +941,8 @@ deploy_airflow_services() {
     # Check if podman-compose is available
     if ! command -v podman-compose &> /dev/null; then
         log_info "Installing podman-compose for Airflow..."
-        if ! pip3 install podman-compose; then
+        ensure_uv
+        if ! uv pip install podman-compose; then
             log_warning "Failed to install podman-compose, skipping Airflow deployment"
             return 1
         fi
@@ -1650,13 +1659,14 @@ configure_navigator() {
         fi
 
         # Install Python requirements
-        sudo pip3 install -r requirements.txt || {
+        ensure_uv
+        sudo -E uv pip install -r requirements.txt || {
             log_warning "Failed to install Python requirements"
         }
 
         # Install passlib for Ansible password_hash filter
         log_info "Ensuring passlib is installed for password hashing..."
-        sudo pip3 install passlib || {
+        sudo -E uv pip install passlib || {
             log_warning "Failed to install passlib, password operations may fail"
         }
 

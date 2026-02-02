@@ -38,6 +38,14 @@ DEFAULT_QUBINODE_HOME="/opt/qubinode_navigator"
 QUBINODE_HOME="${QUBINODE_HOME:-$DEFAULT_QUBINODE_HOME}"
 export QUBINODE_HOME
 
+# Ensure uv is available for fast Python package management
+ensure_uv() {
+    if ! command -v uv &> /dev/null; then
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+}
+
 # 📊 GLOBAL VARIABLES
 export ANSIBLE_SAFE_VERSION="0.0.14"
 export GIT_REPO="https://github.com/Qubinode/qubinode_navigator.git"
@@ -145,7 +153,8 @@ function setup_plugin_framework() {
     fi
 
     # Install plugin framework dependencies
-    pip3 install pyyaml requests hvac python-dotenv
+    ensure_uv
+    uv pip install pyyaml requests hvac python-dotenv
 
     echo "✅ Plugin framework ready"
 }

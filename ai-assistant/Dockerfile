@@ -38,14 +38,17 @@ RUN mkdir -p /app/llama.cpp && \
     ln -s /usr/local/bin/llama-server /app/llama.cpp/server && \
     ln -s /usr/local/bin/llama-cli /app/llama.cpp/cli
 
+# Install uv for fast dependency management
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:$PATH"
+
 # Set up Python virtual environment (best practice)
 WORKDIR /app
-RUN python3.12 -m venv /app/venv && \
-    /app/venv/bin/pip install --upgrade pip
+RUN uv venv /app/venv
 
 # Install Python dependencies in virtual environment
 COPY requirements.txt .
-RUN /app/venv/bin/pip install --no-cache-dir -r requirements.txt
+RUN uv pip install --python /app/venv/bin/python --no-cache-dir -r requirements.txt
 
 # Copy application source
 COPY src/ ./src/

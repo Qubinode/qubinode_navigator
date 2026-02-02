@@ -6,6 +6,7 @@ on:
     paths:
       - 'ai-assistant/mcp_*.py'
       - 'airflow/scripts/mcp_*.py'
+      - 'intent_parser/mcp_server.py'
       - 'tests/mcp/**'
       - '.github/workflows/mcp-server-ci.yml'
   pull_request:
@@ -13,6 +14,7 @@ on:
     paths:
       - 'ai-assistant/mcp_*.py'
       - 'airflow/scripts/mcp_*.py'
+      - 'intent_parser/mcp_server.py'
       - 'tests/mcp/**'
   workflow_dispatch:
 
@@ -37,6 +39,9 @@ jobs:
           - name: "Airflow MCP"
             path: "airflow/scripts"
             server: "mcp_server_fastmcp.py"
+          - name: "Intent Parser MCP"
+            path: "intent_parser"
+            server: "mcp_server.py"
 
     steps:
       - name: Checkout code
@@ -46,16 +51,19 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install fastmcp pytest pytest-asyncio httpx
+          uv pip install --system fastmcp pytest pytest-asyncio httpx
 
           # Install server-specific dependencies
           if [ -f "${{ matrix.mcp-server.path }}/requirements.txt" ]; then
-            pip install -r "${{ matrix.mcp-server.path }}/requirements.txt"
+            uv pip install --system -r "${{ matrix.mcp-server.path }}/requirements.txt"
           fi
 
       - name: Validate MCP Server Syntax
@@ -143,28 +151,34 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install fastmcp httpx pytest
+          uv pip install --system fastmcp httpx pytest
 
           # Install all MCP dependencies
-          pip install -r ai-assistant/requirements.txt || true
+          uv pip install --system -r ai-assistant/requirements.txt || true
 
       - name: Test MCP Server Count
         run: |
           echo "Checking for MCP servers..."
           ai_mcp=$(find ai-assistant -name "mcp_*.py" -type f | wc -l)
           airflow_mcp=$(find airflow/scripts -name "mcp_*.py" -type f 2>/dev/null | wc -l)
+          intent_mcp=$(find intent_parser -name "mcp_*.py" -type f 2>/dev/null | wc -l)
 
           echo "AI Assistant MCP servers: $ai_mcp"
           echo "Airflow MCP servers: $airflow_mcp"
+          echo "Intent Parser MCP servers: $intent_mcp"
 
-          total=$((ai_mcp + airflow_mcp))
+          total=$((ai_mcp + airflow_mcp + intent_mcp))
           echo "Total MCP servers: $total"
 
-          if [ $total -lt 2 ]; then
-            echo "⚠️  Expected at least 2 MCP servers"
+          if [ $total -lt 3 ]; then
+            echo "⚠️  Expected at least 3 MCP servers"
           else
             echo "✅ Found $total MCP servers"
           fi

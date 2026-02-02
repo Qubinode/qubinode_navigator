@@ -93,6 +93,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install dependencies
         run: |
           # Install Airflow 2.10.4 with constraints file to ensure correct version
@@ -100,10 +105,10 @@ jobs:
           CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-2.10.4/constraints-${PYTHON_VERSION}.txt"
           echo "Using constraints: $CONSTRAINT_URL"
 
-          pip install "apache-airflow==2.10.4" --constraint "$CONSTRAINT_URL"
-          pip install "apache-airflow-providers-postgres" --constraint "$CONSTRAINT_URL"
-          pip install "apache-airflow-providers-ssh" --constraint "$CONSTRAINT_URL"
-          pip install pyyaml
+          uv pip install --system "apache-airflow==2.10.4" --constraint "$CONSTRAINT_URL"
+          uv pip install --system "apache-airflow-providers-postgres" --constraint "$CONSTRAINT_URL"
+          uv pip install --system "apache-airflow-providers-ssh" --constraint "$CONSTRAINT_URL"
+          uv pip install --system pyyaml
 
           # Find scripts directory
           SCRIPTS_DIR=$(python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")
@@ -116,7 +121,7 @@ jobs:
             "$SCRIPTS_DIR/airflow" version
           else
             echo "ERROR: airflow binary not found in $SCRIPTS_DIR"
-            pip show apache-airflow | head -10
+            uv pip show --system apache-airflow | head -10
             exit 1
           fi
 
@@ -264,10 +269,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Validate docker-compose.yml syntax
         run: |
           # Install docker-compose if needed
-          docker compose version || pip install docker-compose
+          docker compose version || uv pip install --system docker-compose
 
           cd airflow
           docker compose config --quiet && echo "[OK] docker-compose.yml is valid"
@@ -359,6 +369,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install dependencies
         run: |
           # Install Airflow 2.10.4 with constraints file to ensure correct version
@@ -366,12 +381,12 @@ jobs:
           CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-2.10.4/constraints-${PYTHON_VERSION}.txt"
           echo "Using constraints: $CONSTRAINT_URL"
 
-          pip install "apache-airflow==2.10.4" --constraint "$CONSTRAINT_URL"
-          pip install "apache-airflow-providers-postgres" --constraint "$CONSTRAINT_URL"
-          pip install "apache-airflow-providers-ssh" --constraint "$CONSTRAINT_URL"
-          pip install openlineage-airflow
-          pip install pyyaml
-          pip install httpx  # For MCP server testing
+          uv pip install --system "apache-airflow==2.10.4" --constraint "$CONSTRAINT_URL"
+          uv pip install --system "apache-airflow-providers-postgres" --constraint "$CONSTRAINT_URL"
+          uv pip install --system "apache-airflow-providers-ssh" --constraint "$CONSTRAINT_URL"
+          uv pip install --system openlineage-airflow
+          uv pip install --system pyyaml
+          uv pip install --system httpx  # For MCP server testing
 
           # Find scripts directory and add to PATH
           SCRIPTS_DIR=$(python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))")
@@ -383,7 +398,7 @@ jobs:
             "$SCRIPTS_DIR/airflow" version
           else
             echo "ERROR: airflow binary not found"
-            pip show apache-airflow | head -10
+            uv pip show --system apache-airflow | head -10
             exit 1
           fi
 
@@ -890,7 +905,7 @@ jobs:
           echo "========================================"
 
           # Install MCP dependencies
-          pip install mcp starlette uvicorn sse-starlette fastmcp 2>/dev/null || true
+          uv pip install --system mcp starlette uvicorn sse-starlette fastmcp 2>/dev/null || true
 
           # Test MCP server can import without errors
           cd airflow/scripts

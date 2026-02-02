@@ -38,28 +38,32 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install Airflow and initialize database
         run: |
           # Use the CI setup script for consistent environment
           chmod +x ./airflow/scripts/ci-setup.sh
 
           # Install dependencies
-          python -m pip install --upgrade pip
           echo "Installing Apache Airflow ${{ env.AIRFLOW_VERSION }}..."
           # Use constraints to ensure compatible package versions
           PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
           CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${{ env.AIRFLOW_VERSION }}/constraints-${PYTHON_VERSION}.txt"
           echo "Using constraints: $CONSTRAINT_URL"
 
-          pip install "apache-airflow[postgres,celery]==${{ env.AIRFLOW_VERSION }}" --constraint "$CONSTRAINT_URL"
+          uv pip install --system "apache-airflow[postgres,celery]==${{ env.AIRFLOW_VERSION }}" --constraint "$CONSTRAINT_URL"
           echo "Installing SSH provider..."
-          pip install "apache-airflow-providers-ssh" --constraint "$CONSTRAINT_URL"
-          pip install pytest pytest-asyncio pyyaml
+          uv pip install --system "apache-airflow-providers-ssh" --constraint "$CONSTRAINT_URL"
+          uv pip install --system pytest pytest-asyncio pyyaml
           echo "Airflow packages installed successfully"
 
           # Install project dependencies
           if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
+            uv pip install --system -r requirements.txt
           fi
 
           # Setup PATH and initialize DB
@@ -256,11 +260,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install "apache-airflow[postgres]==${{ env.AIRFLOW_VERSION }}"
-          pip install pytest langchain chromadb
+          uv pip install --system "apache-airflow[postgres]==${{ env.AIRFLOW_VERSION }}"
+          uv pip install --system pytest langchain chromadb
 
       - name: Initialize Airflow
         run: |
@@ -337,11 +345,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install "apache-airflow[postgres]==${{ env.AIRFLOW_VERSION }}"
-          pip install fastmcp httpx pytest
+          uv pip install --system "apache-airflow[postgres]==${{ env.AIRFLOW_VERSION }}"
+          uv pip install --system fastmcp httpx pytest
 
       - name: Test MCP Plugin in Airflow
         run: |

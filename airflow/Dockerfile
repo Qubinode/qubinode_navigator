@@ -7,12 +7,16 @@
 # Using Python 3.12 for forward compatibility (aligned with ADR-0001 and ADR-0025)
 FROM docker.io/apache/airflow:2.10.4-python3.12
 
-# Switch to airflow user (no root needed for slim image)
+# Install uv for fast dependency management
+USER root
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    mv /root/.local/bin/uv /usr/local/bin/uv && \
+    mv /root/.local/bin/uvx /usr/local/bin/uvx || true
 USER airflow
 
 # Core dependencies for Qubinode integration
 # These are lightweight and needed for DAG execution
-RUN pip install --no-cache-dir \
+RUN uv pip install --no-cache-dir \
     # HTTP client for calling host services
     httpx>=0.24.0 \
     # PostgreSQL vector extension client
@@ -22,23 +26,23 @@ RUN pip install --no-cache-dir \
     pydantic>=2.0.0
 
 # ADR-0049 Phase 4: OpenLineage integration for data/code lineage
-RUN pip install --no-cache-dir \
+RUN uv pip install --no-cache-dir \
     apache-airflow-providers-openlineage>=1.0.0 \
     openlineage-python>=1.0.0
 
 # ADR-0051: HashiCorp Vault integration for secrets management
 # Official Airflow provider for Vault (includes VaultHook, VaultBackend)
-RUN pip install --no-cache-dir \
+RUN uv pip install --no-cache-dir \
     apache-airflow-providers-hashicorp>=3.0.0
 
 # SSH provider for remote host execution (replaces manual SSH in BashOperator)
 # Used for executing commands on host from container (kcli, virsh, ansible)
-RUN pip install --no-cache-dir \
+RUN uv pip install --no-cache-dir \
     apache-airflow-providers-ssh>=3.0.0
 
 # ADR-0038: FastMCP framework for MCP server
 # Required for MCP server integration with Claude/AI assistants
-RUN pip install --no-cache-dir \
+RUN uv pip install --no-cache-dir \
     fastmcp>=0.1.0 \
     mcp>=1.0.0 \
     starlette>=0.27.0 \
