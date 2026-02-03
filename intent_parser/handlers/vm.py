@@ -25,12 +25,26 @@ try:
         sys.path.insert(0, _scripts_dir)
 
     from mcp_server_fastmcp import (
-        list_vms as _list_vms,
-        get_vm_info as _get_vm_info,
-        create_vm as _create_vm,
-        delete_vm as _delete_vm,
-        preflight_vm_creation as _preflight_vm_creation,
+        list_vms as _list_vms_tool,
+        get_vm_info as _get_vm_info_tool,
+        create_vm as _create_vm_tool,
+        delete_vm as _delete_vm_tool,
+        preflight_vm_creation as _preflight_vm_creation_tool,
     )
+
+    def _unwrap(t):
+        if callable(t):
+            return t
+        fn = getattr(t, "fn", None)
+        if fn and callable(fn):
+            return fn
+        raise TypeError(f"Cannot unwrap {type(t)}")
+
+    _list_vms = _unwrap(_list_vms_tool)
+    _get_vm_info = _unwrap(_get_vm_info_tool)
+    _create_vm = _unwrap(_create_vm_tool)
+    _delete_vm = _unwrap(_delete_vm_tool)
+    _preflight_vm_creation = _unwrap(_preflight_vm_creation_tool)
 
     _backend_available = True
     logger.info("VM backend functions loaded")

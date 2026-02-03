@@ -188,7 +188,7 @@ create_freeipa_vm = SSHOperator(
         -P numcpus=2 \
         -P disks=[50] \
         -P nets=[default] \
-        --wait || {{
+        --wait < /dev/null || {{
         echo "[ERROR] Failed to create VM"
         exit 1
     }}

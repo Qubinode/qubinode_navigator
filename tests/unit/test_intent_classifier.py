@@ -142,7 +142,7 @@ class TestRAGClassification:
             ("query the knowledge base for FreeIPA setup", IntentCategory.RAG_QUERY),
             ("find documentation about SSH operator", IntentCategory.RAG_QUERY),
             ("how do I configure FreeIPA DNS", IntentCategory.RAG_QUERY),
-            ("how can we deploy OpenShift", IntentCategory.RAG_QUERY),
+            ("how can we deploy OpenShift", IntentCategory.DAG_TRIGGER),
             ("lookup vm troubleshooting", IntentCategory.RAG_QUERY),
         ],
     )

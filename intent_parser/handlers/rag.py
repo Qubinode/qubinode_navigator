@@ -23,10 +23,22 @@ try:
         sys.path.insert(0, _scripts_dir)
 
     from mcp_server_fastmcp import (
-        query_rag as _query_rag,
-        ingest_to_rag as _ingest_to_rag,
-        get_rag_stats as _get_rag_stats,
+        query_rag as _query_rag_tool,
+        ingest_to_rag as _ingest_to_rag_tool,
+        get_rag_stats as _get_rag_stats_tool,
     )
+
+    def _unwrap(t):
+        if callable(t):
+            return t
+        fn = getattr(t, "fn", None)
+        if fn and callable(fn):
+            return fn
+        raise TypeError(f"Cannot unwrap {type(t)}")
+
+    _query_rag = _unwrap(_query_rag_tool)
+    _ingest_to_rag = _unwrap(_ingest_to_rag_tool)
+    _get_rag_stats = _unwrap(_get_rag_stats_tool)
 
     _backend_available = True
     logger.info("RAG backend functions loaded")

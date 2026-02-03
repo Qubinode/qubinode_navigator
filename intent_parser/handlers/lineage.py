@@ -23,9 +23,20 @@ try:
         sys.path.insert(0, _scripts_dir)
 
     from mcp_server_fastmcp import (
-        get_dag_lineage as _get_dag_lineage,
-        get_failure_blast_radius as _get_failure_blast_radius,
+        get_dag_lineage as _get_dag_lineage_tool,
+        get_failure_blast_radius as _get_failure_blast_radius_tool,
     )
+
+    def _unwrap(t):
+        if callable(t):
+            return t
+        fn = getattr(t, "fn", None)
+        if fn and callable(fn):
+            return fn
+        raise TypeError(f"Cannot unwrap {type(t)}")
+
+    _get_dag_lineage = _unwrap(_get_dag_lineage_tool)
+    _get_failure_blast_radius = _unwrap(_get_failure_blast_radius_tool)
 
     _backend_available = True
     logger.info("Lineage backend functions loaded")

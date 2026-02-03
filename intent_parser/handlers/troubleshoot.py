@@ -23,10 +23,22 @@ try:
         sys.path.insert(0, _scripts_dir)
 
     from mcp_server_fastmcp import (
-        diagnose_issue as _diagnose_issue,
-        get_troubleshooting_history as _get_troubleshooting_history,
-        log_troubleshooting_attempt as _log_troubleshooting_attempt,
+        diagnose_issue as _diagnose_issue_tool,
+        get_troubleshooting_history as _get_troubleshooting_history_tool,
+        log_troubleshooting_attempt as _log_troubleshooting_attempt_tool,
     )
+
+    def _unwrap(t):
+        if callable(t):
+            return t
+        fn = getattr(t, "fn", None)
+        if fn and callable(fn):
+            return fn
+        raise TypeError(f"Cannot unwrap {type(t)}")
+
+    _diagnose_issue = _unwrap(_diagnose_issue_tool)
+    _get_troubleshooting_history = _unwrap(_get_troubleshooting_history_tool)
+    _log_troubleshooting_attempt = _unwrap(_log_troubleshooting_attempt_tool)
 
     _backend_available = True
     logger.info("Troubleshooting backend functions loaded")

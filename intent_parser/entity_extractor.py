@@ -282,6 +282,10 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
 
     _skip_words = {"dag", "workflow", "the", "a"}
 
+    # Dynamic service-to-DAG-ID mapping built from scanning airflow/dags/
+    from .dag_registry import get_service_dag_map
+    _SERVICE_DAG_MAP = get_service_dag_map()
+
     # "trigger/run/execute dag <dag_id>"
     m = re.search(
         r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?(?:dag|workflow)\s+" r"[\"']?([a-zA-Z][a-zA-Z0-9_-]*)[\"']?",
@@ -314,6 +318,26 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
         )
         if m:
             params["dag_id"] = m.group(1).strip("\"'")
+
+    # Natural language: "deploy freeipa/idm/dns/vyos/keycloak ..."
+    if "dag_id" not in params:
+        text_lower = text.lower()
+        for service_name, dag_id in _SERVICE_DAG_MAP.items():
+            if service_name in text_lower:
+                params["dag_id"] = dag_id
+                break
+
+    # Extract domain parameter: "with domain X" / "domain X" / "domain=X"
+    if "dag_id" in params:
+        m = re.search(
+            r"\b(?:with\s+)?domain\s+[\"']?([a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,})[\"']?",
+            text,
+            re.I,
+        )
+        if m:
+            domain = m.group(1).strip("\"'")
+            params.setdefault("conf", {})
+            params["conf"]["domain"] = domain
 
     # Try to extract JSON conf: "with config {...}" or "conf={...}"
     m = re.search(r"\b(?:conf|config|configuration)\s*=?\s*(\{[^}]+\})", text, re.I)

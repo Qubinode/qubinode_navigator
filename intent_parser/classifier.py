@@ -149,19 +149,38 @@ def _build_rules() -> dict:
         "boost": 1,
     }
 
+    # Build DAG_TRIGGER keywords dynamically from discovered DAGs
+    from .dag_registry import get_deploy_keywords
+    _deploy_kws = get_deploy_keywords()
+
+    dag_trigger_keywords = [
+        _kw("trigger", "dag"),
+        _kw("run", "dag"),
+        _kw("execute", "dag"),
+        _kw("start", "dag"),
+        _kw("trigger", "workflow"),
+        _kw("run", "workflow"),
+    ]
+    # Add "deploy <service>" keywords for every discovered DAG service
+    for svc_kw in _deploy_kws:
+        dag_trigger_keywords.append(_kw("deploy", svc_kw))
+
+    # Build pattern alternation from service keywords for regex matching
+    # Only use keywords >= 4 chars to avoid false positives
+    _svc_names = "|".join(re.escape(k) for k in _deploy_kws if len(k) >= 4)
+
+    dag_trigger_patterns = [
+        re.compile(r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?(?:dag|workflow)\s+\w+", re.I),
+        re.compile(r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?\w+\s+(?:dag|workflow)\b", re.I),
+    ]
+    if _svc_names:
+        dag_trigger_patterns.append(
+            re.compile(rf"\bdeploy\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I)
+        )
+
     rules[IntentCategory.DAG_TRIGGER] = {
-        "keywords": [
-            _kw("trigger", "dag"),
-            _kw("run", "dag"),
-            _kw("execute", "dag"),
-            _kw("start", "dag"),
-            _kw("trigger", "workflow"),
-            _kw("run", "workflow"),
-        ],
-        "patterns": [
-            re.compile(r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?(?:dag|workflow)\s+\w+", re.I),
-            re.compile(r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?\w+\s+(?:dag|workflow)\b", re.I),
-        ],
+        "keywords": dag_trigger_keywords,
+        "patterns": dag_trigger_patterns,
         "boost": 0,
     }
 
@@ -409,7 +428,8 @@ def classify(text: str) -> ParsedIntent:
         )
 
     # Normalize confidence: map score to 0-1 range
-    max_possible = 10.0
+    # A strong match typically scores 3-5 points (keyword=1 + pattern=2 + boost)
+    max_possible = 5.0
     confidence = min(best_score / max_possible, 1.0)
 
     # Boost confidence if clear winner (big gap to second)

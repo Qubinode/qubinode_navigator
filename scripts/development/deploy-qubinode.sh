@@ -558,6 +558,7 @@ start_ai_assistant() {
         -v "${REPO_ROOT}/ai-assistant/data:/app/data:z" \
         -v "${REPO_ROOT}/airflow/dags:/app/airflow/dags:ro,z" \
         -v "${REPO_ROOT}/docs/adrs:/app/docs/adrs:ro,z" \
+        -v "${REPO_ROOT}/intent_parser:/app/intent_parser:ro,z" \
         "$ai_image")
 
     # Wait for AI Assistant to be ready
@@ -832,6 +833,7 @@ restart_ai_assistant_with_credentials() {
         -v "${REPO_ROOT}/ai-assistant/data:/app/data:z" \
         -v "${REPO_ROOT}/airflow/dags:/app/airflow/dags:ro,z" \
         -v "${REPO_ROOT}/docs/adrs:/app/docs/adrs:ro,z" \
+        -v "${REPO_ROOT}/intent_parser:/app/intent_parser:ro,z" \
         "$ai_image")
 
     # Wait for AI Assistant to be ready using podman health check + endpoint verification
@@ -2307,6 +2309,15 @@ bootstrap_rag_knowledge_base() {
             log_warning "Could not unpause DAG: ${dag_id} (may not exist yet)"
         fi
     done
+
+    # Create localhost SSH connection for DAGs that use SSHOperator
+    log_info "Creating localhost_ssh Airflow connection..."
+    curl -s -X POST -u "admin:admin" -H "Content-Type: application/json" \
+        "http://localhost:${AIRFLOW_PORT}/api/v1/connections" \
+        -d '{"connection_id":"localhost_ssh","conn_type":"ssh","host":"localhost","login":"root","port":22,"extra":"{\"no_host_key_check\": true}"}' \
+        2>/dev/null | grep -q "connection_id" && \
+        log_success "Created localhost_ssh Airflow connection" || \
+        log_info "localhost_ssh connection already exists"
 
     # Trigger the rag_bootstrap DAG
     log_info "Triggering RAG bootstrap DAG to ingest ADRs, DAG examples, and documentation..."

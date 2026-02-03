@@ -560,6 +560,80 @@ class OrchestratorResponse(BaseModel):
     code_changes: List[dict] = []
 
 
+async def _try_intent_fast_path(message: str) -> Optional[OrchestratorResponse]:
+    """
+    Try to handle the request via the deterministic intent parser.
+    Returns OrchestratorResponse if handled, None to fall through to agents.
+    """
+    try:
+        import sys as _sys
+        if "/app" not in _sys.path:
+            _sys.path.insert(0, "/app")
+        from intent_parser import IntentParser, IntentCategory
+
+        parser = IntentParser()
+        parsed = parser.classify(message)
+
+        # Only fast-path for high-confidence, actionable intents
+        FAST_PATH_CATEGORIES = {
+            IntentCategory.DAG_TRIGGER,
+            IntentCategory.DAG_LIST,
+            IntentCategory.DAG_INFO,
+            IntentCategory.VM_LIST,
+            IntentCategory.VM_INFO,
+            IntentCategory.VM_CREATE,
+            IntentCategory.VM_DELETE,
+            IntentCategory.VM_PREFLIGHT,
+            IntentCategory.SYSTEM_STATUS,
+            IntentCategory.SYSTEM_INFO,
+            IntentCategory.RAG_QUERY,
+            IntentCategory.RAG_STATS,
+        }
+
+        if parsed.confidence < 0.5 or parsed.category not in FAST_PATH_CATEGORIES:
+            return None  # Fall through to full orchestrator
+
+        # Execute via intent parser
+        result = await parser.process(message)
+
+        return OrchestratorResponse(
+            session_id=str(uuid.uuid4()),
+            model_used="intent-parser (deterministic)",
+            plan={
+                "session_id": "intent-fast-path",
+                "user_intent": message,
+                "planned_tasks": [f"Execute {parsed.category.value}: {message}"],
+                "estimated_confidence": parsed.confidence,
+                "requires_external_docs": False,
+                "required_providers": [],
+                "escalation_triggers": [],
+            },
+            response_text=result.output if result.success else f"Error: {result.error}",
+            confidence=parsed.confidence,
+            escalation_needed=not result.success,
+            escalation_reason=result.error if not result.success else None,
+            planned_tasks=[f"Execute {parsed.category.value}: {message}"],
+            required_providers=[],
+            timestamp=time.time(),
+            execution_performed=True,
+            execution_success=result.success,
+            tasks_executed=1,
+            tasks_succeeded=1 if result.success else 0,
+            tasks_failed=0 if result.success else 1,
+            tasks_escalated=0,
+            execution_confidence=parsed.confidence,
+            execution_log_file=None,
+            execution_summary=result.output,
+            code_changes=[],
+        )
+    except ImportError:
+        logger.debug("Intent parser not available, falling through to agents")
+        return None
+    except Exception as e:
+        logger.warning(f"Intent parser fast path failed: {e}, falling through to agents")
+        return None
+
+
 @app.post("/orchestrator/chat", response_model=OrchestratorResponse)
 async def orchestrator_chat(request: OrchestratorRequest):
     """
@@ -609,6 +683,11 @@ async def orchestrator_chat(request: OrchestratorRequest):
 
     if not any([has_gemini, has_openrouter, has_anthropic, has_openai, has_ollama]):
         raise HTTPException(status_code=503, detail="No LLM API key configured. Set one of: GEMINI_API_KEY, OPENROUTER_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, or OLLAMA_BASE_URL")
+
+    # Fast path: try intent parser for deterministic routing
+    intent_result = await _try_intent_fast_path(request.message)
+    if intent_result is not None:
+        return intent_result
 
     try:
         # Create or use existing session

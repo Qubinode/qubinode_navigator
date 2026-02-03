@@ -23,9 +23,20 @@ try:
         sys.path.insert(0, _scripts_dir)
 
     from mcp_server_fastmcp import (
-        get_airflow_status as _get_airflow_status,
-        get_system_info as _get_system_info,
+        get_airflow_status as _get_airflow_status_tool,
+        get_system_info as _get_system_info_tool,
     )
+
+    def _unwrap(t):
+        if callable(t):
+            return t
+        fn = getattr(t, "fn", None)
+        if fn and callable(fn):
+            return fn
+        raise TypeError(f"Cannot unwrap {type(t)}")
+
+    _get_airflow_status = _unwrap(_get_airflow_status_tool)
+    _get_system_info = _unwrap(_get_system_info_tool)
 
     _backend_available = True
     logger.info("System backend functions loaded")
