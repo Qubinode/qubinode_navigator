@@ -70,6 +70,8 @@ class AgentContextManager:
         self.adrs_loaded = False
         self.project_root = Path(os.getenv("QUBINODE_ROOT", "/opt/qubinode_navigator"))
         self.data_dir = Path(os.getenv("RAG_DATA_DIR", "/app/data"))
+        self.adr_dir = Path(os.getenv("ADR_DIR", "/app/docs/adrs"))
+        self.drop_dir = Path(os.getenv("RAG_DROP_DIR", "/app/data/rag-drop"))
 
     async def initialize(
         self,
@@ -122,118 +124,29 @@ class AgentContextManager:
             return
 
         # If no chunks exist, we need to prepare them
-        logger.info("No pre-processed ADRs found - preparing documents...")
-        await self._prepare_adr_documents()
+        logger.info("No pre-processed documents found - preparing documents...")
+        await self._prepare_documents()
 
-    async def _prepare_adr_documents(self) -> None:
-        """Prepare ADR documents for RAG ingestion."""
+    async def _prepare_documents(self) -> None:
+        """Prepare documents for RAG ingestion using DropDirectoryScanner."""
         try:
-            # Import the prepare script functionality
-            import hashlib
-            from datetime import datetime
+            from drop_directory_scanner import DropDirectoryScanner
 
-            adr_dir = self.project_root / "docs" / "adrs"
-            if not adr_dir.exists():
-                logger.warning(f"ADR directory not found: {adr_dir}")
-                return
+            scanner = DropDirectoryScanner(
+                source_dirs=[self.adr_dir, self.drop_dir],
+                output_dir=self.data_dir / "rag-docs",
+            )
+            files_processed, chunks_generated = scanner.scan_and_process()
+            logger.info(f"Scanner processed {files_processed} files, generated {chunks_generated} chunks")
 
-            # Find all ADR files
-            adr_files = list(adr_dir.glob("adr-*.md"))
-            if not adr_files:
-                logger.warning("No ADR files found")
-                return
-
-            logger.info(f"Found {len(adr_files)} ADR files to process")
-
-            # Process ADRs into chunks
-            chunks = []
-            for adr_file in adr_files:
-                try:
-                    content = adr_file.read_text(encoding="utf-8")
-                    rel_path = str(adr_file.relative_to(self.project_root))
-
-                    # Extract title from first line
-                    lines = content.split("\n")
-                    title = lines[0].strip("#").strip() if lines else adr_file.stem
-
-                    # Split by headers for better chunking
-                    sections = self._split_by_headers(content)
-
-                    for i, (section_title, section_content) in enumerate(sections):
-                        if len(section_content.strip()) < 50:
-                            continue
-
-                        chunk_id = hashlib.md5(f"{rel_path}_{i}_{section_title}".encode()).hexdigest()[:12]
-
-                        chunk = {
-                            "id": chunk_id,
-                            "source_file": rel_path,
-                            "title": section_title or title,
-                            "content": section_content.strip(),
-                            "chunk_type": "markdown",
-                            "metadata": {
-                                "section_index": i,
-                                "file_type": "markdown",
-                                "document_type": "adr",
-                                "relative_path": rel_path,
-                            },
-                            "word_count": len(section_content.split()),
-                            "created_at": datetime.now().isoformat(),
-                        }
-                        chunks.append(chunk)
-
-                except Exception as e:
-                    logger.warning(f"Error processing {adr_file}: {e}")
-
-            if not chunks:
-                logger.warning("No chunks generated from ADRs")
-                return
-
-            # Save chunks to file
-            output_dir = self.data_dir / "rag-docs"
-            output_dir.mkdir(parents=True, exist_ok=True)
-
-            chunks_file = output_dir / "document_chunks.json"
-            with open(chunks_file, "w", encoding="utf-8") as f:
-                json.dump(chunks, f, indent=2, ensure_ascii=False)
-
-            logger.info(f"Saved {len(chunks)} ADR chunks to {chunks_file}")
-
-            # Rebuild RAG collection if service supports it
-            if hasattr(self.rag_service, "_build_collection_from_documents"):
-                # First ensure the RAG service client is initialized
-                if hasattr(self.rag_service, "client") and self.rag_service.client is None:
-                    logger.info("RAG service client not initialized, initializing...")
-                    await self.rag_service.initialize()
-
+            if chunks_generated > 0 and hasattr(self.rag_service, "rebuild_collection"):
                 logger.info("Rebuilding RAG collection with new documents...")
-                await self.rag_service._build_collection_from_documents()
+                await self.rag_service.rebuild_collection()
 
-            self.adrs_loaded = True
+            self.adrs_loaded = chunks_generated > 0
 
         except Exception as e:
-            logger.error(f"Failed to prepare ADR documents: {e}")
-
-    def _split_by_headers(self, content: str) -> List[tuple]:
-        """Split markdown content by headers."""
-        lines = content.split("\n")
-        sections = []
-        current_title = None
-        current_content = []
-
-        for line in lines:
-            if line.startswith("#"):
-                if current_content:
-                    sections.append((current_title, "\n".join(current_content)))
-                current_title = line.strip("#").strip()
-                current_content = [line]
-            else:
-                current_content.append(line)
-
-        if current_content:
-            sections.append((current_title, "\n".join(current_content)))
-
-        return sections
+            logger.error(f"Failed to prepare documents: {e}")
 
     async def query_rag(
         self,

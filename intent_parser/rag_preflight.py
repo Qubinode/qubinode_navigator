@@ -69,28 +69,28 @@ def _set_cached(result: PreflightResult) -> None:
 # ---------------------------------------------------------------------------
 
 def _check_adr_source_files(qubinode_root: str) -> PreflightCheck:
-    """Check if ADR source files exist on the filesystem."""
-    adr_dir = Path(qubinode_root) / "docs" / "adrs"
+    """Check if ADR source files and drop-directory files exist."""
+    adr_dir = Path(os.getenv("ADR_DIR", "/app/docs/adrs"))
+    drop_dir = Path(os.getenv("RAG_DROP_DIR", "/app/data/rag-drop"))
 
-    if not adr_dir.is_dir():
+    adr_files = list(adr_dir.glob("adr-*.md")) if adr_dir.is_dir() else []
+    drop_files: list = []
+    if drop_dir.is_dir():
+        for ext in (".md", ".yml", ".yaml", ".rst", ".txt"):
+            drop_files.extend(drop_dir.rglob(f"*{ext}"))
+
+    total = len(adr_files) + len(drop_files)
+    if total == 0:
         return PreflightCheck(
             name="adr_source_files",
             status=CheckStatus.WARNING,
-            message=f"ADR directory not found: {adr_dir}",
-        )
-
-    adr_files = list(adr_dir.glob("adr-*.md"))
-    if not adr_files:
-        return PreflightCheck(
-            name="adr_source_files",
-            status=CheckStatus.WARNING,
-            message=f"ADR directory exists but contains no adr-*.md files: {adr_dir}",
+            message=f"No source files in {adr_dir} or {drop_dir}",
         )
 
     return PreflightCheck(
         name="adr_source_files",
         status=CheckStatus.OK,
-        message=f"Found {len(adr_files)} ADR files in {adr_dir}",
+        message=f"Found {len(adr_files)} ADRs + {len(drop_files)} drop files",
     )
 
 

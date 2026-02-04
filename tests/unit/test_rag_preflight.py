@@ -84,6 +84,8 @@ def _env_defaults(monkeypatch):
     monkeypatch.setenv("QUBINODE_ROOT", "/opt/qubinode_navigator")
     monkeypatch.setenv("RAG_DATA_DIR", "/app/data")
     monkeypatch.setenv("RAG_PREFLIGHT_CACHE_TTL", "300")
+    monkeypatch.setenv("ADR_DIR", "/opt/qubinode_navigator/docs/adrs")
+    monkeypatch.setenv("RAG_DROP_DIR", "/opt/qubinode_navigator/data/rag-drop")
 
 
 # ---------------------------------------------------------------------------
@@ -108,7 +110,12 @@ async def test_all_checks_pass(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {
+             "QUBINODE_ROOT": str(tmp_path),
+             "RAG_DATA_DIR": str(tmp_path / "data"),
+             "ADR_DIR": str(adr_dir),
+             "RAG_DROP_DIR": str(tmp_path / "drop"),
+         }):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -134,12 +141,17 @@ async def test_adr_dir_missing_warning(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {
+             "QUBINODE_ROOT": str(tmp_path),
+             "RAG_DATA_DIR": str(tmp_path / "data"),
+             "ADR_DIR": str(tmp_path / "docs" / "adrs"),
+             "RAG_DROP_DIR": str(tmp_path / "drop"),
+         }):
         result = await run_rag_preflight(force=True)
 
     adr_check = [c for c in result.checks if c.name == "adr_source_files"][0]
     assert adr_check.status == CheckStatus.WARNING
-    assert "not found" in adr_check.message
+    assert "No source files" in adr_check.message
     assert result.can_proceed is True
 
 
@@ -164,12 +176,17 @@ async def test_adr_dir_empty_warning(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {
+             "QUBINODE_ROOT": str(tmp_path),
+             "RAG_DATA_DIR": str(tmp_path / "data"),
+             "ADR_DIR": str(adr_dir),
+             "RAG_DROP_DIR": str(tmp_path / "drop"),
+         }):
         result = await run_rag_preflight(force=True)
 
     adr_check = [c for c in result.checks if c.name == "adr_source_files"][0]
     assert adr_check.status == CheckStatus.WARNING
-    assert "no adr-*.md" in adr_check.message
+    assert "No source files" in adr_check.message
 
 
 # ---------------------------------------------------------------------------
@@ -191,7 +208,7 @@ async def test_chunks_missing_triggers_reload(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -221,7 +238,7 @@ async def test_zero_docs_triggers_reload(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -246,7 +263,7 @@ async def test_reload_fails_gracefully(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -272,7 +289,7 @@ async def test_reload_succeeds_but_still_empty(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -301,13 +318,13 @@ async def test_cache_hit(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         result1 = await run_rag_preflight(force=True)
 
     client.get.reset_mock()
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         result2 = await run_rag_preflight()  # No force -> cache hit
 
     client.get.assert_not_called()
@@ -336,7 +353,7 @@ async def test_cache_expired(tmp_path, monkeypatch):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         await run_rag_preflight(force=True)
 
     time.sleep(1.1)
@@ -344,7 +361,7 @@ async def test_cache_expired(tmp_path, monkeypatch):
     client.get.reset_mock()
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         await run_rag_preflight()  # Cache expired, should re-run
 
     client.get.assert_called_once()
@@ -370,13 +387,13 @@ async def test_cache_bypass_with_force(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         await run_rag_preflight(force=True)
 
     client.get.reset_mock()
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         await run_rag_preflight(force=True)  # Force bypasses cache
 
     client.get.assert_called_once()
@@ -442,7 +459,7 @@ async def test_ai_assistant_unreachable(tmp_path):
     )
 
     with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data")}):
+         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True

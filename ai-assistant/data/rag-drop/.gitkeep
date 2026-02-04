@@ -1,0 +1,4 @@
+# RAG Drop Directory
+# Place .md, .yml, .yaml, .rst, or .txt files here.
+# They are automatically ingested into RAG on startup and on reload.
+# Trigger reload: POST /orchestrator/context/reload

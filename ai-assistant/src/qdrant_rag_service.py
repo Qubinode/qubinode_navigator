@@ -191,6 +191,21 @@ class QdrantRAGService:
         except Exception as e:
             self.logger.error(f"Failed to build collection: {e}")
 
+    async def rebuild_collection(self) -> int:
+        """Delete existing collection and rebuild from document_chunks.json.
+
+        Returns the new document count.
+        """
+        if self.client:
+            try:
+                self.client.delete_collection(self.collection_name)
+                self.logger.info(f"Deleted existing collection: {self.collection_name}")
+            except Exception:
+                pass
+        self.documents_loaded = False
+        await self._build_collection_from_documents()
+        return self._get_document_count()
+
     async def search_documents(self, query: str, n_results: int = 5, document_types: Optional[List[str]] = None) -> List[RetrievalResult]:
         """Search for relevant documents using Qdrant+FastEmbed"""
         if not self.documents_loaded or not self.client:
