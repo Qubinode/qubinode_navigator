@@ -18,6 +18,8 @@ import os
 from pydantic_ai import models
 from pydantic_ai.models.test import TestModel
 
+from src.models.domain import SessionPlan
+
 from src.agents.base import (
     AgentDependencies,
     create_mcp_connection,
@@ -437,3 +439,120 @@ class TestAgentWithTestModel:
             )
             # Verify agent output type
             assert agent.output_type == TaskResult
+
+
+class TestProviderFuzzyMatching:
+    """Test fuzzy provider matching in validate_plan() per escalation fix."""
+
+    def test_short_alias_in_known_providers(self):
+        """Short aliases like 'ssh' should be in known_providers."""
+        deps = ManagerDependencies(session_id="test")
+        assert "ssh" in deps.known_providers
+        assert "ansible" in deps.known_providers
+        assert "http" in deps.known_providers
+
+    def test_full_package_in_known_providers(self):
+        """Full package names should still be in known_providers."""
+        deps = ManagerDependencies(session_id="test")
+        assert "apache-airflow-providers-ssh" in deps.known_providers
+        assert "apache-airflow-providers-http" in deps.known_providers
+
+    @pytest.mark.asyncio
+    async def test_validate_plan_ssh_short_name_no_escalation(self):
+        """'ssh' should match and NOT trigger missing provider escalation."""
+        agent = create_manager_agent("test")
+        deps = ManagerDependencies(session_id="test")
+        plan = SessionPlan(
+            session_id="test",
+            user_intent="Deploy freeipa",
+            planned_tasks=["Delete VM", "Deploy VM"],
+            estimated_confidence=0.8,
+            required_providers=["ssh"],
+        )
+        ctx = MagicMock()
+        ctx.deps = deps
+        validated = plan
+        for validator_fn in agent._output_validators:
+            validated = await validator_fn.function(ctx, validated)
+        assert "Missing provider" not in str(validated.escalation_triggers)
+        assert validated.requires_external_docs is False
+
+    @pytest.mark.asyncio
+    async def test_validate_plan_ansible_short_name_no_escalation(self):
+        """'ansible' should match and NOT trigger missing provider escalation."""
+        agent = create_manager_agent("test")
+        deps = ManagerDependencies(session_id="test")
+        plan = SessionPlan(
+            session_id="test",
+            user_intent="Deploy freeipa",
+            planned_tasks=["Configure DNS"],
+            estimated_confidence=0.75,
+            required_providers=["ansible"],
+        )
+        ctx = MagicMock()
+        ctx.deps = deps
+        validated = plan
+        for validator_fn in agent._output_validators:
+            validated = await validator_fn.function(ctx, validated)
+        assert "Missing provider" not in str(validated.escalation_triggers)
+        assert validated.requires_external_docs is False
+
+    @pytest.mark.asyncio
+    async def test_validate_plan_ssh_and_ansible_together(self):
+        """LLM returning ['ssh', 'ansible'] should NOT escalate (the original bug)."""
+        agent = create_manager_agent("test")
+        deps = ManagerDependencies(session_id="test")
+        plan = SessionPlan(
+            session_id="test",
+            user_intent="Delete the freeipa server and deploy a new one",
+            planned_tasks=["Delete freeipa VM", "Trigger freeipa DAG", "Verify deployment"],
+            estimated_confidence=0.75,
+            required_providers=["ssh", "ansible"],
+        )
+        ctx = MagicMock()
+        ctx.deps = deps
+        validated = plan
+        for validator_fn in agent._output_validators:
+            validated = await validator_fn.function(ctx, validated)
+        assert "Missing provider" not in str(validated.escalation_triggers)
+        assert validated.requires_external_docs is False
+        assert validated.estimated_confidence == 0.75
+
+    @pytest.mark.asyncio
+    async def test_validate_plan_truly_unknown_provider_escalates(self):
+        """A genuinely unknown provider should still trigger escalation."""
+        agent = create_manager_agent("test")
+        deps = ManagerDependencies(session_id="test")
+        plan = SessionPlan(
+            session_id="test",
+            user_intent="Deploy to kubernetes",
+            planned_tasks=["Deploy to k8s"],
+            estimated_confidence=0.7,
+            required_providers=["kubernetes"],
+        )
+        ctx = MagicMock()
+        ctx.deps = deps
+        validated = plan
+        for validator_fn in agent._output_validators:
+            validated = await validator_fn.function(ctx, validated)
+        assert any("Missing provider" in t for t in validated.escalation_triggers)
+        assert validated.requires_external_docs is True
+
+    @pytest.mark.asyncio
+    async def test_validate_plan_full_package_name_no_escalation(self):
+        """Full package name 'apache-airflow-providers-ssh' should still work."""
+        agent = create_manager_agent("test")
+        deps = ManagerDependencies(session_id="test")
+        plan = SessionPlan(
+            session_id="test",
+            user_intent="Deploy freeipa",
+            planned_tasks=["SSH to host"],
+            estimated_confidence=0.8,
+            required_providers=["apache-airflow-providers-ssh"],
+        )
+        ctx = MagicMock()
+        ctx.deps = deps
+        validated = plan
+        for validator_fn in agent._output_validators:
+            validated = await validator_fn.function(ctx, validated)
+        assert "Missing provider" not in str(validated.escalation_triggers)

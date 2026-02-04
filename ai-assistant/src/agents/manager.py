@@ -48,6 +48,7 @@ class ManagerDependencies(AgentDependencies):
     escalation_history: List[EscalationRequest] = []
     # Known providers from Airflow (for Provider-First Rule)
     known_providers: List[str] = [
+        # Full package names
         "apache-airflow-providers-amazon",
         "apache-airflow-providers-google",
         "apache-airflow-providers-microsoft-azure",
@@ -57,6 +58,16 @@ class ManagerDependencies(AgentDependencies):
         "apache-airflow-providers-redis",
         "apache-airflow-providers-docker",
         "apache-airflow-providers-openlineage",
+        # Short aliases (LLMs commonly return these)
+        "ssh",
+        "http",
+        "postgres",
+        "docker",
+        "amazon",
+        "google",
+        "azure",
+        "redis",
+        "ansible",
     ]
 
     class Config:
@@ -142,9 +153,16 @@ Output a SessionPlan with:
                 "Cross-DAG impact detected",
             ]
 
-        # Check for missing providers
+        # Check for missing providers (fuzzy match: "ssh" matches "apache-airflow-providers-ssh")
         for provider in output.required_providers:
-            if provider not in ctx.deps.known_providers:
+            provider_lower = provider.lower().strip()
+            matched = any(
+                provider_lower == kp.lower()
+                or provider_lower in kp.lower()
+                or kp.lower().endswith(f"-{provider_lower}")
+                for kp in ctx.deps.known_providers
+            )
+            if not matched:
                 if "Missing provider" not in str(output.escalation_triggers):
                     output.escalation_triggers.append(f"Missing provider: {provider} - requires documentation")
                 output.requires_external_docs = True
