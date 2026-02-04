@@ -168,13 +168,24 @@ async def handle_dag_trigger(params: Dict) -> str:
     dag_id = params.get("dag_id")
     if not dag_id:
         return "Error: DAG ID is required. Try: 'trigger dag <dag_id>'"
+
+    # Run SSH pre-flight checks with auto-fix
+    from ..ssh_preflight import run_ssh_preflight
+
+    preflight = await run_ssh_preflight()
+    preflight_report = preflight.format_report()
+
     conf = params.get("conf")
-    return await _call_with_http_fallback(
+    trigger_result = await _call_with_http_fallback(
         (lambda dag_id, conf: _trigger_dag(dag_id=dag_id, conf=conf)) if _backend_available else (lambda dag_id, conf: ""),
         _http_trigger_dag,
         dag_id,
         conf,
     )
+
+    if preflight_report:
+        return f"{preflight_report}\n\n{trigger_result}"
+    return trigger_result
 
 
 register(IntentCategory.DAG_LIST, handle_dag_list)
