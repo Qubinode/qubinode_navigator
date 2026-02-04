@@ -42,6 +42,7 @@ class PreflightResult:
     checks: List[PreflightCheck] = field(default_factory=list)
     can_proceed: bool = True  # Always True — warn but never block
     summary: str = ""
+    label: str = "SSH Pre-flight"
 
     def format_report(self) -> str:
         """Format checks into a human-readable report for prepending to trigger output."""
@@ -50,13 +51,13 @@ class PreflightResult:
 
         # If everything is OK, keep it brief
         if all(c.status == CheckStatus.OK for c in self.checks):
-            return "[SSH Pre-flight] All checks passed."
+            return f"[{self.label}] All checks passed."
 
         fixed = [c for c in self.checks if c.status == CheckStatus.FIXED]
         warnings = [c for c in self.checks if c.status == CheckStatus.WARNING]
         errors = [c for c in self.checks if c.status == CheckStatus.ERROR]
 
-        parts = ["[SSH Pre-flight]"]
+        parts = [f"[{self.label}]"]
 
         if fixed:
             fixes = "; ".join(c.fix_applied or c.message for c in fixed)

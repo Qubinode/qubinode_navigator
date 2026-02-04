@@ -693,6 +693,17 @@ async def orchestrator_chat(request: OrchestratorRequest):
         # Create or use existing session
         session_id = request.session_id or str(uuid.uuid4())
 
+        # Run RAG pre-flight checks with auto-fix
+        rag_preflight_report = ""
+        try:
+            from intent_parser.rag_preflight import run_rag_preflight
+            rag_preflight_result = await run_rag_preflight()
+            rag_preflight_report = rag_preflight_result.format_report()
+        except ImportError:
+            logger.debug("RAG preflight not available")
+        except Exception as e:
+            logger.warning(f"RAG preflight failed: {e}")
+
         # Create Manager Agent
         agent = create_manager_agent()
         model_name = str(agent.model)
@@ -864,6 +875,9 @@ Or call the MCP tool: `trigger_dag(dag_id="<dag_id>", conf={{...}})`"""
             response_parts.append("\n*Task execution skipped due to low confidence. Escalation required.*")
 
         response_text = "\n".join(response_parts)
+
+        if rag_preflight_report:
+            response_text = f"{rag_preflight_report}\n\n{response_text}"
 
         return OrchestratorResponse(
             session_id=session_id,
@@ -2248,6 +2262,48 @@ async def observe_dag_by_name(
         "endpoint": "/orchestrator/observe",
         "timestamp": time.time(),
     }
+
+
+# =============================================================================
+# RAG Pre-flight Endpoint
+# =============================================================================
+
+
+@app.get("/orchestrator/rag/preflight")
+async def rag_preflight_endpoint(force: bool = False):
+    """
+    Run RAG pre-flight checks and return results.
+
+    Detects empty RAG state (0 documents loaded) and auto-fixes
+    by triggering /orchestrator/context/reload. Useful for operators
+    to verify RAG health after container restarts.
+
+    Args:
+        force: Bypass cache and re-run all checks (default: False)
+    """
+    try:
+        from intent_parser.rag_preflight import run_rag_preflight
+        result = await run_rag_preflight(force=force)
+        return {
+            "checks": [
+                {
+                    "name": c.name,
+                    "status": c.status.value,
+                    "message": c.message,
+                    "fix_applied": c.fix_applied,
+                }
+                for c in result.checks
+            ],
+            "can_proceed": result.can_proceed,
+            "summary": result.summary,
+            "label": result.label,
+            "timestamp": time.time(),
+        }
+    except ImportError:
+        raise HTTPException(status_code=503, detail="RAG preflight module not available")
+    except Exception as e:
+        logger.error(f"RAG preflight endpoint error: {e}")
+        raise HTTPException(status_code=500, detail=f"RAG preflight error: {str(e)}")
 
 
 def main():
