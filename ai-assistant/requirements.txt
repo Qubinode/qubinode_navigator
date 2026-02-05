@@ -113,7 +113,7 @@ portalocker==3.2.0
 prometheus-client==0.24.1
 prompt-toolkit==3.0.52
 propcache==0.4.1
-protobuf==5.29.5
+protobuf==5.29.6
 psutil==7.2.2
 py-key-value-aio[disk,keyring,memory,redis]==0.3.0
 py-key-value-shared==0.3.0
