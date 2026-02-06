@@ -106,8 +106,8 @@ x-airflow-common:
     # Mount qubinode_navigator for vault.yml and inventory access
     # Uses QUBINODE_HOME env var (default /opt/qubinode_navigator)
     - ${QUBINODE_HOME:-/opt/qubinode_navigator}:/opt/qubinode_navigator:ro
-    # Mount freeipa-workshop-deployer for Ansible playbooks
-    - /root/freeipa-workshop-deployer:/opt/freeipa-workshop-deployer
+    # FreeIPA Ansible content is vendored at ansible/playbooks/freeipa/
+    # (accessible via the qubinode_navigator mount above)
     # Mount qubinode-pipelines for deployment scripts (ADR-0047)
     # Standard location: /opt/qubinode-pipelines (clone from https://github.com/Qubinode/qubinode-pipelines)
     - /opt/qubinode-pipelines:/opt/qubinode-pipelines:ro

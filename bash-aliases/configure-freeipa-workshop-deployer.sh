@@ -63,12 +63,13 @@ function deploy_freeipa(){
 # ⚠️  SIDE EFFECTS: Creates virtual machines, modifies DNS configuration, requires network access
     set_variables
     dependency_check
-    if [ ! -d /opt/freeipa-workshop-deployer ]; then
-        cd /opt/
-        sudo git clone https://github.com/tosin2013/freeipa-workshop-deployer.git
-    else
-        cd /opt/freeipa-workshop-deployer
-        sudo git pull
+
+    # FreeIPA Ansible content is now vendored in the Qubinode Navigator repo
+    FREEIPA_PLAYBOOK_DIR="/opt/qubinode_navigator/ansible/playbooks/freeipa"
+    if [ ! -f "$FREEIPA_PLAYBOOK_DIR/deploy_idm.yaml" ]; then
+        echo "[ERROR] Vendored FreeIPA playbook not found at $FREEIPA_PLAYBOOK_DIR"
+        echo "  Ensure qubinode_navigator repo is up to date"
+        return 1
     fi
 
     if [ -d /opt/qubinode_navigator/kcli-plan-samples ]; then
@@ -77,21 +78,9 @@ function deploy_freeipa(){
         update_profiles_file
     fi
 
-    cd /opt/freeipa-workshop-deployer || return
-    sudo cp  example.vars.sh vars.sh
-    cat $ANSIBLE_ALL_VARIABLES
-    DOMAIN=$(yq eval '.domain' $ANSIBLE_ALL_VARIABLES)
-    FORWARD_DOMAIN=$(yq eval '.dns_forwarder' $ANSIBLE_ALL_VARIABLES)
-    sudo sed -i "s/example.com/${DOMAIN}/g" vars.sh
-    sudo sed -i "s/1.1.1.1/${FORWARD_DOMAIN}/g" vars.sh
-    sudo sed -i 's|INFRA_PROVIDER="aws"|INFRA_PROVIDER="kcli"|g' vars.sh
-    sudo sed -i 's|export INVENTORY=localhost|export INVENTORY="'${CURRENT_INVENTORY}'"|g' vars.sh
-    get_rhel_version
-    if [ "$BASE_OS" == "ROCKY8" ]; then
-      sudo sed -i 's|KCLI_NETWORK="qubinet"|KCLI_NETWORK="default"|g' vars.sh
-    fi
-    cat vars.sh
-    ./total_deployer.sh
+    echo "[INFO] FreeIPA deployment now uses the Airflow DAG (freeipa_deployment)"
+    echo "  Trigger via: curl -X POST -u admin:admin http://localhost:8888/api/v1/dags/freeipa_deployment/dagRuns -H 'Content-Type: application/json' -d '{\"conf\": {}}'"
+    echo "  Or via Airflow UI: http://localhost:8888"
 }
 
 # FreeIPA Destruction Manager - The "Infrastructure Cleanup Specialist"
@@ -107,14 +96,7 @@ function destroy_freeipa(){
 # - INPUT: Existing FreeIPA deployment and DNS records
 # - OUTPUT: Cleaned environment with removed infrastructure and DNS records
 # ⚠️  SIDE EFFECTS: Destroys virtual machines, removes DNS records, requires network access
-    cd /opt/freeipa-workshop-deployer || return
-    ./1_kcli/destroy.sh
-    cd /opt/freeipa-workshop-deployer/2_ansible_config/
-    IP_ADDRESS=$(sudo kcli info vm device-edge-workshops | grep ip: | awk '{print $2}')
-    echo "IP Address: ${IP_ADDRESS}"
-    sudo python3 dynamic_dns.py --remove controller
-    sudo python3 dynamic_dns.py --remove 'cockpit'
-    sudo python3 dynamic_dns.py --remove 'gitea'
-    sudo python3 dynamic_dns.py --remove 'edge-manager'
-    cd ~
+    echo "[INFO] FreeIPA destruction now uses the Airflow DAG (freeipa_deployment with action=destroy)"
+    echo "  Trigger via: curl -X POST -u admin:admin http://localhost:8888/api/v1/dags/freeipa_deployment/dagRuns -H 'Content-Type: application/json' -d '{\"conf\": {\"action\": \"destroy\"}}'"
+    echo "  Or via Airflow UI: http://localhost:8888"
 }

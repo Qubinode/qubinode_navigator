@@ -171,7 +171,6 @@ check_external_repos() {
 
     local repos=(
         "/opt/kcli-pipelines|https://github.com/Qubinode/kcli-pipelines.git"
-        "/root/freeipa-workshop-deployer|https://github.com/tosin2013/freeipa-workshop-deployer.git"
     )
 
     for repo_info in "${repos[@]}"; do
@@ -221,7 +220,6 @@ check_vault_password() {
     # Check symlinks
     local symlink_targets=(
         "/opt/kcli-pipelines/.vault_password"
-        "/root/freeipa-workshop-deployer/.vault_password"
     )
 
     for target in "${symlink_targets[@]}"; do

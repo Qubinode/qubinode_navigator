@@ -9,7 +9,8 @@ This DAG automates the complete deployment of FreeIPA including:
 - DNS configuration
 - Service validation
 
-Follows the kcli-pipelines and freeipa-workshop-deployer patterns.
+Follows the kcli-pipelines pattern. Ansible content is vendored from
+freeipa-workshop-deployer (commit e23a776) at ansible/playbooks/freeipa/.
 """
 
 from datetime import datetime, timedelta
@@ -65,7 +66,8 @@ dag = DAG(
 )
 
 # Paths - using host paths since we run with host network (ADR-0043)
-FREEIPA_DEPLOYER = "/opt/freeipa-workshop-deployer"
+# Ansible content vendored from freeipa-workshop-deployer into the repo
+FREEIPA_PLAYBOOK_DIR = "/opt/qubinode_navigator/ansible/playbooks/freeipa"
 QUBINODE_NAV = "/opt/qubinode_navigator"
 
 # User-configurable paths (used in commands, not for string concatenation)
@@ -136,11 +138,11 @@ validate_environment = SSHOperator(
         exit 1
     fi
 
-    if [ -d /opt/freeipa-workshop-deployer ]; then
-        echo "[OK] freeipa-workshop-deployer found"
+    if [ -f {FREEIPA_PLAYBOOK_DIR}/deploy_idm.yaml ]; then
+        echo "[OK] Vendored FreeIPA playbook found at {FREEIPA_PLAYBOOK_DIR}"
     else
-        echo "[WARN] Cloning freeipa-workshop-deployer..."
-        git clone https://github.com/tosin2013/freeipa-workshop-deployer.git /opt/freeipa-workshop-deployer
+        echo "[ERROR] Vendored FreeIPA playbook not found at {FREEIPA_PLAYBOOK_DIR}/deploy_idm.yaml"
+        exit 1
     fi
 
     echo ""
@@ -322,13 +324,11 @@ INVENTORY_EOF
         echo "[WARN] SSH test failed - may need to wait longer"
     }}
 
-    # Install Ansible collections
+    # Install Ansible collections from vendored requirements
     echo ""
     echo "Installing Ansible collections..."
-    cd /opt/freeipa-workshop-deployer
-    if [ -f "2_ansible_config/collections/requirements.yaml" ]; then
-        ansible-galaxy install --force -r /opt/freeipa-workshop-deployer/2_ansible_config/collections/requirements.yaml 2>/dev/null || true
-        ansible-galaxy collection install freeipa.ansible_freeipa 2>/dev/null || true
+    if [ -f "{FREEIPA_PLAYBOOK_DIR}/collections/requirements.yaml" ]; then
+        ansible-galaxy install --force -r {FREEIPA_PLAYBOOK_DIR}/collections/requirements.yaml 2>/dev/null || true
     fi
 
     echo ""
@@ -370,15 +370,25 @@ install_freeipa = SSHOperator(
 
     # Use same inventory path as prepare_ansible task
     INVENTORY_DIR="{INVENTORY_BASE_DIR}/.$IDM_HOSTNAME.$DOMAIN"
-    PLAYBOOK_DIR="/opt/freeipa-workshop-deployer"
+    PLAYBOOK_DIR="{FREEIPA_PLAYBOOK_DIR}"
 
     echo "Running Ansible playbook..."
     echo "  Inventory: $INVENTORY_DIR/inventory"
-    echo "  Playbook: $PLAYBOOK_DIR/2_ansible_config/deploy_idm.yaml"
+    echo "  Playbook: $PLAYBOOK_DIR/deploy_idm.yaml"
     echo "  Domain: $DOMAIN"
     echo "  IDM Hostname: $IDM_HOSTNAME"
     echo "  DNS Forwarder: $DNS_FORWARDER"
     echo "  VM IP: $IP"
+
+    # Extract passwords from vault.yml (if present) for Ansible extra-vars
+    FREEIPA_PASS=""
+    FREEIPA_DM_PASS=""
+    VAULT_FILE="/opt/qubinode_navigator/inventories/localhost/group_vars/control/vault.yml"
+    if [ -f "$VAULT_FILE" ]; then
+        FREEIPA_PASS=$(grep "freeipa_server_admin_password:" "$VAULT_FILE" | awk "{{print \\$2}}" | tr -d "'" || echo "")
+        FREEIPA_DM_PASS=$(grep "freeipa_server_dm_password:" "$VAULT_FILE" | awk "{{print \\$2}}" | tr -d "'" || echo "")
+        [ -n "$FREEIPA_PASS" ] && echo "[OK] Vault password loaded"
+    fi
 
     cd $PLAYBOOK_DIR
     ANSIBLE_HOST_KEY_CHECKING=False \
@@ -388,7 +398,9 @@ install_freeipa = SSHOperator(
         --extra-vars "private_ip=$IP" \
         --extra-vars "domain=$DOMAIN" \
         --extra-vars "dns_forwarder=$DNS_FORWARDER" \
-        2_ansible_config/deploy_idm.yaml \
+        ${{FREEIPA_PASS:+--extra-vars "freeipa_admin_password=$FREEIPA_PASS"}} \
+        ${{FREEIPA_DM_PASS:+--extra-vars "freeipa_ds_password=$FREEIPA_DM_PASS"}} \
+        deploy_idm.yaml \
         -v
 
     echo ""

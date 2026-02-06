@@ -1,0 +1,10 @@
+---
+# Vendored from: https://github.com/tosin2013/freeipa-workshop-deployer
+# Source commit: e23a776 (2025-11-27)
+# Original path: 2_ansible_config/collections/requirements.yaml
+#
+# Added freeipa.ansible_freeipa (previously installed separately in DAG)
+collections:
+  - ansible.posix
+  - community.general
+  - freeipa.ansible_freeipa

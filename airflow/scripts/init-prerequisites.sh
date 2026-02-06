@@ -6,7 +6,7 @@
 #
 # This script creates:
 # 1. vault.yml with default credentials (if missing)
-# 2. Clones freeipa-workshop-deployer (if missing)
+# 2. Verifies vendored FreeIPA playbook exists
 # 3. Clones kcli-pipelines (if missing)
 # 4. Configures SSH keys for container-to-host communication
 #
@@ -23,7 +23,6 @@ echo ""
 # Configuration
 QUBINODE_DIR="${QUBINODE_DIR:-/opt/qubinode_navigator}"
 VAULT_FILE="$QUBINODE_DIR/inventories/localhost/group_vars/control/vault.yml"
-FREEIPA_DIR="/opt/freeipa-workshop-deployer"
 KCLI_PIPELINES_DIR="/opt/kcli-pipelines"
 
 ERRORS=0
@@ -85,29 +84,18 @@ EOF
 fi
 
 # =============================================================================
-# 2. Clone freeipa-workshop-deployer if missing
+# 2. Verify vendored FreeIPA playbook exists
 # =============================================================================
 echo ""
-echo "[INFO] Checking freeipa-workshop-deployer..."
+echo "[INFO] Checking vendored FreeIPA playbook..."
 
-if [ -d "$FREEIPA_DIR" ]; then
-    echo "[OK] freeipa-workshop-deployer exists at $FREEIPA_DIR"
+FREEIPA_PLAYBOOK="$QUBINODE_DIR/ansible/playbooks/freeipa/deploy_idm.yaml"
+if [ -f "$FREEIPA_PLAYBOOK" ]; then
+    echo "[OK] Vendored FreeIPA playbook found at $FREEIPA_PLAYBOOK"
 else
-    echo "[INFO] Cloning freeipa-workshop-deployer..."
-
-    if git clone https://github.com/tosin2013/freeipa-workshop-deployer.git "$FREEIPA_DIR" 2>/dev/null; then
-        echo "[OK] freeipa-workshop-deployer cloned to $FREEIPA_DIR"
-    else
-        echo "[ERROR] Failed to clone freeipa-workshop-deployer"
-        echo "  Try manually: git clone https://github.com/tosin2013/freeipa-workshop-deployer.git $FREEIPA_DIR"
-        ERRORS=$((ERRORS + 1))
-    fi
-fi
-
-# Create symlink in home directory if needed
-if [ ! -e "/root/freeipa-workshop-deployer" ] && [ -d "$FREEIPA_DIR" ]; then
-    ln -sf "$FREEIPA_DIR" /root/freeipa-workshop-deployer
-    echo "[OK] Created symlink /root/freeipa-workshop-deployer -> $FREEIPA_DIR"
+    echo "[ERROR] Vendored FreeIPA playbook not found at $FREEIPA_PLAYBOOK"
+    echo "  The FreeIPA Ansible content should be in the qubinode_navigator repo"
+    ERRORS=$((ERRORS + 1))
 fi
 
 # =============================================================================

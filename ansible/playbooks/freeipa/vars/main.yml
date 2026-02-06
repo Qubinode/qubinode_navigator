@@ -1,0 +1,88 @@
+---
+# Vendored from: https://github.com/tosin2013/freeipa-workshop-deployer
+# Source commit: e23a776 (2025-11-27)
+# Original path: 2_ansible_config/vars/main.yml
+#
+# Passwords externalized: hardcoded defaults replaced with Jinja2 lookups
+# that map to vault.yml keys (freeipa_server_admin_password, freeipa_server_dm_password).
+# Pass via --extra-vars from the DAG or set in vault.yml.
+
+enable_certbot: false
+
+idm_provision_users: true
+idm_provision_users_group: workshopusers
+idm_provision_users_prefix: student
+idm_provision_users_suffix:
+idm_provision_users_start: 0
+idm_provision_users_count: 1
+idm_provision_users_password: "{{ freeipa_users_password | default(freeipa_admin_password) | default('changeme-set-in-vault') }}"
+
+freeipa_server_admin_password: "{{ freeipa_admin_password | default('changeme-set-in-vault') }}"
+freeipa_server_ds_password: "{{ freeipa_ds_password | default(freeipa_admin_password) | default('changeme-set-in-vault') }}"
+
+freeipa_server_domain: "{{ domain }}"
+freeipa_server_fqdn: "{{ idm_hostname }}.{{ domain }}"
+freeipa_server_ip: "{{ ansible_ssh_host }}"
+dns_forwarder: "{{ dns_forwarder }}"
+freeipa_server_realm: "{{ domain | upper }}"
+freeipa_server_manage_host: false
+freeipa_server_install_base_command: ipa-server-install --unattended
+freeipa_server_pkgs:
+  - bind
+  - bind-dyndb-ldap
+  - ipa-server
+  - openldap-devel
+  - platform-python-devel
+  - ipa-server-common
+  - ipa-server-dns
+  - ipa-server-trust-ad
+  - krb5-devel
+  - python3-ipapython
+  - python3-six
+  - python3-dns
+  - python3-cffi
+  - python3-idna
+  - python3-netaddr
+  - python3-gssapi
+  - python3-decorator
+  - python3-pyasn1
+  - python3-jwcrypto
+  - python3-cryptography
+  - python3-ldap
+  - python3-argcomplete
+  - "@Development tools"
+freeipa_server_pip_pkgs:
+  - custodia
+  - jwcrypto
+  - pyasn1-modules
+  - pyopenssl
+  - python-ldap
+  - paramiko
+  - cryptography
+  - pytest
+  - argparse-manpage
+  - argh
+  - pyOpenSSL
+  - pytest
+  - ipapython
+freeipa_server_install_options:
+  - "--realm={{ freeipa_server_realm }}"
+  - "--domain={{ freeipa_server_domain }}"
+  - "--ds-password={{ freeipa_server_ds_password }}"
+  - "--admin-password={{ freeipa_server_admin_password }}"
+  - "--mkhomedir"
+  - "--hostname={{ freeipa_server_fqdn | default(ansible_fqdn) }}"
+  - "--no-ntp"
+  - "--setup-dns"
+  - "--forwarder={{ dns_forwarder }}"
+  - "--allow-zone-overlap"
+  - "--ip-address={{ private_ip }}"
+  - "--auto-forwarders"
+freeipa_base_dn: "DC={{ freeipa_server_domain.split('.') | join(',DC=') }}"
+# Hostnames to update DNS records for
+names:
+  - example_host
+
+# Dictionary of IP addresses for each host
+dns_clients:
+  example_host: 192.168.1.112

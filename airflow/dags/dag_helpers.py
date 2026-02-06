@@ -567,7 +567,6 @@ def get_kcli_pipelines_vault_setup_command(
         components = [
             "vyos-router",
             "step-ca-server",
-            "freeipa-workshop-deployer",
             "ceph-cluster",
             "kubernetes",
             "openshift4-disconnected-helper",

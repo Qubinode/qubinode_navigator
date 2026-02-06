@@ -157,10 +157,6 @@ fi
 # Create symlinks for vault password in external repos (for Ansible playbooks)
 echo -e "${CYAN}  Setting up vault password symlinks for external repos...${NC}"
 if [[ -f "$HOME/.vault_password" ]]; then
-    # freeipa-workshop-deployer
-    if [[ -d "/root/freeipa-workshop-deployer" ]]; then
-        ln -sf "$HOME/.vault_password" /root/freeipa-workshop-deployer/.vault_password 2>/dev/null || true
-    fi
     # qubinode-pipelines (root and component directories)
     if [[ -d "/root/qubinode-pipelines" ]]; then
         ln -sf "$HOME/.vault_password" /root/qubinode-pipelines/.vault_password 2>/dev/null || true
