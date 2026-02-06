@@ -1,0 +1,89 @@
+# Static fallback for DAG discovery when filesystem scan is unavailable.
+# Update this file when adding or removing DAGs.
+#
+# Each entry maps a dag_id to its service keywords (used by the classifier
+# to match "deploy <keyword>" inputs) and a human-readable description.
+dags:
+  freeipa_deployment:
+    keywords: [freeipa, identity]
+    description: "Deploy FreeIPA Identity Management Server"
+
+  dns_management:
+    keywords: [dns, freeipa, management]
+    description: "Unified DNS management via FreeIPA"
+
+  step_ca_deployment:
+    keywords: [step-ca, step, certificates]
+    description: "Deploy Step-CA certificate authority"
+
+  step_ca_operations:
+    keywords: [step-ca, step, certificates, operations]
+    description: "Certificate operations using Step-CA"
+
+  certificate_provisioning:
+    keywords: [certificate, certificates, letsencrypt, security, step-ca, vault]
+    description: "Unified certificate management"
+
+  vyos_router_deployment:
+    keywords: [vyos, router, networking]
+    description: "Deploy VyOS Router for network segmentation"
+
+  harbor_deployment:
+    keywords: [harbor, registry]
+    description: "Deploy Harbor enterprise container registry"
+
+  jfrog_deployment:
+    keywords: [jfrog, artifactory, registry]
+    description: "Deploy JFrog Artifactory repository"
+
+  jumpserver_deployment:
+    keywords: [jumpserver, bastion, gui]
+    description: "Deploy Jumpserver with GUI Desktop"
+
+  mirror_registry_deployment:
+    keywords: [mirror, mirror-registry, quay, registry]
+    description: "Deploy Quay-based mirror-registry"
+
+  generic_vm_deployment:
+    keywords: [generic, vm]
+    description: "Deploy VMs using kcli profiles"
+
+  registry_deployment:
+    keywords: [registry]
+    description: "Deploy container registries for disconnected installs"
+
+  ocp_agent_deployment:
+    keywords: [ocp, openshift, agent, agent-install, sno, 3-node]
+    description: "OpenShift Agent-Based Deployment"
+
+  ocp_disconnected_workflow:
+    keywords: [ocp, openshift]
+    description: "End-to-end disconnected OpenShift deployment workflow"
+
+  ocp_initial_deployment:
+    keywords: [ocp, openshift, initial]
+    description: "Complete OCP deployment for disconnected environments"
+
+  ocp_incremental_update:
+    keywords: [ocp, openshift, incremental, lifecycle, update]
+    description: "Incremental OCP cluster update workflow"
+
+  ocp_pre_deployment_validation:
+    keywords: [ocp, openshift, validation, pre-deployment]
+    description: "Validate prerequisites before OpenShift deployment"
+
+  ocp_registry_sync:
+    keywords: [ocp, openshift, registry, sync]
+    description: "Sync OCP images to registries"
+
+  infrastructure_health_check:
+    keywords: [health, monitoring, check]
+    description: "Validate all Qubinode infrastructure components"
+
+  rag_bootstrap:
+    keywords: [rag, bootstrap]
+    description: "Bootstrap RAG knowledge base"
+
+  rag_document_ingestion:
+    keywords: [rag, document, documentation, ingestion]
+    description: "Scan and record documents for RAG ingestion"

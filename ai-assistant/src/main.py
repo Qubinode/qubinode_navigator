@@ -574,6 +574,8 @@ async def _try_intent_fast_path(message: str) -> Optional[OrchestratorResponse]:
         parser = IntentParser()
         parsed = parser.classify(message)
 
+        logger.info(f"Intent fast path: category={parsed.category.value} confidence={parsed.confidence} input='{message[:80]}'")
+
         # Only fast-path for high-confidence, actionable intents
         FAST_PATH_CATEGORIES = {
             IntentCategory.DAG_TRIGGER,

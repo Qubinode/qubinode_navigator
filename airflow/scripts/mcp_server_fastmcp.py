@@ -2653,6 +2653,183 @@ async def diagnose_issue(
     return output
 
 
+# =============================================================================
+# VM SSH Check API Endpoint (Second-Hop Validation)
+# =============================================================================
+
+async def _run_on_host(cmd: str, timeout: int = 10) -> tuple:
+    """Run a command on the host via ``ssh root@localhost``.
+
+    kcli/virsh are not available inside the Airflow container — they live
+    on the KVM host.  All host-level commands are proxied through the
+    first-hop SSH connection that the SSH preflight already validates.
+
+    Returns ``(returncode, stdout_str, stderr_str)``.
+    """
+    import asyncio as _aio
+
+    proc = await _aio.create_subprocess_exec(
+        "ssh",
+        "-o", "BatchMode=yes",
+        "-o", "StrictHostKeyChecking=no",
+        "-o", "ConnectTimeout=5",
+        "root@localhost",
+        cmd,
+        stdout=_aio.subprocess.PIPE,
+        stderr=_aio.subprocess.PIPE,
+    )
+    stdout, stderr = await _aio.wait_for(proc.communicate(), timeout=timeout)
+    return proc.returncode, stdout.decode(), stderr.decode()
+
+
+async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict:
+    """Check VM SSH reachability and auto-fix key issues.
+
+    All host-level commands (kcli, nc, ssh to VM) are executed on the KVM
+    host via ``ssh root@localhost`` because the Airflow container does not
+    have kcli/virsh installed.
+
+    Sequential checks:
+    1. kcli info vm — get IP  (on host)
+    2. nc -z — TCP port 22    (on host)
+    3. ssh BatchMode — auth   (on host)
+    4. kcli ssh key injection  (on host, only if step 3 failed)
+
+    Returns dict with status and metadata.
+    """
+
+    # Step 1: Get VM IP via kcli (on host)
+    try:
+        rc, stdout, stderr = await _run_on_host(f"kcli info vm {vm_name}")
+    except Exception as exc:
+        return {"status": "no_vm", "vm": vm_name, "error": str(exc)}
+
+    if rc != 0:
+        return {"status": "no_vm", "vm": vm_name}
+
+    # Parse IP from kcli output (line like "ip: 192.168.122.233")
+    ip = None
+    for line in stdout.splitlines():
+        stripped = line.strip()
+        if stripped.lower().startswith("ip:"):
+            val = stripped.split(":", 1)[1].strip()
+            if val and val.lower() != "none":
+                ip = val
+            break
+
+    if not ip:
+        return {"status": "no_ip", "vm": vm_name}
+
+    # Step 2: TCP port check (on host)
+    try:
+        rc, _, _ = await _run_on_host(f"nc -z -w3 {ip} 22", timeout=8)
+    except Exception:
+        return {"status": "port_closed", "vm": vm_name, "ip": ip}
+
+    if rc != 0:
+        return {"status": "port_closed", "vm": vm_name, "ip": ip}
+
+    # Step 3: SSH auth test (host -> VM)
+    # DAGs use id_rsa; check if it already works
+    ssh_test_cmd = (
+        f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no "
+        f"-o ConnectTimeout=5 -i /root/.ssh/id_rsa "
+        f"{ssh_user}@{ip} exit"
+    )
+    try:
+        rc, _, stderr = await _run_on_host(ssh_test_cmd, timeout=12)
+    except Exception as exc:
+        rc = 1
+        stderr = str(exc)
+
+    if rc == 0:
+        return {"status": "ok", "vm": vm_name, "ip": ip}
+
+    # Step 4: Auto-fix — inject id_rsa.pub via the cloud-init key
+    # kcli ssh does NOT support remote commands (only interactive sessions).
+    # kcli injects id_ed25519 into VMs via cloud-init, so we use that key
+    # to SSH in and append id_rsa.pub to authorized_keys.
+    cloud_init_keys = ["/root/.ssh/id_ed25519", "/root/.ssh/id_rsa"]
+    fix_applied = False
+
+    for ci_key in cloud_init_keys:
+        # Check if the cloud-init key can reach the VM
+        ci_test = (
+            f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no "
+            f"-o ConnectTimeout=5 -i {ci_key} "
+            f"{ssh_user}@{ip} exit"
+        )
+        try:
+            rc, _, _ = await _run_on_host(ci_test, timeout=12)
+        except Exception:
+            continue
+        if rc != 0:
+            continue
+
+        # This key works — use it to inject id_rsa.pub
+        inject_cmd = (
+            f"ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 "
+            f"-i {ci_key} {ssh_user}@{ip} "
+            f"'mkdir -p ~/.ssh && chmod 700 ~/.ssh && "
+            f"cat >> ~/.ssh/authorized_keys && "
+            f"chmod 600 ~/.ssh/authorized_keys' "
+            f"< /root/.ssh/id_rsa.pub"
+        )
+        try:
+            rc, _, inject_err = await _run_on_host(inject_cmd, timeout=15)
+            if rc == 0:
+                fix_applied = True
+                break
+        except Exception as exc:
+            logger.warning("Key injection via %s failed for %s: %s", ci_key, vm_name, exc)
+
+    if not fix_applied:
+        return {
+            "status": "auth_failed",
+            "vm": vm_name,
+            "ip": ip,
+            "error": stderr.strip() if stderr else "no working cloud-init key found",
+        }
+
+    # Retest SSH with id_rsa (the key DAGs actually use)
+    try:
+        rc, _, stderr = await _run_on_host(ssh_test_cmd, timeout=12)
+    except Exception as exc:
+        return {
+            "status": "auth_failed",
+            "vm": vm_name,
+            "ip": ip,
+            "error": str(exc),
+        }
+
+    if rc == 0:
+        return {
+            "status": "fixed",
+            "vm": vm_name,
+            "ip": ip,
+            "fix": "injected host public key via cloud-init SSH key",
+        }
+
+    return {
+        "status": "auth_failed",
+        "vm": vm_name,
+        "ip": ip,
+        "error": stderr.strip() if stderr else "key injected but id_rsa still fails",
+    }
+
+
+@mcp.custom_route("/api/check-vm-ssh/{vm_name}", methods=["GET"])
+async def api_check_vm_ssh(request):
+    """HTTP endpoint for VM SSH second-hop validation."""
+    from starlette.responses import JSONResponse
+
+    vm_name = request.path_params["vm_name"]
+    ssh_user = request.query_params.get("ssh_user", "cloud-user")
+    logger.info("API call: check-vm-ssh vm=%s user=%s", vm_name, ssh_user)
+    result = await _check_vm_ssh_impl(vm_name, ssh_user)
+    return JSONResponse(result)
+
+
 def main():
     """Main entry point"""
     if not MCP_ENABLED:

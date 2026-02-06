@@ -189,6 +189,41 @@ class TestLineageEntityExtraction:
         assert params.get("task_id") == "create_step"
 
 
+class TestDestroyActionExtraction:
+    """Test destroy action extraction for DAG triggers."""
+
+    def test_destroy_sets_action(self):
+        params = extract("destroy freeipa", IntentCategory.DAG_TRIGGER)
+        assert params.get("dag_id") == "freeipa_deployment"
+        assert params.get("conf", {}).get("action") == "destroy"
+
+    def test_delete_sets_action(self):
+        params = extract("delete harbor", IntentCategory.DAG_TRIGGER)
+        assert params.get("dag_id") == "harbor_deployment"
+        assert params.get("conf", {}).get("action") == "destroy"
+
+    def test_remove_sets_action(self):
+        params = extract("remove the jumpserver", IntentCategory.DAG_TRIGGER)
+        assert params.get("dag_id") == "jumpserver_deployment"
+        assert params.get("conf", {}).get("action") == "destroy"
+
+    def test_teardown_sets_action(self):
+        params = extract("teardown vyos", IntentCategory.DAG_TRIGGER)
+        assert params.get("dag_id") == "vyos_router_deployment"
+        assert params.get("conf", {}).get("action") == "destroy"
+
+    def test_deploy_no_action(self):
+        params = extract("deploy freeipa", IntentCategory.DAG_TRIGGER)
+        assert params.get("dag_id") == "freeipa_deployment"
+        assert "action" not in params.get("conf", {})
+
+    def test_destroy_with_domain(self):
+        params = extract("destroy freeipa with domain example.com", IntentCategory.DAG_TRIGGER)
+        assert params.get("dag_id") == "freeipa_deployment"
+        assert params.get("conf", {}).get("action") == "destroy"
+        assert params.get("conf", {}).get("domain") == "example.com"
+
+
 class TestKeyValueExtraction:
     """Test explicit key=value parameter extraction."""
 

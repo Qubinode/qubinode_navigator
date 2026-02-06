@@ -556,6 +556,7 @@ start_ai_assistant() {
         ${DEVELOPER_MODEL:+-e DEVELOPER_MODEL="${DEVELOPER_MODEL}"} \
         ${PYDANTICAI_MODEL:+-e PYDANTICAI_MODEL="${PYDANTICAI_MODEL}"} \
         -v "${REPO_ROOT}/ai-assistant/data:/app/data:z" \
+        -v "${REPO_ROOT}/ai-assistant/src:/app/src:ro,z" \
         -v "${REPO_ROOT}/airflow/dags:/app/airflow/dags:ro,z" \
         -v "${REPO_ROOT}/docs/adrs:/app/docs/adrs:ro,z" \
         -v "${REPO_ROOT}/intent_parser:/app/intent_parser:ro,z" \
@@ -831,6 +832,7 @@ restart_ai_assistant_with_credentials() {
         ${DEVELOPER_MODEL:+-e DEVELOPER_MODEL="${DEVELOPER_MODEL}"} \
         ${PYDANTICAI_MODEL:+-e PYDANTICAI_MODEL="${PYDANTICAI_MODEL}"} \
         -v "${REPO_ROOT}/ai-assistant/data:/app/data:z" \
+        -v "${REPO_ROOT}/ai-assistant/src:/app/src:ro,z" \
         -v "${REPO_ROOT}/airflow/dags:/app/airflow/dags:ro,z" \
         -v "${REPO_ROOT}/docs/adrs:/app/docs/adrs:ro,z" \
         -v "${REPO_ROOT}/intent_parser:/app/intent_parser:ro,z" \
@@ -1482,6 +1484,11 @@ get_qubinode_navigator() {
 
     # Always ensure system-wide symlink exists (needed for Airflow DAGs)
     # DAGs reference /opt/qubinode_navigator for vault.yml and inventory resources
+    # If a real directory exists (not a symlink), remove it first — ln -sf cannot overwrite directories
+    if [[ -d /opt/qubinode_navigator && ! -L /opt/qubinode_navigator ]]; then
+        log_info "Removing stale /opt/qubinode_navigator directory (replacing with symlink)"
+        sudo rm -rf /opt/qubinode_navigator
+    fi
     if [[ ! -L /opt/qubinode_navigator ]] || [[ "$(readlink -f /opt/qubinode_navigator 2>/dev/null)" != "$(readlink -f "$target_dir/qubinode_navigator" 2>/dev/null)" ]]; then
         log_info "Creating/updating system symlink: /opt/qubinode_navigator -> $target_dir/qubinode_navigator"
         sudo ln -sf "$target_dir/qubinode_navigator" /opt/qubinode_navigator || {
@@ -1629,6 +1636,9 @@ deploy_qubinode_infrastructure() {
 
     # Setup kcli base (from setup.sh)
     setup_kcli_base || return 1
+
+    # Configure kcli to inject SSH keys into VMs
+    configure_kcli_ssh_keys || log_warning "SSH key injection config failed"
 
     log_success "Qubinode infrastructure deployment completed successfully!"
     return 0
@@ -2048,6 +2058,50 @@ setup_kcli_base() {
     }
 
     log_success "Kcli base setup completed"
+    return 0
+}
+
+# Configure kcli to inject SSH keys into all VMs
+configure_kcli_ssh_keys() {
+    log_step "Configuring kcli SSH key injection..."
+
+    # Always use /root/ paths because:
+    # 1. kcli runs with sudo (via get_kcli_prefix()), so uses /root/.kcli/config.yml
+    # 2. Admin user's key is synced to /root/.ssh/ by configure_ssh() (lines 1387-1410)
+    # 3. Airflow containers mount /root/.ssh:ro and use that key for SSH connections
+    # This works regardless of QUBINODE_ADMIN_USER - the key is always synced to /root/
+    local ssh_pub_key="/root/.ssh/id_rsa.pub"
+    local kcli_config="/root/.kcli/config.yml"
+
+    # Verify SSH public key exists
+    if [[ ! -f "$ssh_pub_key" ]]; then
+        log_warning "SSH public key not found at $ssh_pub_key"
+        log_warning "VMs will be created without SSH key injection"
+        return 0
+    fi
+
+    # Verify kcli config exists
+    if [[ ! -f "$kcli_config" ]]; then
+        log_warning "kcli config not found at $kcli_config"
+        return 0
+    fi
+
+    # Check if keysname is already configured
+    if grep -q "^  keysname:" "$kcli_config" 2>/dev/null; then
+        log_info "kcli SSH key injection already configured"
+        return 0
+    fi
+
+    # Add keysname parameter to default section
+    # Insert after 'cloudinit: true' line
+    if grep -q "cloudinit: true" "$kcli_config"; then
+        sed -i '/^  cloudinit: true$/a\  keysname:\n    - '"$ssh_pub_key"'' "$kcli_config"
+        log_success "kcli configured to inject SSH key from $ssh_pub_key"
+    else
+        log_warning "Could not find cloudinit setting in kcli config"
+        log_warning "Manually add 'keysname: [\"$ssh_pub_key\"]' to $kcli_config"
+    fi
+
     return 0
 }
 

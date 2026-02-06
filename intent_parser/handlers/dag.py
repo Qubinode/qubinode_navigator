@@ -55,8 +55,8 @@ except ImportError as e:
 # (i.e., running outside the Airflow container but with HTTP access)
 
 _AIRFLOW_API_URL = os.getenv("AIRFLOW_API_URL", "http://localhost:8888")
-_AIRFLOW_USER = os.getenv("AIRFLOW_USER", os.getenv("AIRFLOW_API_USER", "admin"))
-_AIRFLOW_PASS = os.getenv("AIRFLOW_PASSWORD", os.getenv("AIRFLOW_API_PASSWORD", "admin"))
+_AIRFLOW_USER = os.getenv("AIRFLOW_USER") or os.getenv("AIRFLOW_API_USER") or "admin"
+_AIRFLOW_PASS = os.getenv("AIRFLOW_PASSWORD") or os.getenv("AIRFLOW_API_PASSWORD") or "admin"
 
 
 async def _http_list_dags() -> str:
@@ -175,7 +175,17 @@ async def handle_dag_trigger(params: Dict) -> str:
     preflight = await run_ssh_preflight()
     preflight_report = preflight.format_report()
 
+    # VM SSH pre-flight (second hop)
+    from ..vm_ssh_preflight import get_vm_for_dag, run_vm_ssh_preflight
+
     conf = params.get("conf")
+    vm_preflight_report = ""
+    vm_info = get_vm_for_dag(dag_id, conf)
+    if vm_info:
+        vm_name, ssh_user = vm_info
+        vm_preflight = await run_vm_ssh_preflight(vm_name, ssh_user)
+        vm_preflight_report = vm_preflight.format_report()
+
     trigger_result = await _call_with_http_fallback(
         (lambda dag_id, conf: _trigger_dag(dag_id=dag_id, conf=conf)) if _backend_available else (lambda dag_id, conf: ""),
         _http_trigger_dag,
@@ -183,8 +193,9 @@ async def handle_dag_trigger(params: Dict) -> str:
         conf,
     )
 
-    if preflight_report:
-        return f"{preflight_report}\n\n{trigger_result}"
+    reports = [r for r in [preflight_report, vm_preflight_report] if r]
+    if reports:
+        return "\n\n".join(reports) + f"\n\n{trigger_result}"
     return trigger_result
 
 

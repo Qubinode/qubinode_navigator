@@ -319,13 +319,27 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
         if m:
             params["dag_id"] = m.group(1).strip("\"'")
 
+    # Detect deploy-synonym verbs (install, set up) for service lookup
+    # These are handled the same as "deploy" for entity extraction
+    _DEPLOY_VERBS = {"deploy", "install"}
+
+    # Detect destroy/delete action from verb BEFORE dag_id extraction
+    _DESTROY_VERBS = {"destroy", "delete", "remove", "teardown", "undeploy"}
+    text_lower = text.lower()
+    is_destroy = any(re.search(rf"\b{verb}\b", text_lower) for verb in _DESTROY_VERBS)
+
     # Natural language: "deploy freeipa/idm/dns/vyos/keycloak ..."
+    # Also handles: "destroy freeipa", "delete harbor", etc.
     if "dag_id" not in params:
-        text_lower = text.lower()
         for service_name, dag_id in _SERVICE_DAG_MAP.items():
             if service_name in text_lower:
                 params["dag_id"] = dag_id
                 break
+
+    # Set action=destroy in conf if destroy verb detected
+    if is_destroy and "dag_id" in params:
+        params.setdefault("conf", {})
+        params["conf"]["action"] = "destroy"
 
     # Extract domain parameter: "with domain X" / "domain X" / "domain=X"
     if "dag_id" in params:

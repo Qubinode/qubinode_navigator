@@ -15,6 +15,8 @@ import re
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
+import yaml
+
 logger = logging.getLogger("intent-parser.dag-registry")
 
 # Words that are too generic to use as service keywords
@@ -119,6 +121,29 @@ def _extract_service_keywords(dag: dict) -> Set[str]:
     return keywords
 
 
+def _load_manifest() -> List[dict]:
+    """Load DAG metadata from the static manifest file (fallback)."""
+    manifest_path = Path(__file__).parent / "dag_manifest.yaml"
+    if not manifest_path.exists():
+        logger.warning(f"DAG manifest not found: {manifest_path}")
+        return []
+    try:
+        data = yaml.safe_load(manifest_path.read_text())
+    except Exception as e:
+        logger.error(f"Failed to parse DAG manifest: {e}")
+        return []
+
+    results = []
+    for dag_id, meta in (data.get("dags") or {}).items():
+        results.append({
+            "dag_id": dag_id,
+            "tags": meta.get("keywords", []),
+            "description": meta.get("description", ""),
+        })
+    logger.info(f"DAG manifest loaded {len(results)} DAGs from {manifest_path}")
+    return results
+
+
 def build_service_dag_map() -> Dict[str, str]:
     """
     Build a keyword -> dag_id mapping from all discovered DAGs.
@@ -136,8 +161,14 @@ def build_service_dag_map() -> Dict[str, str]:
     Priority: keywords from dag_id parts take precedence over tag-only keywords.
     This ensures "freeipa" maps to freeipa_deployment (not dns_management which
     merely has "freeipa" as a tag).
+
+    Falls back to the static manifest (dag_manifest.yaml) if no DAGs are
+    found via filesystem scan.
     """
     dags = scan_dags()
+    if not dags:
+        logger.warning("No DAGs found via filesystem scan, using static manifest")
+        dags = _load_manifest()
     mapping: Dict[str, str] = {}
 
     # Two passes: first dag_id-derived keywords (strong signal), then tag keywords

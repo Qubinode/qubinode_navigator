@@ -46,7 +46,7 @@ def _build_rules() -> dict:
         ],
         "patterns": [
             re.compile(r"\blist\s+(?:all\s+)?(?:vms?|virtual\s+machines?)\b", re.I),
-            re.compile(r"\bshow\s+(?:all\s+)?(?:vms?|virtual\s+machines?)\b", re.I),
+            re.compile(r"\bshow\s+(?:(?:me\s+)?(?:the\s+)?)?(?:all\s+)?(?:vms?|virtual\s+machines?)\b", re.I),
             re.compile(r"\bwhat\s+vms?\b", re.I),
         ],
         "boost": 0,
@@ -82,7 +82,9 @@ def _build_rules() -> dict:
             re.compile(r"\b(?:create|make|launch)\s+(?:a\s+)?(?:new\s+)?(?:vm|virtual\s+machine)\b", re.I),
             re.compile(r"\bspin\s+up\s+(?:a\s+)?(?:(?:new|the)\s+)?(?:vm|virtual\s+machine|server)\b", re.I),
             re.compile(r"\bdeploy\s+(?:a\s+)?(?:new\s+)?(?:vm|virtual\s+machine)\b", re.I),
-            re.compile(r"\bprovision\s+(?:a\s+)?(?:vm|virtual\s+machine)\b", re.I),
+            re.compile(r"\bprovision\s+(?:a\s+)?(?:new\s+)?(?:vm|virtual\s+machine)\b", re.I),
+            # "create a centos vm", "make a rhel vm" — word between article and vm
+            re.compile(r"^(?:create|make|launch)\s+(?:a\s+)?\w+\s+vm\b", re.I),
         ],
         "boost": 0,
     }
@@ -113,8 +115,9 @@ def _build_rules() -> dict:
             re.compile(r"\bpre-?flight\b", re.I),
             re.compile(r"\bcheck\s+(?:before|if)\s+(?:i\s+can\s+)?creat", re.I),
             re.compile(r"\bcan\s+i\s+create\s+(?:a\s+)?vm", re.I),
+            re.compile(r"\bvalidate\s+(?:vm\s+)?(?:creation|deployment|provisioning)\b", re.I),
         ],
-        "boost": 1,
+        "boost": 2,
     }
 
     # --- DAG operations ---
@@ -160,14 +163,20 @@ def _build_rules() -> dict:
         _kw("start", "dag"),
         _kw("trigger", "workflow"),
         _kw("run", "workflow"),
+        _kw("start", "workflow"),
     ]
-    # Add "deploy <service>" keywords for every discovered DAG service
+    # Add "deploy/install/set up <service>" AND "destroy/delete <service>" keywords
     for svc_kw in _deploy_kws:
         dag_trigger_keywords.append(_kw("deploy", svc_kw))
+        dag_trigger_keywords.append(_kw("install", svc_kw))
+        dag_trigger_keywords.append(_kw("destroy", svc_kw))
+        dag_trigger_keywords.append(_kw("delete", svc_kw))
+        dag_trigger_keywords.append(_kw("remove", svc_kw))
+        dag_trigger_keywords.append(_kw("teardown", svc_kw))
 
     # Build pattern alternation from service keywords for regex matching
-    # Only use keywords >= 4 chars to avoid false positives
-    _svc_names = "|".join(re.escape(k) for k in _deploy_kws if len(k) >= 4)
+    # Only use keywords >= 3 chars to avoid false positives
+    _svc_names = "|".join(re.escape(k) for k in _deploy_kws if len(k) >= 3)
 
     dag_trigger_patterns = [
         re.compile(r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?(?:dag|workflow)\s+\w+", re.I),
@@ -176,6 +185,16 @@ def _build_rules() -> dict:
     if _svc_names:
         dag_trigger_patterns.append(
             re.compile(rf"\bdeploy\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I)
+        )
+        dag_trigger_patterns.append(
+            re.compile(rf"\b(?:destroy|delete|remove|teardown)\s+(?:the\s+)?(?:{_svc_names})\b", re.I)
+        )
+        dag_trigger_patterns.append(
+            re.compile(rf"\binstall\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I)
+        )
+        # "set up <service>" only as imperative (start of input, not in a question)
+        dag_trigger_patterns.append(
+            re.compile(rf"^(?:please\s+)?set\s+up\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I)
         )
 
     rules[IntentCategory.DAG_TRIGGER] = {
@@ -260,6 +279,7 @@ def _build_rules() -> dict:
         "patterns": [
             re.compile(r"\b(?:system|qubinode)\s+(?:info|information|overview)\b", re.I),
             re.compile(r"\btell\s+me\s+about\s+(?:the\s+)?(?:system|qubinode|architecture)\b", re.I),
+            re.compile(r"\bwhat\s+(?:capabilities|features)\s+(?:do\s+you|does\s+(?:this|it))\s+have\b", re.I),
         ],
         "boost": 0,
     }
@@ -273,11 +293,13 @@ def _build_rules() -> dict:
             _kw("fix"),
             _kw("broken"),
             _kw("not", "working"),
+            _kw("not", "responding"),
             _kw("failing"),
         ],
         "patterns": [
             re.compile(r"\b(?:diagnose|troubleshoot|debug|fix)\s+", re.I),
             re.compile(r"\b(?:is|not)\s+(?:working|responding|running)\b", re.I),
+            re.compile(r"\bis\s+(?:broken|down)\b", re.I),
             re.compile(r"\bwhy\s+(?:is|did|does)\s+.+?\s+(?:fail|error|crash|hang)", re.I),
             re.compile(r"\bsomething\s+(?:is\s+)?(?:wrong|broken)\b", re.I),
             re.compile(r"\b(?:error|failure|problem|issue)\s+(?:in|with|during)\b", re.I),
@@ -420,7 +442,7 @@ def classify(text: str) -> ParsedIntent:
     best_category, best_score = scores[0]
 
     # Require minimum score to avoid matching on noise
-    if best_score < 1.5:
+    if best_score < 1.0:
         return ParsedIntent(
             category=IntentCategory.UNKNOWN,
             confidence=round(best_score / 10.0, 2),
@@ -428,8 +450,8 @@ def classify(text: str) -> ParsedIntent:
         )
 
     # Normalize confidence: map score to 0-1 range
-    # A strong match typically scores 3-5 points (keyword=1 + pattern=2 + boost)
-    max_possible = 5.0
+    # A strong match typically scores 2-4 points (keyword=1 + pattern=2 + boost)
+    max_possible = 4.0
     confidence = min(best_score / max_possible, 1.0)
 
     # Boost confidence if clear winner (big gap to second)

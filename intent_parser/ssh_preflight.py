@@ -81,8 +81,8 @@ class PreflightResult:
 def _get_config() -> Dict[str, str]:
     return {
         "api_url": os.getenv("AIRFLOW_API_URL", "http://localhost:8888"),
-        "user": os.getenv("AIRFLOW_USER", os.getenv("AIRFLOW_API_USER", "admin")),
-        "password": os.getenv("AIRFLOW_PASSWORD", os.getenv("AIRFLOW_API_PASSWORD", "admin")),
+        "user": os.getenv("AIRFLOW_USER") or os.getenv("AIRFLOW_API_USER") or "admin",
+        "password": os.getenv("AIRFLOW_PASSWORD") or os.getenv("AIRFLOW_API_PASSWORD") or "admin",
         "ssh_user": os.getenv("QUBINODE_SSH_USER", os.getenv("USER", "root")),
         "conn_id": os.getenv("QUBINODE_SSH_CONN_ID", "localhost_ssh"),
         "cache_ttl": int(os.getenv("SSH_PREFLIGHT_CACHE_TTL", "300")),

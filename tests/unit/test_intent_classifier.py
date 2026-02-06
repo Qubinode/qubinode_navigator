@@ -304,6 +304,27 @@ class TestHelpClassification:
         assert result.category == expected
 
 
+class TestDestroyServiceClassification:
+    """Test destroy/delete service intent classification."""
+
+    @pytest.mark.parametrize(
+        "text,expected",
+        [
+            ("destroy freeipa", IntentCategory.DAG_TRIGGER),
+            ("delete freeipa", IntentCategory.DAG_TRIGGER),
+            ("remove the freeipa server", IntentCategory.DAG_TRIGGER),
+            ("teardown harbor", IntentCategory.DAG_TRIGGER),
+            ("delete the harbor registry", IntentCategory.DAG_TRIGGER),
+            ("destroy the jumpserver instance", IntentCategory.DAG_TRIGGER),
+            ("remove vyos", IntentCategory.DAG_TRIGGER),
+        ],
+    )
+    def test_destroy_service_triggers_dag(self, text, expected):
+        result = classify(text)
+        assert result.category == expected
+        assert result.confidence >= 0.5
+
+
 class TestEdgeCases:
     """Test edge cases and ambiguous inputs."""
 
