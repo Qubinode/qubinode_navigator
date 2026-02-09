@@ -100,7 +100,7 @@ numpy==2.4.2
 openai==2.17.0
 openapi-pydantic==0.5.1
 opentelemetry-api==1.39.1
-orjson==3.11.6
+orjson==3.11.7
 packaging==25.0
 pathable==0.4.4
 pathvalidate==3.3.1
