@@ -48,7 +48,7 @@ google-genai==1.61.0
 greenlet==3.3.1
 griffe==1.15.0
 groq==1.0.0
-grpcio==1.76.0
+grpcio==1.78.0
 h11==0.16.0
 h2==4.3.0
 hf-xet==1.2.0
