@@ -14,7 +14,7 @@ attrs==25.4.0
 authlib==1.6.6
 beartype==0.22.9
 boto3==1.42.39
-botocore==1.42.39
+botocore==1.42.44
 cachetools==7.0.0
 certifi==2026.1.4
 cffi==2.0.0
