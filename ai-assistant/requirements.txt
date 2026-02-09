@@ -83,7 +83,7 @@ langchain-core==0.3.83
 langchain-text-splitters==0.3.11
 langsmith==0.6.7
 litellm==1.81.6
-logfire-api==4.21.0
+logfire-api==4.22.0
 lupa==2.6
 markdown-it-py==4.0.0
 markupsafe==3.0.3
