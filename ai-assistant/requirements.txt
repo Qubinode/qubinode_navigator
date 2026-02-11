@@ -24,7 +24,7 @@ cloudpickle==3.1.2
 cohere==5.20.4
 colorama==0.4.6
 croniter==6.0.0
-cryptography==46.0.4
+cryptography==46.0.5
 cyclopts==4.5.1
 dataclasses-json==0.6.7
 diskcache==5.6.3
