@@ -192,6 +192,14 @@ ______________________________________________________________________
 
 ### Prerequisites Check
 
+**System Requirements:**
+- **OS**: RHEL 9+, CentOS Stream 9/10+, Rocky Linux 9+, Fedora 39+
+- **RAM**: 8GB minimum, 16GB+ recommended (for AI features)
+- **Disk**: 50GB minimum, 100GB+ recommended
+- **CPU**: Hardware virtualization enabled (VT-x/AMD-V)
+- **Network**: Internet access for container images and packages
+- **Software**: Git, Podman or Docker
+
 Before any deployment, run pre-flight validation:
 
 ```bash
