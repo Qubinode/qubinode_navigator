@@ -32,7 +32,25 @@ git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 ```
 
-## Step 2: Run Pre-flight Checks
+## Step 2: Configure Environment
+
+Copy the environment template and customize it for your deployment:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` to set at minimum:
+
+- **`QUBINODE_DOMAIN`** - Your domain name (e.g., `lab.example.com`)
+- **`QUBINODE_ADMIN_USER`** - Admin username
+- **`QUBINODE_CLUSTER_NAME`** - Cluster identifier
+
+For AI Assistant features, configure a model provider (e.g., Gemini, Anthropic, or local Ollama). See the comments in `.env.example` for all available options.
+
+> **Note**: The deploy scripts will use sensible defaults if `.env` is not present, but configuring it ensures your domain, credentials, and AI model are set correctly.
+
+## Step 3: Run Pre-Flight Checks
 
 The preflight script validates your system and auto-fixes common issues:
 
@@ -55,7 +73,7 @@ Pre-flight checks passed!
 You can proceed with deployment.
 ```
 
-## Step 3: Deploy the Full Stack
+## Step 4: Deploy the Full Stack
 
 Deploy with Airflow orchestration, AI Assistant, and all supporting services:
 
@@ -74,7 +92,7 @@ This deploys:
 - **MCP Server** (tool API for LLM integration) on port 8889
 - **PostgreSQL** (metadata + pgvector) on port 5432
 
-## Step 4: Verify the Deployment
+## Step 5: Verify the Deployment
 
 Check that all services are running:
 
@@ -89,7 +107,7 @@ curl http://localhost:8888/health
 curl http://localhost:8080/orchestrator/status
 ```
 
-## Step 5: Access the Services
+## Step 6: Access the Services
 
 | Service          | URL                   | Purpose                             |
 | ---------------- | --------------------- | ----------------------------------- |
@@ -97,7 +115,7 @@ curl http://localhost:8080/orchestrator/status
 | **AI Assistant** | `http://YOUR_IP:8080` | Chat-driven deployment orchestrator |
 | **MCP Server**   | `http://YOUR_IP:8889` | Tool API for LLM integration        |
 
-## Step 6: Run Your First DAG
+## Step 7: Run Your First DAG
 
 1. Open the Airflow UI at `http://YOUR_IP:8888`
 1. You'll see pre-built DAGs:

@@ -48,6 +48,10 @@ ______________________________________________________________________
 git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 
+# Configure environment (set domain, AI model keys, etc.)
+cp .env.example .env
+# Edit .env with your settings (QUBINODE_DOMAIN, model API keys, etc.)
+
 # Run pre-flight checks
 ./scripts/preflight-check.sh --fix
 
