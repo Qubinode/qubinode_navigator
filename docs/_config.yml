@@ -30,7 +30,6 @@ twitter_username: tosin2013
 github_username: Qubinode
 
 # Just the Docs theme configuration
-logo: "/assets/images/logo.png"
 search_enabled: true
 search:
   heading_level: 2

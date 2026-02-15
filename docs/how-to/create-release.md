@@ -127,7 +127,7 @@ The documentation site will automatically rebuild with the new release tag.
 git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 git checkout vX.Y.Z
-./setup_modernized.sh
+./deploy-qubinode-with-airflow.sh
 ```
 
 ### Announce Release

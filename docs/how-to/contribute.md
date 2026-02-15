@@ -8,7 +8,7 @@ nav_order: 4
 
 This documentation site follows the Diataxis structure. For full contribution guidelines and development workflows, please refer to the main developer guide.
 
-- Developer Guide: https://qubinode.github.io/qubinode_navigator/development/developers_guide.html
+- [Developer's Guide](./developers-guide.md)
 
 ## How to Contribute
 

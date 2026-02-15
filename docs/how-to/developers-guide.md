@@ -1,6 +1,10 @@
-______________________________________________________________________
+---
+title: Developer's Guide
+parent: How to
+nav_order: 5
+---
 
-## layout: default title:  "Contributing to Qubinode Navigator: A Comprehensive Developer's Guide" parent: Developer Documentation nav_order: 1
+# Developer's Guide
 
 Welcome to the Qubinode Navigator project! We are excited to have you consider contributing to our open-source project. This guide will walk you through the process of setting up your development environment, adhering to coding standards, and submitting your contributions effectively.
 

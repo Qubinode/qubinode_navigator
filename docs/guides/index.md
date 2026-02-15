@@ -17,3 +17,4 @@ This section contains operational guides for advanced features.
 
 - [RAG Operations Guide](./rag-operations-guide.md) – RAG system operations and troubleshooting
 - [Multi-Agent LLM Guide](./multi-agent-llm-guide.md) – Multi-agent LLM architecture and workflows
+- [AI Assistant Interaction Guide](./ai-assistant-guide.md) – Using the integrated AI Assistant for deployment and troubleshooting
