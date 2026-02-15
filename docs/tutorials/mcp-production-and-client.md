@@ -75,7 +75,7 @@ Typical checks (adapt as needed to match your configuration):
 curl -N http://localhost:8889/sse || echo "Airflow MCP SSE check failed"
 
 # Check AI Assistant MCP SSE endpoint
-curl -N http://localhost:8081/sse || echo "AI Assistant MCP SSE check failed"
+curl -N http://localhost:8080/sse || echo "AI Assistant MCP SSE check failed"
 ```
 
 Also confirm that the containers are running:

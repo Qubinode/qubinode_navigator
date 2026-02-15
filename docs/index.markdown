@@ -1,6 +1,10 @@
-______________________________________________________________________
-
-## layout: default title: Qubinode Navigator nav_order: 1 description: "Modern AI-enhanced infrastructure automation platform with plugin architecture" permalink: /
+---
+layout: default
+title: Qubinode Navigator
+nav_order: 1
+description: "Modern AI-enhanced infrastructure automation platform with plugin architecture"
+permalink: /
+---
 
 # Qubinode Navigator
 
@@ -90,17 +94,17 @@ Qubinode Navigator follows a **modern, plugin-based architecture** with comprehe
 
 ### 📋 **Latest Architectural Decisions (2025)**
 
-- [**ADR-0026**: RHEL 10/CentOS 10 Platform Support Strategy](/adrs/adr-0026-rhel-10-centos-10-platform-support-strategy.html)
-- [**ADR-0027**: CPU-Based AI Deployment Assistant Architecture](/adrs/adr-0027-cpu-based-ai-deployment-assistant-architecture.html)
-- [**ADR-0028**: Modular Plugin Framework for Extensibility](/adrs/adr-0028-modular-plugin-framework-for-extensibility.html)
-- [**ADR-0029**: Documentation Strategy and Website Modernization](/adrs/adr-0029-documentation-strategy-and-website-modernization.html)
-- [**ADR-0030**: Software and OS Update Strategy](/adrs/adr-0030-software-and-os-update-strategy.html)
+- [**ADR-0026**: RHEL 10/CentOS 10 Platform Support Strategy](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0026-rhel-10-centos-10-platform-support-strategy.md)
+- [**ADR-0027**: CPU-Based AI Deployment Assistant Architecture](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0027-cpu-based-ai-deployment-assistant-architecture.md)
+- [**ADR-0028**: Modular Plugin Framework for Extensibility](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0028-modular-plugin-framework-for-extensibility.md)
+- [**ADR-0029**: Documentation Strategy and Website Modernization](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0029-documentation-strategy-and-website-modernization.md)
+- [**ADR-0030**: Software and OS Update Strategy](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0030-software-and-os-update-strategy.md)
 
 ### 🏛️ **Foundation ADRs**
 
-- [**ADR-0001**: Container-First Execution Model](/adrs/adr-0001-container-first-execution-model-with-ansible-navigator.html)
-- [**ADR-0004**: Security Architecture with Ansible Vault](/adrs/adr-0004-security-architecture-ansible-vault.html)
-- [**ADR-0023**: HashiCorp Vault Integration](/adrs/adr-0023-enhanced-configuration-management-with-template-support-and-hashicorp-vault-integration.html)
+- [**ADR-0001**: Container-First Execution Model](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0001-container-first-execution-model-with-ansible-navigator.md)
+- [**ADR-0004**: Security Architecture with Ansible Vault](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0004-security-architecture-ansible-vault.md)
+- [**ADR-0023**: HashiCorp Vault Integration](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0023-enhanced-configuration-management-with-template-support-and-hashicorp-vault-integration.md)
 
 ### 🔐 **Enterprise Security**
 

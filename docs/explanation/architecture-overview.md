@@ -31,7 +31,7 @@ Qubinode Navigator uses **Ansible Navigator** to execute all automation inside c
 
 The trade-off is slightly longer startup times for containerized execution, but the consistency benefits far outweigh this minor cost.
 
-See [ADR-0001: Container-First Execution Model](../adrs/adr-0001-container-first-execution-model-with-ansible-navigator.md) for the full decision rationale.
+See [ADR-0001: Container-First Execution Model](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0001-container-first-execution-model-with-ansible-navigator.md) for the full decision rationale.
 
 ### Modular Plugin Framework
 
@@ -50,7 +50,7 @@ Each plugin is self-contained with its own:
 
 This modularity means adding support for a new OS or cloud provider requires only creating a new plugin, not modifying core code.
 
-See [ADR-0028: Modular Plugin Framework](../adrs/adr-0028-modular-plugin-framework-for-extensibility.md) for implementation details.
+See [ADR-0028: Modular Plugin Framework](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0028-modular-plugin-framework-for-extensibility.md) for implementation details.
 
 ### Progressive Security Model
 
@@ -63,7 +63,7 @@ Security in Qubinode Navigator follows a layered approach:
 
 This progressive model allows starting with basic security (Ansible Vault) and adding layers (HashiCorp Vault, advanced SSH) as needs evolve.
 
-See [ADR-0004: Security Architecture](../adrs/adr-0004-security-architecture-ansible-vault.md) for details.
+See [ADR-0004: Security Architecture](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0004-security-architecture-ansible-vault.md) for details.
 
 ## Design Decisions
 
@@ -122,7 +122,7 @@ The cost is slightly more complex project structure, but this pays dividends at 
 
 The cost is additional infrastructure (Airflow + database), but this is optional—scripts still work standalone.
 
-See [ADR-0036: Airflow Integration](../adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md) for the full analysis.
+See [ADR-0036: Airflow Integration](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md) for the full analysis.
 
 ## Comparison with Alternatives
 
@@ -156,7 +156,7 @@ See [ADR-0036: Airflow Integration](../adrs/adr-0036-apache-airflow-workflow-orc
 
 ### Architecture Decision Records
 
-- [ADR-0001: Container-First Execution](../adrs/adr-0001-container-first-execution-model-with-ansible-navigator.md)
-- [ADR-0028: Modular Plugin Framework](../adrs/adr-0028-modular-plugin-framework-for-extensibility.md)
-- [ADR-0036: Airflow Integration](../adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
-- [Browse all ADRs](../adrs/) for complete architectural decisions
+- [ADR-0001: Container-First Execution](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0001-container-first-execution-model-with-ansible-navigator.md)
+- [ADR-0028: Modular Plugin Framework](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0028-modular-plugin-framework-for-extensibility.md)
+- [ADR-0036: Airflow Integration](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
+- [Browse all ADRs](https://github.com/Qubinode/qubinode_navigator/tree/main/docs/adrs) for complete architectural decisions
