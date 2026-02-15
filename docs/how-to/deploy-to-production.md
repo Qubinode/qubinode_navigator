@@ -91,38 +91,34 @@ Ensure `podman-compose` is installed and your MCP configuration matches the MCP 
 
 Use the existing production verification docs to confirm your deployment:
 
-- [Production Deployment Test Results](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/PRODUCTION_DEPLOYMENT_TEST_RESULTS.md)
-
 At minimum, verify:
 
 - Hypervisor services (KVM/libvirt, Cockpit, SSH) are healthy.
 - Qubinode Navigator workflows complete without errors.
-- Optional Airflow UI and AI Assistant endpoints are reachable and responsive.
-
-If you discover additional checks that should be included here, please propose them via a documentation contribution.
-
-### 2. Execute the task
+- Airflow UI is reachable at port 8888.
+- AI Assistant endpoint is responsive at port 8080.
 
 ```bash
-# Main command
-echo "Execute task"
-```
+# Check container status
+sudo podman ps
 
-### 3. Verify results
+# Verify Airflow health
+curl http://localhost:8888/health
 
-```bash
-# Verification command
-echo "Verify success"
+# Verify AI Assistant
+curl http://localhost:8080/orchestrator/status
 ```
 
 ## Troubleshooting
 
 If you encounter issues:
 
-- Check condition 1
-- Verify setting 2
+- Check container logs: `cd airflow && podman-compose logs -f`
+- Restart services: `cd airflow && podman-compose restart`
+- Re-run preflight checks: `./scripts/preflight-check.sh --fix`
 
 ## Related Guides
 
-- [Another How-To Guide](./another-guide.md)
+- [Getting Started Tutorial](../tutorials/getting-started.md)
+- [Airflow Getting Started](../tutorials/airflow-getting-started.md)
 - [Reference Documentation](../reference/)
