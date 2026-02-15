@@ -21,12 +21,12 @@ Qubinode Navigator is a next-generation infrastructure automation platform built
 ## 🚀 Key Features
 
 - **🔌 Plugin Architecture**: Extensible framework with OS, cloud provider, and deployment plugins
-- **🤖 AI-Powered Assistant**: CPU-based AI deployment guidance with interactive troubleshooting *(coming soon)*
+- **🤖 AI-Powered Assistant**: PydanticAI orchestrator with RAG-powered documentation search and intent-based deployment
 - **🖥️ Next-Gen OS Support**: Native RHEL 10, CentOS Stream 10, Rocky Linux, and Fedora support
 - **📦 Container-First**: Ansible Navigator execution with standardized environments
 - **🌐 Multi-Cloud Ready**: Equinix, Hetzner, AWS, and bare-metal deployments
 - **🔒 Enterprise Security**: HashiCorp Vault integration and progressive SSH security
-- **📊 Automated Updates**: Intelligent update detection and compatibility validation *(coming soon)*
+- **📊 Workflow Orchestration**: Apache Airflow DAGs for automated VM provisioning, service deployment, and infrastructure health checks
 - **🧪 Comprehensive Testing**: 84%+ test coverage with real deployment validation
 
 ______________________________________________________________________
@@ -35,7 +35,7 @@ ______________________________________________________________________
 
 ### Prerequisites
 
-- **Operating System**: RHEL 8/9/10, CentOS Stream 10, Rocky Linux, or Fedora
+- **Operating System**: RHEL 9/10, CentOS Stream 10, Rocky Linux 9+, or Fedora 39+ (RHEL 8: legacy/compatibility only)
 - **Memory**: Minimum 4GB RAM (8GB+ recommended for AI features)
 - **Storage**: 500GB+ available space
 - **Container Runtime**: Podman or Docker
@@ -49,7 +49,7 @@ git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 
 # Run the modernized setup script with plugin framework
-./setup_modernized.sh
+./scripts/development/setup_modernized.sh
 ```
 
 ### Plugin Framework CLI
@@ -69,7 +69,7 @@ python3 qubinode_cli.py info --plugin centos_stream10
 
 ```bash
 # Traditional setup script (compatibility mode)
-./setup.sh
+./scripts/development/setup.sh
 ```
 
 ______________________________________________________________________
@@ -90,17 +90,17 @@ Qubinode Navigator follows a **modern, plugin-based architecture** with comprehe
 
 ### 📋 **Latest Architectural Decisions (2025)**
 
-- [**ADR-0026**: RHEL 10/CentOS 10 Platform Support Strategy](/adrs/adr-0026-rhel-10-centos-10-platform-support-strategy.html)
-- [**ADR-0027**: CPU-Based AI Deployment Assistant Architecture](/adrs/adr-0027-cpu-based-ai-deployment-assistant-architecture.html)
-- [**ADR-0028**: Modular Plugin Framework for Extensibility](/adrs/adr-0028-modular-plugin-framework-for-extensibility.html)
-- [**ADR-0029**: Documentation Strategy and Website Modernization](/adrs/adr-0029-documentation-strategy-and-website-modernization.html)
-- [**ADR-0030**: Software and OS Update Strategy](/adrs/adr-0030-software-and-os-update-strategy.html)
+- [**ADR-0026**: RHEL 10/CentOS 10 Platform Support Strategy](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0026-rhel-10-centos-10-platform-support-strategy.md)
+- [**ADR-0027**: CPU-Based AI Deployment Assistant Architecture](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0027-cpu-based-ai-deployment-assistant-architecture.md)
+- [**ADR-0028**: Modular Plugin Framework for Extensibility](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0028-modular-plugin-framework-for-extensibility.md)
+- [**ADR-0029**: Documentation Strategy and Website Modernization](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0029-documentation-strategy-and-website-modernization.md)
+- [**ADR-0030**: Software and OS Update Strategy](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0030-software-and-os-update-strategy.md)
 
 ### 🏛️ **Foundation ADRs**
 
-- [**ADR-0001**: Container-First Execution Model](/adrs/adr-0001-container-first-execution-model-with-ansible-navigator.html)
-- [**ADR-0004**: Security Architecture with Ansible Vault](/adrs/adr-0004-security-architecture-ansible-vault.html)
-- [**ADR-0023**: HashiCorp Vault Integration](/adrs/adr-0023-enhanced-configuration-management-with-template-support-and-hashicorp-vault-integration.html)
+- [**ADR-0001**: Container-First Execution Model](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0001-container-first-execution-model-with-ansible-navigator.md)
+- [**ADR-0004**: Security Architecture with Ansible Vault](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0004-security-architecture-ansible-vault.md)
+- [**ADR-0023**: HashiCorp Vault Integration](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0023-enhanced-configuration-management-with-template-support-and-hashicorp-vault-integration.md)
 
 ### 🔐 **Enterprise Security**
 
@@ -112,7 +112,7 @@ Qubinode Navigator follows a **modern, plugin-based architecture** with comprehe
 
 ### 🔌 **Plugin Architecture**
 
-- **OS Plugins**: RHEL 8/9/10, CentOS Stream 10, Rocky Linux, Fedora
+- **OS Plugins**: RHEL 9/10, CentOS Stream 10, Rocky Linux 9+, Fedora (RHEL 8: legacy only)
 - **Cloud Plugins**: Equinix, Hetzner, AWS integrations
 - **Environment Plugins**: Red Hat Demo, development, production configurations
 - **Service Plugins**: Vault integration, monitoring, logging
@@ -124,13 +124,13 @@ ______________________________________________________________________
 
 This site follows the [Diataxis](https://diataxis.fr/) framework for clear, well-organized documentation:
 
-| Section                          | Description                                                           |
-| :------------------------------- | :-------------------------------------------------------------------- |
-| [**Tutorials**](/tutorials/)     | Learning-oriented guides that take you through a process step by step |
-| [**How-To Guides**](/how-to/)    | Task-oriented recipes for accomplishing specific goals                |
-| [**Reference**](/reference/)     | Information-oriented technical descriptions and API documentation     |
-| [**Explanation**](/explanation/) | Understanding-oriented discussions that clarify concepts              |
-| [**ADRs**](/adrs/)               | Architecture Decision Records documenting key design choices          |
+| Section                                                                        | Description                                                           |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| [**Tutorials**](/tutorials/)                                                   | Learning-oriented guides that take you through a process step by step |
+| [**How-To Guides**](/how-to/)                                                  | Task-oriented recipes for accomplishing specific goals                |
+| [**Reference**](/reference/)                                                   | Information-oriented technical descriptions and API documentation     |
+| [**Explanation**](/explanation/)                                               | Understanding-oriented discussions that clarify concepts              |
+| [**ADRs**](https://github.com/Qubinode/qubinode_navigator/tree/main/docs/adrs) | Architecture Decision Records documenting key design choices          |
 
 ______________________________________________________________________
 

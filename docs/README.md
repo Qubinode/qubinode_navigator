@@ -22,10 +22,21 @@ The documentation is automatically deployed to GitHub Pages via GitHub Actions w
 
 ## Structure
 
+### Published to Site
+
 - `_config.yml` - Jekyll configuration
 - `index.markdown` - Homepage
-- `adrs/` - Architecture Decision Records
-- `deployments/` - Deployment guides
+- `explanation/` - Conceptual discussions (architecture, design decisions)
+- `how-to/` - Task-oriented guides (deploy, contribute, release)
+- `tutorials/` - Learning-oriented step-by-step guides
+- `reference/` - API documentation and technical reference
+- `guides/` - Operational guides (RAG, multi-agent LLM)
+- `fixes/` - Known issues and solutions
+
+### Excluded from Site (Available on GitHub)
+
+- `adrs/` - Architecture Decision Records (excluded due to Jinja2/Liquid conflicts)
+- `deployments/` - Platform-specific deployment guides
 - `development/` - Developer documentation
 - `plugins/` - Plugin documentation
 - `security/` - Security guides
