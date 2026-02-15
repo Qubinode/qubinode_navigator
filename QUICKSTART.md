@@ -8,6 +8,7 @@
 - **RAM**: 8GB minimum (16GB+ recommended)
 - **Disk**: 50GB+ free space
 - **CPU**: Virtualization enabled (VT-x/AMD-V)
+- **Software**: Git, Podman (or Docker)
 - **Network**: Internet access for container images
 
 ## Step 1: Clone the Repository (2 min)
@@ -68,6 +69,8 @@ After deployment completes, you'll see:
 | **Airflow UI**   | http://YOUR_IP/       | admin / admin |
 | **AI Assistant** | http://YOUR_IP/ai/    | (no auth)     |
 | **Health Check** | http://YOUR_IP/health | (no auth)     |
+
+> **Note**: The full stack deployment includes Nginx reverse proxy, so services are accessed on port 80. For development deployments (`scripts/development/deploy-qubinode.sh`), use direct ports: Airflow at `:8888`, AI Assistant at `:8080`.
 
 ## Step 5: Enable and Run DAGs
 

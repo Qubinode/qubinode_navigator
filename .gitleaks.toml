@@ -119,6 +119,11 @@ paths = [
     '''airflow/plugins/qubinode/rag_store.py''',  # RAG store with URL string manipulation
     '''dependancies/onedev/configure-onedev-agent.sh''',  # OneDev setup with prompts
     '''.github/workflows/.*\.yml$''',  # CI workflow files with example configs
+    '''.claude/.*''',      # Claude Code configs
+    '''.cursor/.*''',      # Cursor IDE configs
+    '''.gemini/.*''',      # Gemini CLI configs
+    '''.windsurf/.*''',    # Windsurf IDE configs
+    '''.cursorrules$''',   # Cursor rules file
 ]
 
 # Regex patterns to ignore in detected matches

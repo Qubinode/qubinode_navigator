@@ -30,6 +30,8 @@ sudo -E ./scripts/development/deploy-qubinode.sh
 **Total time**: 15-25 minutes
 
 > **Deployment Options**: This guide uses the development deployment script. For a full production stack with Airflow + Marquez + Nginx, use `./deploy-qubinode-with-airflow.sh` instead. See [README.md](../README.md#choose-your-deployment-method) for all deployment options.
+>
+> **Note**: `deploy-qubinode.sh` in the repo root is a symlink to `scripts/development/deploy-qubinode.sh`.
 
 > **Note**: This is the same deployment method used in our [E2E CI workflow](https://github.com/Qubinode/qubinode_navigator/actions) which runs on CentOS Stream 10.
 
