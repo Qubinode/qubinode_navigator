@@ -40,8 +40,8 @@ ______________________________________________________________________
 ### Prerequisites
 
 - **Operating System**: RHEL 9/10, CentOS Stream 10, Rocky Linux 9+, or Fedora 39+ (RHEL 8: legacy/compatibility only)
-- **Memory**: Minimum 4GB RAM (8GB+ recommended for AI features)
-- **Storage**: 500GB+ available space
+- **Memory**: Minimum 8GB RAM (16GB+ recommended for AI features)
+- **Storage**: 50GB+ available space (100GB+ recommended)
 - **Container Runtime**: Podman or Docker
 - **Network**: Internet connectivity for package downloads
 
