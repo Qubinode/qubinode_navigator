@@ -1,3 +1,9 @@
+---
+title: AI Assistant Interaction Guide
+parent: Guides
+nav_order: 3
+---
+
 # AI Assistant Interaction Guide
 
 ## Overview
