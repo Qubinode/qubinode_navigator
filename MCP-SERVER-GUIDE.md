@@ -17,7 +17,7 @@ Qubinode Navigator provides two Model Context Protocol (MCP) servers that enable
 
 - Running Airflow instance (via Docker/Podman)
 - Claude Desktop or compatible MCP client
-- Network access to server ports (8889 for Airflow, 8081 for AI Assistant)
+- Network access to server ports (8889 for Airflow, 8080 for AI Assistant)
 
 ### 1. Start MCP Servers
 
@@ -28,7 +28,7 @@ podman-compose --profile mcp up -d
 
 # Verify servers are running
 curl http://localhost:8889/sse  # Airflow MCP
-curl http://localhost:8081/sse  # AI Assistant MCP (if running)
+curl http://localhost:8080/sse  # AI Assistant MCP (if running)
 ```
 
 ### 2. Configure Claude Desktop
@@ -56,7 +56,7 @@ Add to `~/.config/claude/claude_desktop_config.json`:
       "args": [
         "-y",
         "mcp-remote",
-        "http://YOUR_SERVER_IP:8081/sse",
+        "http://YOUR_SERVER_IP:8080/sse",
         "--header",
         "X-API-Key:${MCP_API_KEY}"
       ],
@@ -166,7 +166,7 @@ AIRFLOW_MCP_READONLY=false      # Allow write operations
 
 ```bash
 MCP_SERVER_ENABLED=true         # Enable MCP server
-MCP_SERVER_PORT=8081            # Server port
+MCP_SERVER_PORT=8080            # Server port
 MCP_API_KEY=<key>               # API key for authentication
 ```
 

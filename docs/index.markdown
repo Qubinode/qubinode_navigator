@@ -25,12 +25,12 @@ Qubinode Navigator is a next-generation infrastructure automation platform built
 ## 🚀 Key Features
 
 - **🔌 Plugin Architecture**: Extensible framework with OS, cloud provider, and deployment plugins
-- **🤖 AI-Powered Assistant**: CPU-based AI deployment guidance with interactive troubleshooting *(coming soon)*
+- **🤖 AI-Powered Assistant**: PydanticAI orchestrator with RAG-powered documentation search and intent-based deployment
 - **🖥️ Next-Gen OS Support**: Native RHEL 10, CentOS Stream 10, Rocky Linux, and Fedora support
 - **📦 Container-First**: Ansible Navigator execution with standardized environments
 - **🌐 Multi-Cloud Ready**: Equinix, Hetzner, AWS, and bare-metal deployments
 - **🔒 Enterprise Security**: HashiCorp Vault integration and progressive SSH security
-- **📊 Automated Updates**: Intelligent update detection and compatibility validation *(coming soon)*
+- **📊 Workflow Orchestration**: Apache Airflow DAGs for automated VM provisioning, service deployment, and infrastructure health checks
 - **🧪 Comprehensive Testing**: 84%+ test coverage with real deployment validation
 
 ______________________________________________________________________
@@ -39,41 +39,31 @@ ______________________________________________________________________
 
 ### Prerequisites
 
-- **Operating System**: RHEL 8/9/10, CentOS Stream 10, Rocky Linux, or Fedora
-- **Memory**: Minimum 4GB RAM (8GB+ recommended for AI features)
-- **Storage**: 500GB+ available space
+- **Operating System**: RHEL 9/10, CentOS Stream 10, Rocky Linux 9+, or Fedora 39+ (RHEL 8: legacy/compatibility only)
+- **Memory**: Minimum 8GB RAM (16GB+ recommended for AI features)
+- **Storage**: 50GB+ available space (100GB+ recommended)
 - **Container Runtime**: Podman or Docker
 - **Network**: Internet connectivity for package downloads
 
-### Modern Installation (Recommended)
+### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 
-# Run the modernized setup script with plugin framework
-./setup_modernized.sh
-```
+# Configure environment (set domain, AI model keys, etc.)
+cp .env.example .env
+# Edit .env with your settings (QUBINODE_DOMAIN, model API keys, etc.)
 
-### Plugin Framework CLI
+# Run pre-flight checks
+./scripts/preflight-check.sh --fix
 
-```bash
-# List available plugins
-python3 qubinode_cli.py list
+# Deploy full stack (recommended for most users)
+./deploy-qubinode-with-airflow.sh
 
-# Deploy with specific OS plugin
-python3 qubinode_cli.py deploy --plugin rhel10
-
-# Get plugin information
-python3 qubinode_cli.py info --plugin centos_stream10
-```
-
-### Legacy Installation
-
-```bash
-# Traditional setup script (compatibility mode)
-./setup.sh
+# OR: Deploy development version
+# sudo -E ./scripts/development/deploy-qubinode.sh
 ```
 
 ______________________________________________________________________
@@ -116,7 +106,7 @@ Qubinode Navigator follows a **modern, plugin-based architecture** with comprehe
 
 ### 🔌 **Plugin Architecture**
 
-- **OS Plugins**: RHEL 8/9/10, CentOS Stream 10, Rocky Linux, Fedora
+- **OS Plugins**: RHEL 9/10, CentOS Stream 10, Rocky Linux 9+, Fedora (RHEL 8: legacy only)
 - **Cloud Plugins**: Equinix, Hetzner, AWS integrations
 - **Environment Plugins**: Red Hat Demo, development, production configurations
 - **Service Plugins**: Vault integration, monitoring, logging
@@ -128,13 +118,13 @@ ______________________________________________________________________
 
 This site follows the [Diataxis](https://diataxis.fr/) framework for clear, well-organized documentation:
 
-| Section                          | Description                                                           |
-| :------------------------------- | :-------------------------------------------------------------------- |
-| [**Tutorials**](/tutorials/)     | Learning-oriented guides that take you through a process step by step |
-| [**How-To Guides**](/how-to/)    | Task-oriented recipes for accomplishing specific goals                |
-| [**Reference**](/reference/)     | Information-oriented technical descriptions and API documentation     |
-| [**Explanation**](/explanation/) | Understanding-oriented discussions that clarify concepts              |
-| [**ADRs**](/adrs/)               | Architecture Decision Records documenting key design choices          |
+| Section                                                                        | Description                                                           |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| [**Tutorials**](/tutorials/)                                                   | Learning-oriented guides that take you through a process step by step |
+| [**How-To Guides**](/how-to/)                                                  | Task-oriented recipes for accomplishing specific goals                |
+| [**Reference**](/reference/)                                                   | Information-oriented technical descriptions and API documentation     |
+| [**Explanation**](/explanation/)                                               | Understanding-oriented discussions that clarify concepts              |
+| [**ADRs**](https://github.com/Qubinode/qubinode_navigator/tree/main/docs/adrs) | Architecture Decision Records documenting key design choices          |
 
 ______________________________________________________________________
 

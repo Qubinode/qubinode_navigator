@@ -1,6 +1,6 @@
 # Qubinode Navigator - Quick Start Guide
 
-**Get from zero to running infrastructure in 15 minutes**
+**Get from zero to running infrastructure in 15-25 minutes**
 
 ## Prerequisites
 

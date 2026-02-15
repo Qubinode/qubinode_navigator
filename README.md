@@ -46,6 +46,8 @@ Qubinode Navigator is an AI-enhanced, container-first infrastructure automation 
 - **8GB+ RAM** (16GB+ recommended for AI features)
 - **50GB+ disk space** (100GB+ recommended)
 - Hardware virtualization enabled (VT-x/AMD-V)
+- **Network**: Internet access for container images and packages
+- **Repositories**: kcli-pipelines and openshift-agent-install (cloned automatically by deploy scripts)
 
 ## 🚀 Quick Start
 
@@ -102,6 +104,15 @@ See the **[Getting Started Guide](docs/GETTING_STARTED.md#running-as-non-root-us
 ```bash
 curl https://raw.githubusercontent.com/Qubinode/qubinode_navigator/main/setup.sh | bash
 ```
+
+### Services After Deployment
+
+| Deployment Mode | Airflow UI              | AI Assistant               | MCP Server |
+| --------------- | ----------------------- | -------------------------- | ---------- |
+| **Full Stack**  | http://YOUR_IP/ (Nginx) | http://YOUR_IP/ai/ (Nginx) | :8889      |
+| **Development** | http://YOUR_IP:8888     | http://YOUR_IP:8080        | :8889      |
+
+> **Note**: The full stack deployment (`deploy-qubinode-with-airflow.sh`) includes an Nginx reverse proxy on port 80. Development deployments expose services on their direct ports.
 
 ### Plugin Framework CLI
 
