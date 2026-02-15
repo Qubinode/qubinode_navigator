@@ -1,6 +1,9 @@
-______________________________________________________________________
-
-## title: Reference description: Information-oriented technical descriptions nav_order: 4 has_children: true
+---
+title: Reference
+description: Information-oriented technical descriptions
+nav_order: 4
+has_children: true
+---
 
 # Reference
 

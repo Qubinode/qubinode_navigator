@@ -1,6 +1,9 @@
-______________________________________________________________________
-
-## title: Explanation description: Understanding-oriented conceptual discussions nav_order: 5 has_children: true
+---
+title: Explanation
+description: Understanding-oriented conceptual discussions
+nav_order: 5
+has_children: true
+---
 
 # Explanation
 

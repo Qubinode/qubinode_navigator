@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Deploy To Production parent: How to nav_order: 1
+---
+title: Deploy To Production
+parent: How to
+nav_order: 1
+---
 
 # Deploy To Production
 
@@ -25,9 +27,9 @@ This guide is for taking a **tested Qubinode Navigator deployment** into a produ
 - Sufficient CPU, RAM, and disk as per the platform guides.
 - DNS / domain ready if exposing public endpoints.
 - Review these docs first:
-  - [Clean Install Guide](../CLEAN-INSTALL-GUIDE.md)
-  - [Unified Deployment Guide](../UNIFIED-DEPLOYMENT-GUIDE.md)
-  - [Deployment Integration Guide](../DEPLOYMENT_INTEGRATION_GUIDE.md)
+  - [Clean Install Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/CLEAN-INSTALL-GUIDE.md)
+  - [Unified Deployment Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/UNIFIED-DEPLOYMENT-GUIDE.md)
+  - [Deployment Integration Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/DEPLOYMENT_INTEGRATION_GUIDE.md)
 
 ## Step 1 – Prepare the host
 
@@ -38,10 +40,10 @@ This guide is for taking a **tested Qubinode Navigator deployment** into a produ
 
 ## Step 2 – Choose a deployment path
 
-Use the platform-specific guides under `../deployments/`:
+Use the platform-specific guides on GitHub:
 
-- **Hetzner**: [Deploying on Hetzner](../deployments/demo-hetzner-com.markdown)
-- **Red Hat Product Demo System**: [Deploying on Red Hat Product Demo System](../deployments/demo-redhat-com.markdown)
+- **Hetzner**: [Deploying on Hetzner](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/deployments/demo-hetzner-com.markdown)
+- **Red Hat Product Demo System**: [Deploying on Red Hat Product Demo System](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/deployments/demo-redhat-com.markdown)
 - **Other bare metal**: Use the appropriate deployment guide for your environment.
 
 These guides describe how to configure `notouch.env`, `/tmp/config.yml`, and other environment variables for non-interactive deployments.
@@ -67,9 +69,9 @@ cd qubinode_navigator
 If you want production-style workflow orchestration and chat-driven operations:
 
 - Read:
-  - [Airflow Integration Overview](../AIRFLOW-INTEGRATION.md)
-  - [DAG Deployment Workflows](../airflow-dag-deployment-workflows.md)
-  - [Airflow Community Ecosystem](../airflow-community-ecosystem.md)
+  - [Airflow Integration Overview](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/AIRFLOW-INTEGRATION.md)
+  - [DAG Deployment Workflows](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-dag-deployment-workflows.md)
+  - [Airflow Community Ecosystem](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-community-ecosystem.md)
 
 Then:
 
@@ -89,7 +91,7 @@ Ensure `podman-compose` is installed and your MCP configuration matches the MCP 
 
 Use the existing production verification docs to confirm your deployment:
 
-- [Production Deployment Test Results](../PRODUCTION_DEPLOYMENT_TEST_RESULTS.md)
+- [Production Deployment Test Results](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/PRODUCTION_DEPLOYMENT_TEST_RESULTS.md)
 
 At minimum, verify:
 

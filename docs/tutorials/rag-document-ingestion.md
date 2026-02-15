@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: RAG Document Ingestion parent: Tutorials nav_order: 4
+---
+title: RAG Document Ingestion
+parent: Tutorials
+nav_order: 4
+---
 
 # RAG Document Ingestion Tutorial
 

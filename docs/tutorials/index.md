@@ -1,6 +1,9 @@
-______________________________________________________________________
-
-## title: Tutorials description: Learning-oriented guides for newcomers nav_order: 2 has_children: true
+---
+title: Tutorials
+description: Learning-oriented guides for newcomers
+nav_order: 2
+has_children: true
+---
 
 # Tutorials
 

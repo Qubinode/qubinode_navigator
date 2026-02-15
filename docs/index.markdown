@@ -1,6 +1,10 @@
-______________________________________________________________________
-
-## layout: default title: Qubinode Navigator nav_order: 1 description: "Modern AI-enhanced infrastructure automation platform with plugin architecture" permalink: /
+---
+layout: default
+title: Qubinode Navigator
+nav_order: 1
+description: Modern AI-enhanced infrastructure automation platform with plugin architecture
+permalink: /
+---
 
 # Qubinode Navigator
 
