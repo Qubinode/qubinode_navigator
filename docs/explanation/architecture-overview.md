@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Architecture Overview parent: Explanation nav_order: 1
+---
+title: Architecture Overview
+parent: Explanation
+nav_order: 1
+---
 
 # Architecture Overview
 

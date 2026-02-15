@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Contributing to Docs parent: How to nav_order: 4
+---
+title: Contributing to Docs
+parent: How to
+nav_order: 4
+---
 
 # Contributing to Qubinode Navigator Documentation
 

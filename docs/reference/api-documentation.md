@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: API Documentation parent: Reference nav_order: 1
+---
+title: API Documentation
+parent: Reference
+nav_order: 1
+---
 
 # API Documentation
 

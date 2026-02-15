@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Deploy To Production parent: How to nav_order: 1
+---
+title: Deploy To Production
+parent: How to
+nav_order: 1
+---
 
 # Deploy To Production
 

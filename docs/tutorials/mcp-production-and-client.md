@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: MCP Production & Client Setup parent: Tutorials nav_order: 3
+---
+title: MCP Production & Client Setup
+parent: Tutorials
+nav_order: 3
+---
 
 # MCP Production Deployment & Client Setup
 

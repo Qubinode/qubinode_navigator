@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Airflow Getting Started parent: Tutorials nav_order: 2
+---
+title: Airflow Getting Started
+parent: Tutorials
+nav_order: 2
+---
 
 # Getting Started with Apache Airflow for Qubinode Navigator
 

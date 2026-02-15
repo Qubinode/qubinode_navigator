@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Getting Started parent: Tutorials nav_order: 1
+---
+title: Getting Started
+parent: Tutorials
+nav_order: 1
+---
 
 # Getting Started
 
