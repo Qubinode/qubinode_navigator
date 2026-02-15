@@ -11,12 +11,14 @@
 Traditional Airflow DAG execution has a critical blind spot: **shadow errors**.
 
 **Shadow Errors** are failures that:
+
 - Don't cause the DAG to fail (task succeeds, but output is wrong)
 - Happen in external systems (VM not created, certificate not issued, DNS not updated)
 - Pass validation but break downstream dependencies
 - Are only discovered when dependent DAGs fail or users manually verify
 
 **Example Scenario:**
+
 ```
 1. DAG "freeipa_deployment" runs and marks SUCCESS ✅
 2. User expects FreeIPA VM at freeipa.example.com
@@ -28,6 +30,7 @@ Traditional Airflow DAG execution has a critical blind spot: **shadow errors**.
 ### Current State (ADR-0046)
 
 ADR-0046 established DAG validation standards:
+
 - Syntax validation (Python AST parsing)
 - Import validation (Airflow DagBag)
 - Lint checks (ADR-0045 standards)
@@ -100,6 +103,7 @@ confidence = compute_confidence(docs, prerequisites)
 ```
 
 **Output**: `DeveloperTaskResult` with:
+
 - `prerequisites_met: bool` - Can the DAG run?
 - `confidence: float` - How confident are we it will succeed?
 - `validation_errors: List[str]` - Specific issues to fix
@@ -122,7 +126,7 @@ class ShadowError:
 async def detect_vm_shadow_errors(vm_name: str) -> List[ShadowError]:
     """Check if VM actually exists and is running."""
     errors = []
-    
+
     # Check 1: VM exists in virsh
     result = run_command(f"virsh list --all | grep {vm_name}")
     if result.returncode != 0:
@@ -136,7 +140,7 @@ async def detect_vm_shadow_errors(vm_name: str) -> List[ShadowError]:
                 f"kcli start vm {vm_name}"
             ]
         ))
-    
+
     # Check 2: VM is running (not just created)
     result = run_command(f"virsh list --state-running | grep {vm_name}")
     if result.returncode != 0:
@@ -147,7 +151,7 @@ async def detect_vm_shadow_errors(vm_name: str) -> List[ShadowError]:
             evidence=f"VM {vm_name} exists but is not running",
             fix_commands=[f"virsh start {vm_name}"]
         ))
-    
+
     # Check 3: VM has IP address
     result = run_command(f"kcli info vm {vm_name} | grep 'ip:'")
     if "N/A" in result.stdout or not result.stdout:
@@ -161,7 +165,7 @@ async def detect_vm_shadow_errors(vm_name: str) -> List[ShadowError]:
                 f"kcli restart vm {vm_name}"
             ]
         ))
-    
+
     return errors
 ```
 
@@ -185,7 +189,7 @@ emit_lineage_event(
         "dataQuality": {
             "assertions": [
                 {"assertion": "vm_exists", "success": True},
-                {"assertion": "vm_running", "success": False, 
+                {"assertion": "vm_running", "success": False,
                  "details": "VM created but failed to start"},
                 {"assertion": "dns_resolves", "success": False,
                  "details": "dig +short freeipa.example.com returned empty"}
@@ -220,7 +224,7 @@ class ModelRetry(Exception):
 async def validate_outcome(result: DAGResult) -> ObserverReport:
     """Validate DAG outcome and raise ModelRetry if shadow errors found."""
     shadow_errors = await detect_all_shadow_errors(result)
-    
+
     if shadow_errors and retry_count < max_retries:
         # Attempt automatic correction
         fix_commands = [err.fix_commands for err in shadow_errors]
@@ -230,7 +234,7 @@ async def validate_outcome(result: DAGResult) -> ObserverReport:
             fix_commands=flatten(fix_commands),
             retry_count=retry_count + 1
         )
-    
+
     return ObserverReport(
         execution_status="success_with_errors" if shadow_errors else "success",
         shadow_errors=shadow_errors,
@@ -299,6 +303,7 @@ async def validate_outcome(result: DAGResult) -> ObserverReport:
 The Smart Pipeline is exposed via FastAPI endpoints:
 
 ### 1. Intent-Based Deployment
+
 ```bash
 POST /orchestrator/intent
 {
@@ -310,6 +315,7 @@ POST /orchestrator/intent
 ```
 
 ### 2. DAG Pre-Flight Validation
+
 ```bash
 POST /orchestrator/validate
 {
@@ -319,75 +325,77 @@ POST /orchestrator/validate
 ```
 
 ### 3. Shadow Error Detection
+
 ```bash
 GET /orchestrator/shadow-errors?dag_id=freeipa_deployment&run_id=abc123
 ```
 
 ### 4. Observer Agent Monitoring
+
 ```bash
 POST /orchestrator/observe?dag_id=freeipa_deployment
 ```
 
 ## Implementation Files
 
-| File | Purpose |
-|------|---------|
-| `ai-assistant/src/smart_pipeline.py` | Core Smart Pipeline orchestration |
-| `ai-assistant/src/dag_validator.py` | Pre-flight DAG validation |
-| `ai-assistant/src/agents/developer.py` | Developer Agent implementation |
-| `ai-assistant/src/agents/observer.py` | Observer Agent implementation |
-| `ai-assistant/src/feedback_loop.py` | Self-correction and retry logic |
-| `ai-assistant/src/project_registry.py` | Project-aware DAG creation |
+| File                                   | Purpose                           |
+| -------------------------------------- | --------------------------------- |
+| `ai-assistant/src/smart_pipeline.py`   | Core Smart Pipeline orchestration |
+| `ai-assistant/src/dag_validator.py`    | Pre-flight DAG validation         |
+| `ai-assistant/src/agents/developer.py` | Developer Agent implementation    |
+| `ai-assistant/src/agents/observer.py`  | Observer Agent implementation     |
+| `ai-assistant/src/feedback_loop.py`    | Self-correction and retry logic   |
+| `ai-assistant/src/project_registry.py` | Project-aware DAG creation        |
 
 ## Consequences
 
 ### Positive
 
 1. **No More Silent Failures**: Shadow errors detected immediately after DAG completion
-2. **Higher Confidence**: Pre-flight validation prevents failed runs
-3. **Self-Healing**: ModelRetry pattern enables automatic correction
-4. **Better UX**: Users know actual infrastructure state, not just DAG status
-5. **Traceability**: OpenLineage DataQuality facets provide audit trail
-6. **Cost Savings**: Prevents wasted time debugging downstream failures caused by upstream shadow errors
+1. **Higher Confidence**: Pre-flight validation prevents failed runs
+1. **Self-Healing**: ModelRetry pattern enables automatic correction
+1. **Better UX**: Users know actual infrastructure state, not just DAG status
+1. **Traceability**: OpenLineage DataQuality facets provide audit trail
+1. **Cost Savings**: Prevents wasted time debugging downstream failures caused by upstream shadow errors
 
 ### Negative
 
 1. **Increased Complexity**: More validation code to maintain
-2. **Execution Time**: Pre-flight and post-flight validation adds overhead (typically 10-30 seconds)
-3. **False Positives**: Shadow error detection may flag issues that aren't actually problems
-4. **API Dependencies**: Requires Airflow API, Marquez API, and host SSH access
+1. **Execution Time**: Pre-flight and post-flight validation adds overhead (typically 10-30 seconds)
+1. **False Positives**: Shadow error detection may flag issues that aren't actually problems
+1. **API Dependencies**: Requires Airflow API, Marquez API, and host SSH access
 
 ### Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| Validation overhead too high | Make validation optional with `skip_validation=true` flag |
-| False positive shadow errors | Tune detection thresholds, allow user overrides |
+| Risk                          | Mitigation                                                       |
+| ----------------------------- | ---------------------------------------------------------------- |
+| Validation overhead too high  | Make validation optional with `skip_validation=true` flag        |
+| False positive shadow errors  | Tune detection thresholds, allow user overrides                  |
 | Self-correction breaks things | Limit to safe operations, require approval for destructive fixes |
-| API availability issues | Graceful degradation: skip validation if APIs unavailable |
+| API availability issues       | Graceful degradation: skip validation if APIs unavailable        |
 
 ## Validation Scope
 
 The Smart Pipeline validates common infrastructure patterns:
 
-| Infrastructure Type | Validation Checks |
-|---------------------|-------------------|
-| **VM Deployment** | VM exists, VM running, IP assigned, SSH accessible |
-| **DNS Records** | Record exists, resolves correctly, matches expected IP |
-| **Certificates** | Cert file exists, valid dates, correct CN/SAN, trusted CA |
-| **FreeIPA** | Server running, admin password works, realm configured |
-| **Keycloak** | Service running, admin console accessible, realm exists |
-| **Step-CA** | CA running, root cert valid, provisioner configured |
+| Infrastructure Type | Validation Checks                                         |
+| ------------------- | --------------------------------------------------------- |
+| **VM Deployment**   | VM exists, VM running, IP assigned, SSH accessible        |
+| **DNS Records**     | Record exists, resolves correctly, matches expected IP    |
+| **Certificates**    | Cert file exists, valid dates, correct CN/SAN, trusted CA |
+| **FreeIPA**         | Server running, admin password works, realm configured    |
+| **Keycloak**        | Service running, admin console accessible, realm exists   |
+| **Step-CA**         | CA running, root cert valid, provisioner configured       |
 
 ## Performance Characteristics
 
-| Operation | Time | Notes |
-|-----------|------|-------|
-| Pre-flight validation | 5-15s | Parallel checks, can be cached |
-| DAG execution | Varies | No overhead (existing Airflow) |
-| Shadow error detection | 5-20s | Depends on number of checks |
-| Self-correction | 10-60s | Depends on fix complexity |
-| **Total overhead** | **20-95s** | Acceptable for infrastructure tasks |
+| Operation              | Time       | Notes                               |
+| ---------------------- | ---------- | ----------------------------------- |
+| Pre-flight validation  | 5-15s      | Parallel checks, can be cached      |
+| DAG execution          | Varies     | No overhead (existing Airflow)      |
+| Shadow error detection | 5-20s      | Depends on number of checks         |
+| Self-correction        | 10-60s     | Depends on fix complexity           |
+| **Total overhead**     | **20-95s** | Acceptable for infrastructure tasks |
 
 ## Testing Strategy
 
@@ -399,12 +407,12 @@ Smart Pipeline is validated via E2E testing (ADR-0067):
   run: |
     curl -X POST http://localhost:8080/orchestrator/intent \
       -d '{"intent": "Deploy FreeIPA", "auto_execute": true}'
-    
+
 - name: Validate Shadow Error Detection
   run: |
     # Inject failure: stop VM after creation
     virsh destroy freeipa
-    
+
     # Observer should detect shadow error
     response=$(curl http://localhost:8080/orchestrator/observe?dag_id=freeipa_deployment)
     if ! echo "$response" | grep "vm_not_running"; then
@@ -427,8 +435,8 @@ Smart Pipeline is validated via E2E testing (ADR-0067):
 - PydanticAI ModelRetry Pattern: https://ai.pydantic.dev/validation/#model-retry
 - Marquez API: https://marquezproject.github.io/marquez/openapi.html
 
----
+______________________________________________________________________
 
-*Status: Implemented*  
-*Last Updated: 2025-12-08*  
+*Status: Implemented*
+*Last Updated: 2025-12-08*
 *Implementation: `ai-assistant/src/smart_pipeline.py`, `ai-assistant/src/agents/observer.py`*

@@ -11,22 +11,23 @@
 The original AI Assistant architecture (ADR-0027) faced several limitations:
 
 1. **Single-Model Constraints**: Local Granite models (8B parameters) lack the capacity for complex architectural decisions and planning
-2. **No Multi-Step Orchestration**: Tasks requiring multiple phases (planning → validation → execution → monitoring) were difficult to coordinate
-3. **Limited Provider Support**: Tied to llama.cpp and local models, preventing use of cloud LLMs with better reasoning capabilities
-4. **No Type-Safe Responses**: Free-form text responses made it difficult to validate and process agent outputs programmatically
+1. **No Multi-Step Orchestration**: Tasks requiring multiple phases (planning → validation → execution → monitoring) were difficult to coordinate
+1. **Limited Provider Support**: Tied to llama.cpp and local models, preventing use of cloud LLMs with better reasoning capabilities
+1. **No Type-Safe Responses**: Free-form text responses made it difficult to validate and process agent outputs programmatically
 
 ### Why PydanticAI?
 
 After evaluating multiple agent frameworks (LangChain, LlamaIndex, AutoGen), PydanticAI emerged as the best fit:
 
-| Framework | Pros | Cons | Decision |
-|-----------|------|------|----------|
-| **PydanticAI** | Type-safe, multi-provider, minimal dependencies, excellent validation | New framework, smaller community | ✅ **SELECTED** |
-| LangChain | Mature, extensive ecosystem | Heavy dependencies, complex abstractions | ❌ Too complex |
-| LlamaIndex | Excellent RAG support | Focused on retrieval, not orchestration | ❌ Limited orchestration |
-| AutoGen | Multi-agent conversations | Complex setup, resource-intensive | ❌ Overkill for our needs |
+| Framework      | Pros                                                                  | Cons                                     | Decision                  |
+| -------------- | --------------------------------------------------------------------- | ---------------------------------------- | ------------------------- |
+| **PydanticAI** | Type-safe, multi-provider, minimal dependencies, excellent validation | New framework, smaller community         | ✅ **SELECTED**           |
+| LangChain      | Mature, extensive ecosystem                                           | Heavy dependencies, complex abstractions | ❌ Too complex            |
+| LlamaIndex     | Excellent RAG support                                                 | Focused on retrieval, not orchestration  | ❌ Limited orchestration  |
+| AutoGen        | Multi-agent conversations                                             | Complex setup, resource-intensive        | ❌ Overkill for our needs |
 
 **Key PydanticAI Advantages:**
+
 - **Type-Safe Agent Responses**: Uses Pydantic models for structured, validated outputs
 - **Multi-Provider Support**: Single API for Google, OpenAI, Anthropic, OpenRouter, Ollama, Groq
 - **Tool Integration**: Native support for function calling and MCP (Model Context Protocol)
@@ -75,6 +76,7 @@ Implement a three-agent system using PydanticAI:
 ### 2. Agent Responsibilities
 
 #### Manager Agent
+
 - **Role**: Session orchestration and planning
 - **Model**: `MANAGER_MODEL` (default: google-gla:gemini-2.0-flash)
 - **Output**: `SessionPlan` (Pydantic model)
@@ -85,6 +87,7 @@ Implement a three-agent system using PydanticAI:
   - Delegate tasks to Developer Agent
 
 #### Developer Agent
+
 - **Role**: Task orchestration (NOT code generation)
 - **Model**: `DEVELOPER_MODEL` (default: google-gla:gemini-2.0-flash)
 - **Output**: `DeveloperTaskResult` (Pydantic model)
@@ -96,10 +99,12 @@ Implement a three-agent system using PydanticAI:
   - Delegate code generation to Aider or return `FallbackCodePrompt`
 
 **IMPORTANT**: The Developer Agent does NOT write code directly. It orchestrates:
+
 - **Option 1**: Aider + LiteLLM (when API keys available)
 - **Option 2**: Return `FallbackCodePrompt` to calling LLM
 
 #### Observer Agent
+
 - **Role**: DAG execution monitoring and feedback
 - **Model**: `PYDANTICAI_MODEL` (default: google-gla:gemini-2.0-flash)
 - **Output**: `ObserverReport` (Pydantic model)
@@ -217,27 +222,27 @@ curl -X POST http://localhost:8080/orchestrator/intent \
 ### Positive
 
 1. **Multi-Model Flexibility**: Can use best model for each task (fast models for orchestration, capable models for complex reasoning)
-2. **Type Safety**: Pydantic validation ensures structured, predictable agent responses
-3. **Provider Agnostic**: Easy to switch between Google, OpenAI, Anthropic, local models
-4. **Separation of Concerns**: Clear boundaries between planning, orchestration, and execution
-5. **Observable**: All agent interactions logged and traceable
-6. **Cost Optimization**: Use cheap/fast models (Gemini Flash) for most tasks, reserve expensive models (GPT-4o, Claude Sonnet) for complex decisions
+1. **Type Safety**: Pydantic validation ensures structured, predictable agent responses
+1. **Provider Agnostic**: Easy to switch between Google, OpenAI, Anthropic, local models
+1. **Separation of Concerns**: Clear boundaries between planning, orchestration, and execution
+1. **Observable**: All agent interactions logged and traceable
+1. **Cost Optimization**: Use cheap/fast models (Gemini Flash) for most tasks, reserve expensive models (GPT-4o, Claude Sonnet) for complex decisions
 
 ### Negative
 
 1. **Cloud Dependency**: Requires API keys for full functionality (mitigated by Ollama fallback)
-2. **New Framework**: PydanticAI is newer, less community resources than LangChain
-3. **Model Costs**: Cloud LLM usage incurs costs (though much lower than GPT-4 for all tasks)
-4. **Complexity**: Three-agent system is more complex than single-agent approach
+1. **New Framework**: PydanticAI is newer, less community resources than LangChain
+1. **Model Costs**: Cloud LLM usage incurs costs (though much lower than GPT-4 for all tasks)
+1. **Complexity**: Three-agent system is more complex than single-agent approach
 
 ### Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| API outages | Fallback to Ollama local models |
-| Cost overruns | Default to Gemini Flash (cheapest/fastest) |
-| Agent coordination failures | Comprehensive error handling and retry logic |
-| Type validation errors | PydanticAI's built-in validation and retry pattern |
+| Risk                        | Mitigation                                         |
+| --------------------------- | -------------------------------------------------- |
+| API outages                 | Fallback to Ollama local models                    |
+| Cost overruns               | Default to Gemini Flash (cheapest/fastest)         |
+| Agent coordination failures | Comprehensive error handling and retry logic       |
+| Type validation errors      | PydanticAI's built-in validation and retry pattern |
 
 ## Implementation Status
 
@@ -266,8 +271,8 @@ curl -X POST http://localhost:8080/orchestrator/intent \
 - Model Context Protocol (MCP): https://modelcontextprotocol.io/
 - Aider + LiteLLM: https://aider.chat/docs/llms.html
 
----
+______________________________________________________________________
 
-*Status: Implemented*  
-*Last Updated: 2025-12-05*  
+*Status: Implemented*
+*Last Updated: 2025-12-05*
 *Implementation: `ai-assistant/src/agents/`*
