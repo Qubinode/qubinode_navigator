@@ -26,3 +26,5 @@ This section contains how-to documentation following the Diataxis framework.
 - [Ingest New Docs into RAG](./rag-ingest-new-docs.md) – Quick recipe for adding new documents to the RAG system
 - [Contributing to Docs](./contribute.md) – How to contribute to this documentation site
 - [Developer's Guide](./developers-guide.md) – Setting up your development environment and contributing code
+- [Clean Installation Guide](./clean-install-guide.md) – Step-by-step installation on a fresh RHEL-based system
+- [Unified Deployment Guide](./unified-deployment-guide.md) – Single-script deployment with nginx reverse proxy

@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: Airflow Integration
+parent: Explanation
+nav_order: 2
+---
 
 # Apache Airflow Integration for Qubinode Navigator
 

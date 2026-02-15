@@ -439,12 +439,12 @@ curl -X POST http://localhost:8080/orchestrator/intent \
 
 ## Documentation Index
 
-| Document                                           | Description                   |
-| -------------------------------------------------- | ----------------------------- |
-| [CLEAN-INSTALL-GUIDE.md](./CLEAN-INSTALL-GUIDE.md) | Fresh OS installation         |
-| [AIRFLOW-INTEGRATION.md](./AIRFLOW-INTEGRATION.md) | Airflow setup details         |
-| [MCP-SERVER-DESIGN.md](./MCP-SERVER-DESIGN.md)     | MCP server architecture       |
-| [docs/adrs/](./adrs/)                              | Architecture Decision Records |
+| Document                                                    | Description                   |
+| ----------------------------------------------------------- | ----------------------------- |
+| [Clean Install Guide](./how-to/clean-install-guide.md)      | Fresh OS installation         |
+| [Airflow Integration](./explanation/airflow-integration.md) | Airflow setup details         |
+| [MCP-SERVER-DESIGN.md](./MCP-SERVER-DESIGN.md)              | MCP server architecture       |
+| [docs/adrs/](./adrs/)                                       | Architecture Decision Records |
 
 ## Getting Help
 

@@ -23,3 +23,5 @@ This section contains explanation documentation following the Diataxis framework
 ## Contents
 
 - [Architecture Overview](./architecture-overview.md) – Core concepts, design decisions, and architectural trade-offs
+- [Airflow Integration](./airflow-integration.md) – Apache Airflow integration overview for Qubinode Navigator
+- [AI Assistant Deployment Strategy](./ai-assistant-deployment-strategy.md) – Container deployment strategy with environment-based image selection

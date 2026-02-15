@@ -8,8 +8,8 @@ ______________________________________________________________________
 >
 > These pipelines were originally used for CI/CD and VM orchestration via OneDev. New deployments should prefer the **Apache Airflow** integration and DAG workflows.
 >
-> - Airflow overview: [AIRFLOW-INTEGRATION.md](../AIRFLOW-INTEGRATION.md)
-> - DAG workflows: [airflow-dag-deployment-workflows.md](../airflow-dag-deployment-workflows.md)
+> - Airflow overview: [AIRFLOW-INTEGRATION.md](../explanation/airflow-integration.md)
+> - DAG workflows: [airflow-dag-deployment-workflows.md](../reference/airflow-dag-deployment-workflows.md)
 
 ## Create OneDev Account on physical server
 

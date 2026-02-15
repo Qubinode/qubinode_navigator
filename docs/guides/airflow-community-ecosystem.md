@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: Airflow Community Ecosystem
+parent: Guides
+nav_order: 4
+---
 
 # Airflow Community Ecosystem & RAG Workflow Integration
 

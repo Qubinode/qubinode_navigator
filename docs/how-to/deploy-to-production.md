@@ -27,9 +27,9 @@ This guide is for taking a **tested Qubinode Navigator deployment** into a produ
 - Sufficient CPU, RAM, and disk as per the platform guides.
 - DNS / domain ready if exposing public endpoints.
 - Review these docs first:
-  - [Clean Install Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/CLEAN-INSTALL-GUIDE.md)
-  - [Unified Deployment Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/UNIFIED-DEPLOYMENT-GUIDE.md)
-  - [Deployment Integration Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/DEPLOYMENT_INTEGRATION_GUIDE.md)
+  - [Clean Install Guide](./clean-install-guide.md)
+  - [Unified Deployment Guide](./unified-deployment-guide.md)
+  - [Deployment Integration Guide](../reference/deployment-integration-guide.md)
 
 ## Step 1 – Prepare the host
 
@@ -69,9 +69,9 @@ cd qubinode_navigator
 If you want production-style workflow orchestration and chat-driven operations:
 
 - Read:
-  - [Airflow Integration Overview](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/AIRFLOW-INTEGRATION.md)
-  - [DAG Deployment Workflows](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-dag-deployment-workflows.md)
-  - [Airflow Community Ecosystem](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-community-ecosystem.md)
+  - [Airflow Integration Overview](../explanation/airflow-integration.md)
+  - [DAG Deployment Workflows](../reference/airflow-dag-deployment-workflows.md)
+  - [Airflow Community Ecosystem](../guides/airflow-community-ecosystem.md)
 
 Then:
 

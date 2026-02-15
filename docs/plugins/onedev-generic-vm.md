@@ -8,8 +8,8 @@ ______________________________________________________________________
 >
 > This guide describes historical OneDev-based VM deployment pipelines. For new environments, use Apache Airflow DAGs and the AI Assistant to orchestrate deployments.
 >
-> - Airflow overview: [AIRFLOW-INTEGRATION.md](../AIRFLOW-INTEGRATION.md)
-> - DAG workflows: [airflow-dag-deployment-workflows.md](../airflow-dag-deployment-workflows.md)
+> - Airflow overview: [AIRFLOW-INTEGRATION.md](../explanation/airflow-integration.md)
+> - DAG workflows: [airflow-dag-deployment-workflows.md](../reference/airflow-dag-deployment-workflows.md)
 
 ## Requirements
 

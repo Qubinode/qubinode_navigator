@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: Clean Installation Guide
+parent: How to
+nav_order: 6
+---
 
 # Qubinode Navigator - Clean Installation Guide
 

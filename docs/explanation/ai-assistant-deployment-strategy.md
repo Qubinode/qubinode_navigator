@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: AI Assistant Deployment Strategy
+parent: Explanation
+nav_order: 3
+---
 
 # AI Assistant Container Deployment Strategy
 

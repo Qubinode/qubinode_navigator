@@ -31,8 +31,8 @@ Before you begin, you should have:
   - [Getting Started with Apache Airflow for Qubinode Navigator](./airflow-getting-started.md)
 - Access to the **Airflow UI** (via nginx, as configured in `deploy-qubinode-with-airflow.sh`).
 - The RAG integration enabled and the AI Assistant running (see:
-  - [Airflow ↔ RAG Bidirectional Learning](../airflow-rag-bidirectional-learning.md)
-  - [Airflow Community Ecosystem](../airflow-community-ecosystem.md)
+  - [Airflow ↔ RAG Bidirectional Learning](../guides/airflow-rag-bidirectional-learning.md)
+  - [Airflow Community Ecosystem](../guides/airflow-community-ecosystem.md)
 
 ______________________________________________________________________
 
@@ -59,7 +59,7 @@ sudo chown $(whoami) /opt/documents/incoming
 cp -r ~/my-docs/*.md /opt/documents/incoming/
 ```
 
-The example `rag_document_ingestion` DAG in `airflow-community-ecosystem.md` assumes a directory like `/opt/documents/incoming`.
+The example `rag_document_ingestion` DAG in the [Airflow Community Ecosystem](../guides/airflow-community-ecosystem.md) guide assumes a directory like `/opt/documents/incoming`.
 
 ______________________________________________________________________
 
@@ -67,7 +67,7 @@ ______________________________________________________________________
 
 In the repository, the RAG ingestion DAG is described in:
 
-- [Airflow Community Ecosystem](../airflow-community-ecosystem.md) – section **"RAG Workflow Integration"** and the `rag_document_ingestion` example.
+- [Airflow Community Ecosystem](../guides/airflow-community-ecosystem.md) – section **"RAG Workflow Integration"** and the `rag_document_ingestion` example.
 
 A simplified version of the DAG flow is:
 
@@ -131,12 +131,12 @@ ______________________________________________________________________
 You can keep RAG in sync by:
 
 - Scheduling the `rag_document_ingestion` DAG to run periodically.
-- Using a separate DAG for incremental updates (see examples in `airflow-community-ecosystem.md`).
+- Using a separate DAG for incremental updates (see examples in the [Airflow Community Ecosystem](../guides/airflow-community-ecosystem.md) guide).
 
 For more advanced RAG workflows (incremental updates, quality monitoring, etc.), see:
 
-- [Airflow Community Ecosystem](../airflow-community-ecosystem.md)
-- [Airflow ↔ RAG Bidirectional Learning](../airflow-rag-bidirectional-learning.md)
+- [Airflow Community Ecosystem](../guides/airflow-community-ecosystem.md)
+- [Airflow ↔ RAG Bidirectional Learning](../guides/airflow-rag-bidirectional-learning.md)
 
 ______________________________________________________________________
 
