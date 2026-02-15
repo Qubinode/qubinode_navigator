@@ -57,10 +57,14 @@ You can proceed with deployment.
 
 ## Step 3: Deploy the Full Stack
 
-For a full deployment with Airflow orchestration and the AI Assistant:
+Deploy with Airflow orchestration, AI Assistant, and all supporting services:
 
 ```bash
-sudo -E ./scripts/development/deploy-qubinode.sh
+# Full stack (recommended for most users)
+./deploy-qubinode-with-airflow.sh
+
+# OR: Development version (for contributors)
+# sudo -E ./scripts/development/deploy-qubinode.sh
 ```
 
 This deploys:

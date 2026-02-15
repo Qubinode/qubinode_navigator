@@ -41,35 +41,21 @@ ______________________________________________________________________
 - **Container Runtime**: Podman or Docker
 - **Network**: Internet connectivity for package downloads
 
-### Modern Installation (Recommended)
+### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 
-# Run the modernized setup script with plugin framework
-./scripts/development/setup_modernized.sh
-```
+# Run pre-flight checks
+./scripts/preflight-check.sh --fix
 
-### Plugin Framework CLI
+# Deploy full stack (recommended for most users)
+./deploy-qubinode-with-airflow.sh
 
-```bash
-# List available plugins
-python3 qubinode_cli.py list
-
-# Deploy with specific OS plugin
-python3 qubinode_cli.py deploy --plugin rhel10
-
-# Get plugin information
-python3 qubinode_cli.py info --plugin centos_stream10
-```
-
-### Legacy Installation
-
-```bash
-# Traditional setup script (compatibility mode)
-./scripts/development/setup.sh
+# OR: Deploy development version
+# sudo -E ./scripts/development/deploy-qubinode.sh
 ```
 
 ______________________________________________________________________
