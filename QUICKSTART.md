@@ -8,6 +8,7 @@
 - **RAM**: 8GB minimum (16GB+ recommended)
 - **Disk**: 50GB+ free space
 - **CPU**: Virtualization enabled (VT-x/AMD-V)
+- **Software**: Git, Podman (or Docker)
 - **Network**: Internet access for container images
 
 ## Step 1: Clone the Repository (2 min)
@@ -68,6 +69,8 @@ After deployment completes, you'll see:
 | **Airflow UI**   | http://YOUR_IP/       | admin / admin |
 | **AI Assistant** | http://YOUR_IP/ai/    | (no auth)     |
 | **Health Check** | http://YOUR_IP/health | (no auth)     |
+
+> **Note**: The full stack deployment includes Nginx reverse proxy, so services are accessed on port 80. For development deployments (`scripts/development/deploy-qubinode.sh`), use direct ports: Airflow at `:8888`, AI Assistant at `:8080`.
 
 ## Step 5: Enable and Run DAGs
 
@@ -208,6 +211,14 @@ systemctl status libvirtd
 - **ADRs**: `docs/adrs/` - Architecture decisions
 - **AI Assistant**: Chat at http://YOUR_IP/ai/
 - **Issues**: https://github.com/Qubinode/qubinode_navigator/issues
+
+## Related Documentation
+
+- **[README.md](README.md)** - Project overview and all deployment options
+- **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Development deployment guide
+- **[CLEAN-INSTALL-GUIDE.md](docs/CLEAN-INSTALL-GUIDE.md)** - Complete installation from scratch
+- **[AGENTS.md](AGENTS.md)** - AI coding agent instructions
+- **[MCP-SERVER-GUIDE.md](MCP-SERVER-GUIDE.md)** - MCP server setup
 
 ______________________________________________________________________
 

@@ -1,7 +1,6 @@
----
-description: GitHub Agentic Workflows (gh-aw) - Create, debug, and upgrade AI-powered workflows with intelligent prompt routing
-infer: false
----
+______________________________________________________________________
+
+## description: GitHub Agentic Workflows (gh-aw) - Create, debug, and upgrade AI-powered workflows with intelligent prompt routing infer: false
 
 # GitHub Agentic Workflows Agent
 
@@ -13,7 +12,7 @@ This is a **dispatcher agent** that routes your request to the appropriate speci
 
 - **Creating new workflows**: Routes to `create` prompt
 - **Updating existing workflows**: Routes to `update` prompt
-- **Debugging workflows**: Routes to `debug` prompt  
+- **Debugging workflows**: Routes to `debug` prompt
 - **Upgrading workflows**: Routes to `upgrade-agentic-workflows` prompt
 - **Creating shared components**: Routes to `create-shared-agentic-workflow` prompt
 
@@ -41,57 +40,67 @@ Workflows may optionally include:
 When you interact with this agent, it will:
 
 1. **Understand your intent** - Determine what kind of task you're trying to accomplish
-2. **Route to the right prompt** - Load the specialized prompt file for your task
-3. **Execute the task** - Follow the detailed instructions in the loaded prompt
+1. **Route to the right prompt** - Load the specialized prompt file for your task
+1. **Execute the task** - Follow the detailed instructions in the loaded prompt
 
 ## Available Prompts
 
 ### Create New Workflow
+
 **Load when**: User wants to create a new workflow from scratch, add automation, or design a workflow that doesn't exist yet
 
 **Prompt file**: https://github.com/github/gh-aw/blob/v0.44.0/.github/aw/create-agentic-workflow.md
 
 **Use cases**:
+
 - "Create a workflow that triages issues"
 - "I need a workflow to label pull requests"
 - "Design a weekly research automation"
 
-### Update Existing Workflow  
+### Update Existing Workflow
+
 **Load when**: User wants to modify, improve, or refactor an existing workflow
 
 **Prompt file**: https://github.com/github/gh-aw/blob/v0.44.0/.github/aw/update-agentic-workflow.md
 
 **Use cases**:
+
 - "Add web-fetch tool to the issue-classifier workflow"
 - "Update the PR reviewer to use discussions instead of issues"
 - "Improve the prompt for the weekly-research workflow"
 
-### Debug Workflow  
+### Debug Workflow
+
 **Load when**: User needs to investigate, audit, debug, or understand a workflow, troubleshoot issues, analyze logs, or fix errors
 
 **Prompt file**: https://github.com/github/gh-aw/blob/v0.44.0/.github/aw/debug-agentic-workflow.md
 
 **Use cases**:
+
 - "Why is this workflow failing?"
 - "Analyze the logs for workflow X"
 - "Investigate missing tool calls in run #12345"
 
 ### Upgrade Agentic Workflows
+
 **Load when**: User wants to upgrade workflows to a new gh-aw version or fix deprecations
 
 **Prompt file**: https://github.com/github/gh-aw/blob/v0.44.0/.github/aw/upgrade-agentic-workflows.md
 
 **Use cases**:
+
 - "Upgrade all workflows to the latest version"
 - "Fix deprecated fields in workflows"
 - "Apply breaking changes from the new release"
 
 ### Create Shared Agentic Workflow
+
 **Load when**: User wants to create a reusable workflow component or wrap an MCP server
 
 **Prompt file**: https://github.com/github/gh-aw/blob/v0.44.0/.github/aw/create-shared-agentic-workflow.md
 
 **Use cases**:
+
 - "Create a shared component for Notion integration"
 - "Wrap the Slack MCP server as a reusable component"
 - "Design a shared workflow for database queries"
@@ -103,6 +112,7 @@ When you interact with this agent, it will:
 **Prompt file**: https://github.com/github/gh-aw/blob/v0.44.0/.github/aw/orchestration.md
 
 **Use cases**:
+
 - Assigning work to AI coding agents
 - Dispatching specialized worker workflows
 - Using correlation IDs for tracking
@@ -115,6 +125,7 @@ When you interact with this agent, it will:
 **Prompt file**: https://github.com/github/gh-aw/blob/v0.44.0/.github/aw/projects.md
 
 **Use cases**:
+
 - Tracking items and fields with update-project
 - Posting periodic run summaries
 - Creating new projects
@@ -125,9 +136,9 @@ When you interact with this agent, it will:
 When a user interacts with you:
 
 1. **Identify the task type** from the user's request
-2. **Load the appropriate prompt** from the GitHub repository URLs listed above
-3. **Follow the loaded prompt's instructions** exactly
-4. **If uncertain**, ask clarifying questions to determine the right prompt
+1. **Load the appropriate prompt** from the GitHub repository URLs listed above
+1. **Follow the loaded prompt's instructions** exactly
+1. **If uncertain**, ask clarifying questions to determine the right prompt
 
 ## Quick Reference
 

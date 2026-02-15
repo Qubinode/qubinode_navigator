@@ -154,6 +154,7 @@ def _build_rules() -> dict:
 
     # Build DAG_TRIGGER keywords dynamically from discovered DAGs
     from .dag_registry import get_deploy_keywords
+
     _deploy_kws = get_deploy_keywords()
 
     dag_trigger_keywords = [
@@ -183,19 +184,11 @@ def _build_rules() -> dict:
         re.compile(r"\b(?:trigger|run|execute|start)\s+(?:the\s+)?\w+\s+(?:dag|workflow)\b", re.I),
     ]
     if _svc_names:
-        dag_trigger_patterns.append(
-            re.compile(rf"\bdeploy\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I)
-        )
-        dag_trigger_patterns.append(
-            re.compile(rf"\b(?:destroy|delete|remove|teardown)\s+(?:the\s+)?(?:{_svc_names})\b", re.I)
-        )
-        dag_trigger_patterns.append(
-            re.compile(rf"\binstall\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I)
-        )
+        dag_trigger_patterns.append(re.compile(rf"\bdeploy\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I))
+        dag_trigger_patterns.append(re.compile(rf"\b(?:destroy|delete|remove|teardown)\s+(?:the\s+)?(?:{_svc_names})\b", re.I))
+        dag_trigger_patterns.append(re.compile(rf"\binstall\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I))
         # "set up <service>" only as imperative (start of input, not in a question)
-        dag_trigger_patterns.append(
-            re.compile(rf"^(?:please\s+)?set\s+up\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I)
-        )
+        dag_trigger_patterns.append(re.compile(rf"^(?:please\s+)?set\s+up\s+(?:a\s+)?(?:new\s+)?(?:{_svc_names})\b", re.I))
 
     rules[IntentCategory.DAG_TRIGGER] = {
         "keywords": dag_trigger_keywords,

@@ -1,15 +1,18 @@
----
+______________________________________________________________________
+
 name: github-issue-resolver
 description: Strategically resolves GitHub Actions failures, failed pull requests, and Dependabot issues using the gh CLI. Use when asked to fix CI failures, triage GitHub Actions errors, manage failed PRs, handle Dependabot updates, or perform repository maintenance.
 allowed-tools:
-  - Bash
-  - Read
-  - Edit
-  - Write
-  - Grep
-  - Glob
-  - Task
----
+
+- Bash
+- Read
+- Edit
+- Write
+- Grep
+- Glob
+- Task
+
+______________________________________________________________________
 
 # GitHub Issue Resolver
 
@@ -31,10 +34,10 @@ If `gh` is not authenticated, stop and ask the user to run `gh auth login`.
 Always process issues in this order:
 
 1. **Security vulnerabilities** - Dependabot security alerts and CVE-related PRs
-2. **Broken main/master branch** - Failures on the default branch
-3. **Blocking PR failures** - PRs with failed required checks
-4. **Dependabot updates** - Dependency version bumps
-5. **Flaky tests / intermittent failures** - Non-deterministic issues
+1. **Broken main/master branch** - Failures on the default branch
+1. **Blocking PR failures** - PRs with failed required checks
+1. **Dependabot updates** - Dependency version bumps
+1. **Flaky tests / intermittent failures** - Non-deterministic issues
 
 ## Workflow 1: GitHub Actions Failure Resolution
 
@@ -62,22 +65,22 @@ gh run view <run-id> --log-failed > /tmp/gh-run-<run-id>.log
 
 Classify the failure into one of these categories:
 
-| Category | Indicators | Action |
-|----------|-----------|--------|
-| Test failure | `FAILED`, `AssertionError`, `pytest` exit code | Read test file, understand assertion, fix code or test |
-| Build error | `ModuleNotFoundError`, `SyntaxError`, compilation errors | Fix imports, syntax, or dependency declarations |
-| Lint/format | `ruff`, `black`, `flake8`, `shellcheck` violations | Run formatter locally, commit fixes |
-| Dependency | `pip install` failures, version conflicts | Update requirements, pin versions |
-| Infrastructure | Timeout, runner error, service unavailable | Rerun the workflow - do not change code |
-| Permissions | `Permission denied`, token errors | Flag for manual intervention |
+| Category       | Indicators                                               | Action                                                 |
+| -------------- | -------------------------------------------------------- | ------------------------------------------------------ |
+| Test failure   | `FAILED`, `AssertionError`, `pytest` exit code           | Read test file, understand assertion, fix code or test |
+| Build error    | `ModuleNotFoundError`, `SyntaxError`, compilation errors | Fix imports, syntax, or dependency declarations        |
+| Lint/format    | `ruff`, `black`, `flake8`, `shellcheck` violations       | Run formatter locally, commit fixes                    |
+| Dependency     | `pip install` failures, version conflicts                | Update requirements, pin versions                      |
+| Infrastructure | Timeout, runner error, service unavailable               | Rerun the workflow - do not change code                |
+| Permissions    | `Permission denied`, token errors                        | Flag for manual intervention                           |
 
 ### Step 4: Implement fixes
 
 1. Checkout the failing branch: `git checkout <branch>`
-2. Make targeted fixes based on diagnosis
-3. Run local verification when possible (e.g., `python3 -m pytest`)
-4. Commit with message: `fix(ci): <description of fix>`
-5. Push and verify: `git push`
+1. Make targeted fixes based on diagnosis
+1. Run local verification when possible (e.g., `python3 -m pytest`)
+1. Commit with message: `fix(ci): <description of fix>`
+1. Push and verify: `git push`
 
 ### Step 5: Rerun and verify
 
@@ -107,13 +110,13 @@ gh pr diff <pr-number>
 ### Step 3: Fix the PR
 
 1. Checkout: `gh pr checkout <pr-number>`
-2. Analyze failures using `gh pr checks <pr-number> --json` and `gh run view`
-3. If the branch is behind base, update it:
+1. Analyze failures using `gh pr checks <pr-number> --json` and `gh run view`
+1. If the branch is behind base, update it:
    ```bash
    gh pr update-branch <pr-number>
    ```
-4. Implement fixes, commit, and push
-5. Comment on the PR explaining the fix:
+1. Implement fixes, commit, and push
+1. Comment on the PR explaining the fix:
    ```bash
    gh pr comment <pr-number> --body "Fixed CI failure: <explanation>"
    ```
@@ -125,11 +128,12 @@ gh pr view <pr-number> --json mergeable -q .mergeable
 ```
 
 If `CONFLICTING`:
+
 1. Checkout the PR branch
-2. Merge or rebase the base branch
-3. Resolve conflicts
-4. Push the resolution
-5. Comment explaining the resolution
+1. Merge or rebase the base branch
+1. Resolve conflicts
+1. Push the resolution
+1. Comment explaining the resolution
 
 ## Workflow 3: Dependabot Issue Handling
 
@@ -143,12 +147,12 @@ gh pr list --author "app/dependabot" --json number,title,labels,createdAt,headRe
 
 Classify each PR by update type:
 
-| Type | Risk | Strategy |
-|------|------|----------|
-| Security patch (any version) | High priority | Merge immediately after checks pass |
-| Patch version (x.y.Z) | Low | Batch and merge |
-| Minor version (x.Y.0) | Medium | Review changelog, merge if checks pass |
-| Major version (X.0.0) | High | Review breaking changes, test thoroughly |
+| Type                         | Risk          | Strategy                                 |
+| ---------------------------- | ------------- | ---------------------------------------- |
+| Security patch (any version) | High priority | Merge immediately after checks pass      |
+| Patch version (x.y.Z)        | Low           | Batch and merge                          |
+| Minor version (x.Y.0)        | Medium        | Review changelog, merge if checks pass   |
+| Major version (X.0.0)        | High          | Review breaking changes, test thoroughly |
 
 ### Step 3: Check for conflicts and failures
 
@@ -162,25 +166,29 @@ gh pr view <pr-number> --json mergeable -q .mergeable
 ### Step 4: Handle common Dependabot scenarios
 
 **Checks pass, no conflicts** - Merge:
+
 ```bash
 gh pr merge <pr-number> --squash --auto
 ```
 
 **Needs rebase** - Use Dependabot command:
+
 ```bash
 gh pr comment <pr-number> --body "@dependabot rebase"
 ```
 
 **Merge conflicts Dependabot cannot resolve**:
+
 1. Checkout the PR branch
-2. Resolve conflicts manually
-3. Push resolution
-4. Let checks run, then merge
+1. Resolve conflicts manually
+1. Push resolution
+1. Let checks run, then merge
 
 **Failed checks on Dependabot PR**:
+
 1. Analyze what broke (API changes, deprecated features)
-2. If trivial (import path changes, minor API tweaks): fix in-place
-3. If complex (major version breaking changes): comment findings and leave for human review
+1. If trivial (import path changes, minor API tweaks): fix in-place
+1. If complex (major version breaking changes): comment findings and leave for human review
 
 ### Step 5: Batch compatible updates
 
@@ -209,6 +217,7 @@ After processing, provide a structured report:
 ## Safety Guidelines
 
 ### Always confirm before:
+
 - Force-pushing any branch
 - Closing or merging PRs
 - Deleting branches
@@ -216,6 +225,7 @@ After processing, provide a structured report:
 - Merging major version Dependabot updates
 
 ### Never:
+
 - Force-push to main/master
 - Merge PRs with failing required checks without user approval
 - Modify secrets or environment variables
@@ -223,6 +233,7 @@ After processing, provide a structured report:
 - Dismiss reviews without user approval
 
 ### When to escalate to the user:
+
 - Security-related failures requiring credential rotation
 - Persistent failures after 2 fix attempts
 - Major version dependency updates with breaking changes
@@ -231,12 +242,12 @@ After processing, provide a structured report:
 
 ## Error Handling
 
-| Error | Recovery |
-|-------|----------|
-| `gh: Not Found` | Verify repo permissions: `gh repo view` |
-| `gh: HTTP 403` | Token lacks required scopes: `gh auth status` |
-| Rate limited | Wait and retry: `gh api rate_limit` |
-| Rerun fails | Download full logs, analyze offline |
+| Error            | Recovery                                        |
+| ---------------- | ----------------------------------------------- |
+| `gh: Not Found`  | Verify repo permissions: `gh repo view`         |
+| `gh: HTTP 403`   | Token lacks required scopes: `gh auth status`   |
+| Rate limited     | Wait and retry: `gh api rate_limit`             |
+| Rerun fails      | Download full logs, analyze offline             |
 | Branch protected | Cannot push directly - create a new PR with fix |
 
 ## Decision Tree: Should I Auto-Fix?

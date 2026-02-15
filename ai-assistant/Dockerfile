@@ -42,9 +42,9 @@ RUN mkdir -p /app/llama.cpp && \
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:$PATH"
 
-# Set up Python virtual environment (best practice)
+# Set up Python virtual environment (use python3.12 explicitly, not UBI9 default 3.9)
 WORKDIR /app
-RUN uv venv /app/venv
+RUN uv venv --python python3.12 /app/venv
 
 # Install Python dependencies in virtual environment
 COPY requirements.txt .

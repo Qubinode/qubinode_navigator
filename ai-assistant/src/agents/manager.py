@@ -156,12 +156,7 @@ Output a SessionPlan with:
         # Check for missing providers (fuzzy match: "ssh" matches "apache-airflow-providers-ssh")
         for provider in output.required_providers:
             provider_lower = provider.lower().strip()
-            matched = any(
-                provider_lower == kp.lower()
-                or provider_lower in kp.lower()
-                or kp.lower().endswith(f"-{provider_lower}")
-                for kp in ctx.deps.known_providers
-            )
+            matched = any(provider_lower == kp.lower() or provider_lower in kp.lower() or kp.lower().endswith(f"-{provider_lower}") for kp in ctx.deps.known_providers)
             if not matched:
                 if "Missing provider" not in str(output.escalation_triggers):
                     output.escalation_triggers.append(f"Missing provider: {provider} - requires documentation")

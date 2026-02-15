@@ -7,7 +7,6 @@ auto-fix logic, and caching.
 
 import json
 import time
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -22,6 +21,7 @@ from intent_parser.rag_preflight import (
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _mock_response(status_code: int, json_data: dict = None):
     resp = MagicMock()
@@ -92,6 +92,7 @@ def _env_defaults(monkeypatch):
 # Test 1: All checks pass
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_all_checks_pass(tmp_path):
     """ADRs exist, chunks exist, health shows docs loaded -> all OK."""
@@ -109,13 +110,15 @@ async def test_all_checks_pass(tmp_path):
         get=AsyncMock(return_value=_mock_response(200, _health_json(10, True))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {
-             "QUBINODE_ROOT": str(tmp_path),
-             "RAG_DATA_DIR": str(tmp_path / "data"),
-             "ADR_DIR": str(adr_dir),
-             "RAG_DROP_DIR": str(tmp_path / "drop"),
-         }):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ",
+        {
+            "QUBINODE_ROOT": str(tmp_path),
+            "RAG_DATA_DIR": str(tmp_path / "data"),
+            "ADR_DIR": str(adr_dir),
+            "RAG_DROP_DIR": str(tmp_path / "drop"),
+        },
+    ):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -129,6 +132,7 @@ async def test_all_checks_pass(tmp_path):
 # Test 2: ADR directory missing -> WARNING
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_adr_dir_missing_warning(tmp_path):
     """ADR directory not found -> WARNING."""
@@ -140,13 +144,15 @@ async def test_adr_dir_missing_warning(tmp_path):
         get=AsyncMock(return_value=_mock_response(200, _health_json(10, True))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {
-             "QUBINODE_ROOT": str(tmp_path),
-             "RAG_DATA_DIR": str(tmp_path / "data"),
-             "ADR_DIR": str(tmp_path / "docs" / "adrs"),
-             "RAG_DROP_DIR": str(tmp_path / "drop"),
-         }):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ",
+        {
+            "QUBINODE_ROOT": str(tmp_path),
+            "RAG_DATA_DIR": str(tmp_path / "data"),
+            "ADR_DIR": str(tmp_path / "docs" / "adrs"),
+            "RAG_DROP_DIR": str(tmp_path / "drop"),
+        },
+    ):
         result = await run_rag_preflight(force=True)
 
     adr_check = [c for c in result.checks if c.name == "adr_source_files"][0]
@@ -158,6 +164,7 @@ async def test_adr_dir_missing_warning(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 3: ADR directory empty -> WARNING
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_adr_dir_empty_warning(tmp_path):
@@ -175,13 +182,15 @@ async def test_adr_dir_empty_warning(tmp_path):
         get=AsyncMock(return_value=_mock_response(200, _health_json(10, True))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {
-             "QUBINODE_ROOT": str(tmp_path),
-             "RAG_DATA_DIR": str(tmp_path / "data"),
-             "ADR_DIR": str(adr_dir),
-             "RAG_DROP_DIR": str(tmp_path / "drop"),
-         }):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ",
+        {
+            "QUBINODE_ROOT": str(tmp_path),
+            "RAG_DATA_DIR": str(tmp_path / "data"),
+            "ADR_DIR": str(adr_dir),
+            "RAG_DROP_DIR": str(tmp_path / "drop"),
+        },
+    ):
         result = await run_rag_preflight(force=True)
 
     adr_check = [c for c in result.checks if c.name == "adr_source_files"][0]
@@ -192,6 +201,7 @@ async def test_adr_dir_empty_warning(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 4: Chunks missing triggers reload
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_chunks_missing_triggers_reload(tmp_path):
@@ -207,8 +217,9 @@ async def test_chunks_missing_triggers_reload(tmp_path):
         post=AsyncMock(return_value=_mock_response(200, _reload_json(True, True, 15))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -220,6 +231,7 @@ async def test_chunks_missing_triggers_reload(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 5: Zero docs triggers reload
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_zero_docs_triggers_reload(tmp_path):
@@ -237,8 +249,9 @@ async def test_zero_docs_triggers_reload(tmp_path):
         post=AsyncMock(return_value=_mock_response(200, _reload_json(True, True, 15))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -249,6 +262,7 @@ async def test_zero_docs_triggers_reload(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 6: Reload fails gracefully
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_reload_fails_gracefully(tmp_path):
@@ -262,8 +276,9 @@ async def test_reload_fails_gracefully(tmp_path):
         post=AsyncMock(return_value=_mock_response(500, {"error": "Internal server error"})),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -275,6 +290,7 @@ async def test_reload_fails_gracefully(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 7: Reload succeeds but still empty
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_reload_succeeds_but_still_empty(tmp_path):
@@ -288,8 +304,9 @@ async def test_reload_succeeds_but_still_empty(tmp_path):
         post=AsyncMock(return_value=_mock_response(200, _reload_json(True, False, 0))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True
@@ -301,6 +318,7 @@ async def test_reload_succeeds_but_still_empty(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 8: Cache hit
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_cache_hit(tmp_path):
@@ -317,14 +335,16 @@ async def test_cache_hit(tmp_path):
         get=AsyncMock(return_value=_mock_response(200, _health_json(10, True))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         result1 = await run_rag_preflight(force=True)
 
     client.get.reset_mock()
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         result2 = await run_rag_preflight()  # No force -> cache hit
 
     client.get.assert_not_called()
@@ -334,6 +354,7 @@ async def test_cache_hit(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 9: Cache expired
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_cache_expired(tmp_path, monkeypatch):
@@ -352,16 +373,18 @@ async def test_cache_expired(tmp_path, monkeypatch):
         get=AsyncMock(return_value=_mock_response(200, _health_json(10, True))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         await run_rag_preflight(force=True)
 
     time.sleep(1.1)
 
     client.get.reset_mock()
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         await run_rag_preflight()  # Cache expired, should re-run
 
     client.get.assert_called_once()
@@ -370,6 +393,7 @@ async def test_cache_expired(tmp_path, monkeypatch):
 # ---------------------------------------------------------------------------
 # Test 10: Cache bypass with force
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_cache_bypass_with_force(tmp_path):
@@ -386,14 +410,16 @@ async def test_cache_bypass_with_force(tmp_path):
         get=AsyncMock(return_value=_mock_response(200, _health_json(10, True))),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         await run_rag_preflight(force=True)
 
     client.get.reset_mock()
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         await run_rag_preflight(force=True)  # Force bypasses cache
 
     client.get.assert_called_once()
@@ -402,6 +428,7 @@ async def test_cache_bypass_with_force(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 11: format_report all OK
 # ---------------------------------------------------------------------------
+
 
 def test_format_report_all_ok():
     """Report for all-OK should use RAG Pre-flight label."""
@@ -420,12 +447,15 @@ def test_format_report_all_ok():
 # Test 12: format_report with fixes
 # ---------------------------------------------------------------------------
 
+
 def test_format_report_with_fixes():
     """Report should show auto-fix count and details with RAG label."""
     result = PreflightResult(
         checks=[
             PreflightCheck(
-                name="reload", status=CheckStatus.FIXED, message="Reloaded",
+                name="reload",
+                status=CheckStatus.FIXED,
+                message="Reloaded",
                 fix_applied="triggered /orchestrator/context/reload (15 docs loaded)",
             ),
             PreflightCheck(name="adr", status=CheckStatus.OK, message="OK"),
@@ -441,6 +471,7 @@ def test_format_report_with_fixes():
 # ---------------------------------------------------------------------------
 # Test 13: AI Assistant unreachable
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_ai_assistant_unreachable(tmp_path):
@@ -458,8 +489,9 @@ async def test_ai_assistant_unreachable(tmp_path):
         post=AsyncMock(side_effect=Exception("Connection refused")),
     )
 
-    with _patch_httpx_client(client), \
-         patch.dict("os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}):
+    with _patch_httpx_client(client), patch.dict(
+        "os.environ", {"QUBINODE_ROOT": str(tmp_path), "RAG_DATA_DIR": str(tmp_path / "data"), "ADR_DIR": str(tmp_path / "docs" / "adrs"), "RAG_DROP_DIR": str(tmp_path / "drop")}
+    ):
         result = await run_rag_preflight(force=True)
 
     assert result.can_proceed is True

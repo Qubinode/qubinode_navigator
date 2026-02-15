@@ -214,16 +214,8 @@ CORPUS = [
 )
 def test_corpus(text, expected_category, min_confidence):
     result = classify(text)
-    assert result.category == expected_category, (
-        f"Input: {text!r}\n"
-        f"  Expected: {expected_category.value}\n"
-        f"  Got:      {result.category.value} (confidence={result.confidence})"
-    )
-    assert result.confidence >= min_confidence, (
-        f"Input: {text!r}\n"
-        f"  Category correct ({result.category.value}) but confidence too low\n"
-        f"  Expected >= {min_confidence}, got {result.confidence}"
-    )
+    assert result.category == expected_category, f"Input: {text!r}\n" f"  Expected: {expected_category.value}\n" f"  Got:      {result.category.value} (confidence={result.confidence})"
+    assert result.confidence >= min_confidence, f"Input: {text!r}\n" f"  Category correct ({result.category.value}) but confidence too low\n" f"  Expected >= {min_confidence}, got {result.confidence}"
 
 
 def test_corpus_summary():

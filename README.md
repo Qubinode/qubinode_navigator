@@ -16,7 +16,7 @@ Qubinode Navigator is an AI-enhanced, container-first infrastructure automation 
 - **Airflow MCP Server**: DAG management and VM operations (9 tools)
 - **AI Assistant MCP Server**: RAG-powered documentation search and chat (3 tools)
 
-**Quick start:** `git clone https://github.com/Qubinode/qubinode_navigator.git && cd qubinode_navigator && sudo -E ./scripts/development/deploy-qubinode.sh`
+**Quick start:** `git clone https://github.com/Qubinode/qubinode_navigator.git && cd qubinode_navigator && ./deploy-qubinode-with-airflow.sh`
 
 ## 🚀 Key Features
 
@@ -41,9 +41,23 @@ Qubinode Navigator is an AI-enhanced, container-first infrastructure automation 
 - Linux-based operating system (RHEL 8+, CentOS, Rocky Linux, or Fedora)
 - Git
 - Podman or Docker
-- 4GB+ RAM (8GB+ recommended for AI features)
+- **8GB+ RAM** (16GB+ recommended for AI features)
+- **50GB+ disk space** (100GB+ recommended)
+- Hardware virtualization enabled (VT-x/AMD-V)
 
 ## 🚀 Quick Start
+
+### Choose Your Deployment Method
+
+Qubinode Navigator offers three deployment scripts for different use cases:
+
+| Method                       | Script                                             | Best For                       | Features                                              |
+| ---------------------------- | -------------------------------------------------- | ------------------------------ | ----------------------------------------------------- |
+| **Full Stack** (Recommended) | `./deploy-qubinode-with-airflow.sh`                | New users, complete platform   | Airflow + AI Assistant + PostgreSQL + Marquez + Nginx |
+| **Development**              | `sudo -E ./scripts/development/deploy-qubinode.sh` | Contributors, testing features | Latest development features, debugging tools          |
+| **Basic**                    | `./deploy-qubinode.sh`                             | Advanced users, minimal setup  | Core components only (symlink to development script)  |
+
+> **Note**: `deploy-qubinode.sh` is a symbolic link to `scripts/development/deploy-qubinode.sh`. For the most comprehensive setup including Airflow orchestration, use `deploy-qubinode-with-airflow.sh`.
 
 ### Modern Setup (Recommended)
 
@@ -55,8 +69,11 @@ cd qubinode_navigator
 # Run pre-flight checks
 ./scripts/preflight-check.sh --fix
 
-# Deploy everything (AI Assistant + Airflow + PostgreSQL)
-sudo -E ./scripts/development/deploy-qubinode.sh
+# Deploy full stack (recommended for most users)
+./deploy-qubinode-with-airflow.sh
+
+# OR: Deploy development version
+# sudo -E ./scripts/development/deploy-qubinode.sh
 ```
 
 ### Running as Non-Root User
@@ -111,7 +128,7 @@ Qubinode Navigator follows a **container-first, plugin-based architecture**:
 - **[Complete Documentation](https://qubinode.github.io/qubinode_navigator/)** - Full documentation website
 - **[Getting Started Guide](docs/GETTING_STARTED.md)** - Quick start with AI orchestrator and non-root setup
 - **[MCP Quick Start](MCP-QUICK-START.md)** - Get started with MCP servers in 5 minutes
-- **[MCP Implementation Guide](FASTMCP-COMPLETE.md)** - Complete FastMCP migration details
+- **[MCP Server Guide](MCP-SERVER-GUIDE.md)** - Complete MCP server setup and FastMCP implementation
 - **[Installation Guide](docs/tutorials/getting-started.md)** - Step-by-step installation instructions
 - **[User Guide](docs/how-to/)** - Practical how-to guides
 - **[API Reference](docs/reference/)** - Complete API documentation

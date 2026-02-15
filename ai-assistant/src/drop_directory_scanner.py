@@ -137,22 +137,24 @@ class DropDirectoryScanner:
             chunk_title = title or filepath.stem
             cid = _chunk_id(relative_path, i, chunk_title)
 
-            chunks.append({
-                "id": cid,
-                "source_file": relative_path,
-                "title": chunk_title,
-                "content": section_content.strip(),
-                "chunk_type": suffix.lstrip("."),
-                "metadata": {
+            chunks.append(
+                {
+                    "id": cid,
                     "source_file": relative_path,
-                    "document_type": doc_type,
-                    "section_index": i,
+                    "title": chunk_title,
+                    "content": section_content.strip(),
+                    "chunk_type": suffix.lstrip("."),
+                    "metadata": {
+                        "source_file": relative_path,
+                        "document_type": doc_type,
+                        "section_index": i,
+                        "word_count": len(section_content.split()),
+                        "created_at": datetime.now().isoformat(),
+                    },
                     "word_count": len(section_content.split()),
                     "created_at": datetime.now().isoformat(),
-                },
-                "word_count": len(section_content.split()),
-                "created_at": datetime.now().isoformat(),
-            })
+                }
+            )
 
         return chunks
 
@@ -181,7 +183,5 @@ class DropDirectoryScanner:
         with open(chunks_file, "w", encoding="utf-8") as f:
             json.dump(all_chunks, f, indent=2, ensure_ascii=False)
 
-        logger.info(
-            f"Wrote {len(all_chunks)} chunks from {files_processed} files to {chunks_file}"
-        )
+        logger.info(f"Wrote {len(all_chunks)} chunks from {files_processed} files to {chunks_file}")
         return files_processed, len(all_chunks)

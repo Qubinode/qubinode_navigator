@@ -23,6 +23,7 @@ from intent_parser.ssh_preflight import (
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _mock_response(status_code: int, json_data: dict = None):
     resp = MagicMock()
     resp.status_code = status_code
@@ -81,6 +82,7 @@ def _env_defaults(monkeypatch):
 # Test: Connection exists and all checks pass
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_connection_exists_ok():
     """All checks pass when connection exists with correct user and key."""
@@ -102,15 +104,18 @@ async def test_connection_exists_ok():
 # Test: Connection missing -> auto-create
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_connection_missing_auto_create():
     """When connection is missing (404), it should be auto-created."""
     client = _make_mock_client(
         get=AsyncMock(return_value=_mock_response(404)),
-        post=AsyncMock(side_effect=[
-            _mock_response(201, _conn_json()),
-            _mock_response(200, {"status": True}),
-        ]),
+        post=AsyncMock(
+            side_effect=[
+                _mock_response(201, _conn_json()),
+                _mock_response(200, {"status": True}),
+            ]
+        ),
     )
 
     with _patch_httpx_client(client):
@@ -125,6 +130,7 @@ async def test_connection_missing_auto_create():
 # ---------------------------------------------------------------------------
 # Test: Wrong SSH user -> auto-fix
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_wrong_ssh_user_auto_fix():
@@ -148,6 +154,7 @@ async def test_wrong_ssh_user_auto_fix():
 # Test: sshd not reachable -> warning
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_sshd_not_reachable_warning():
     """When sshd can't be reached, should warn but still allow proceeding."""
@@ -156,9 +163,7 @@ async def test_sshd_not_reachable_warning():
         post=AsyncMock(side_effect=Exception("Connection refused")),
     )
 
-    with _patch_httpx_client(client), \
-         patch("intent_parser.ssh_preflight.asyncio.wait_for",
-               new_callable=AsyncMock, side_effect=Exception("Connection refused")):
+    with _patch_httpx_client(client), patch("intent_parser.ssh_preflight.asyncio.wait_for", new_callable=AsyncMock, side_effect=Exception("Connection refused")):
         result = await run_ssh_preflight(force=True)
 
     assert result.can_proceed is True
@@ -170,6 +175,7 @@ async def test_sshd_not_reachable_warning():
 # ---------------------------------------------------------------------------
 # Test: No SSH key configured -> warning
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_no_ssh_key_warning():
@@ -193,6 +199,7 @@ async def test_no_ssh_key_warning():
 # ---------------------------------------------------------------------------
 # Test: Cache hit
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_cache_hit():
@@ -220,6 +227,7 @@ async def test_cache_hit():
 # ---------------------------------------------------------------------------
 # Test: Cache expired
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_cache_expired(monkeypatch):
@@ -249,23 +257,27 @@ async def test_cache_expired(monkeypatch):
 # Test: format_report output
 # ---------------------------------------------------------------------------
 
+
 def test_format_report_all_ok():
     """Report for all-OK should be a single line."""
-    result = PreflightResult(checks=[
-        PreflightCheck(name="a", status=CheckStatus.OK, message="Good"),
-        PreflightCheck(name="b", status=CheckStatus.OK, message="Good"),
-    ])
+    result = PreflightResult(
+        checks=[
+            PreflightCheck(name="a", status=CheckStatus.OK, message="Good"),
+            PreflightCheck(name="b", status=CheckStatus.OK, message="Good"),
+        ]
+    )
     report = result.format_report()
     assert report == "[SSH Pre-flight] All checks passed."
 
 
 def test_format_report_with_fixes():
     """Report should show auto-fixed count and details."""
-    result = PreflightResult(checks=[
-        PreflightCheck(name="conn", status=CheckStatus.FIXED, message="Created",
-                       fix_applied="created connection 'localhost_ssh'"),
-        PreflightCheck(name="user", status=CheckStatus.OK, message="OK"),
-    ])
+    result = PreflightResult(
+        checks=[
+            PreflightCheck(name="conn", status=CheckStatus.FIXED, message="Created", fix_applied="created connection 'localhost_ssh'"),
+            PreflightCheck(name="user", status=CheckStatus.OK, message="OK"),
+        ]
+    )
     report = result.format_report()
     assert "Auto-fixed 1 issue" in report
     assert "created connection" in report
@@ -273,10 +285,12 @@ def test_format_report_with_fixes():
 
 def test_format_report_with_warnings():
     """Report should include warning messages."""
-    result = PreflightResult(checks=[
-        PreflightCheck(name="ok", status=CheckStatus.OK, message="Fine"),
-        PreflightCheck(name="sshd", status=CheckStatus.WARNING, message="Cannot reach sshd"),
-    ])
+    result = PreflightResult(
+        checks=[
+            PreflightCheck(name="ok", status=CheckStatus.OK, message="Fine"),
+            PreflightCheck(name="sshd", status=CheckStatus.WARNING, message="Cannot reach sshd"),
+        ]
+    )
     report = result.format_report()
     assert "WARNING" in report
     assert "Cannot reach sshd" in report

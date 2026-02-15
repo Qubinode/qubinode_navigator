@@ -34,11 +34,12 @@ QUBINODE_CLUSTER_NAME=mycluster
 #### 2. Run Deployment
 
 ```bash
-# Make script executable (if needed)
-chmod +x deploy-qubinode.sh
-
 # Deploy with AI Assistant support
+# Note: deploy-qubinode.sh is a symlink to scripts/development/deploy-qubinode.sh
 ./deploy-qubinode.sh
+
+# For full stack with Airflow orchestration, use instead:
+# ./deploy-qubinode-with-airflow.sh
 ```
 
 #### 3. Access Your Cluster
@@ -219,6 +220,14 @@ lscpu | grep -i virtual
 1. **Deployment Logs**: Check `/tmp/qubinode-deployment-*.log`
 1. **System Logs**: `journalctl -u libvirtd -f`
 1. **Community**: GitHub issues and discussions
+
+### 📚 Related Documentation
+
+- **[README.md](README.md)** - Project overview and all deployment options
+- **[QUICKSTART.md](QUICKSTART.md)** - Full stack deployment with Airflow
+- **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Development deployment guide
+- **[CLEAN-INSTALL-GUIDE.md](docs/CLEAN-INSTALL-GUIDE.md)** - This guide (detailed)
+- **[AGENTS.md](AGENTS.md)** - AI coding agent instructions
 
 ### 🎯 Success Indicators
 

@@ -284,6 +284,7 @@ def _extract_dag_trigger(text: str) -> Dict[str, Any]:
 
     # Dynamic service-to-DAG-ID mapping built from scanning airflow/dags/
     from .dag_registry import get_service_dag_map
+
     _SERVICE_DAG_MAP = get_service_dag_map()
 
     # "trigger/run/execute dag <dag_id>"
