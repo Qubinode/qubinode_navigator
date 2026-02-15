@@ -40,7 +40,7 @@ sudo -E ./scripts/development/deploy-qubinode.sh
 | Requirement | Minimum                                   | Recommended      |
 | ----------- | ----------------------------------------- | ---------------- |
 | **OS**      | RHEL 9, CentOS Stream 9/10, Rocky Linux 9 | CentOS Stream 10 |
-| **RAM**     | 8 GB                                      | 16 GB+           |
+| **RAM**     | 8GB                                       | 16GB+            |
 | **Disk**    | 50 GB                                     | 100 GB+          |
 | **CPU**     | VT-x/AMD-V enabled                        | 4+ cores         |
 | **Network** | Internet access                           | Static IP        |

@@ -50,12 +50,18 @@ cat /etc/redhat-release
 git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 
-# Run the one-shot deployment
-# Note: deploy-qubinode.sh is a symlink to scripts/development/deploy-qubinode.sh
-sudo ./deploy-qubinode.sh
+# Configure environment (edit with your settings)
+cp .env.example .env
 
-# For full production stack with Airflow orchestration:
-# ./deploy-qubinode-with-airflow.sh
+# Run pre-flight checks
+./scripts/preflight-check.sh --fix
+
+# Deploy full stack with Airflow orchestration (recommended)
+./deploy-qubinode-with-airflow.sh
+
+# OR: Deploy core components only
+# Note: deploy-qubinode.sh is a symlink to scripts/development/deploy-qubinode.sh
+# sudo ./deploy-qubinode.sh
 ```
 
 That's it! The script will:
