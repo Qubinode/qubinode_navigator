@@ -55,7 +55,7 @@ Plugins implement `QubiNodePlugin` base class with methods:
 
 Families:
 
-- `plugins/os/` - RHEL 8/9/10, Rocky, CentOS Stream
+- `plugins/os/` - RHEL 9/10, Rocky Linux 9+, CentOS Stream 9/10 (RHEL 8: legacy only)
 - `plugins/cloud/` - Hetzner, Equinix
 - `plugins/services/` - AI Assistant, Vault, Log Analysis
 - `plugins/environments/` - Deployment contexts

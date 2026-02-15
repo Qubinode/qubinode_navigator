@@ -31,14 +31,16 @@ Qubinode Navigator is an AI-enhanced, container-first infrastructure automation 
 
 ## 🖥️ Supported Platforms
 
-- **RHEL 8/9/10** - Full enterprise support with subscription management
-- **CentOS Stream 10** - Next-generation enterprise Linux
-- **Rocky Linux** - RHEL-compatible community distribution
-- **Fedora** - Cutting-edge features and packages
+- **RHEL 9/10** - Full enterprise support with subscription management
+- **CentOS Stream 9/10** - Next-generation enterprise Linux
+- **Rocky Linux 9+** - RHEL-compatible community distribution
+- **Fedora 39+** - Cutting-edge features and packages
+
+**Note**: RHEL 8 is legacy and not recommended for new deployments. See [ADR-0026](docs/adrs/adr-0026-rhel-10-centos-10-platform-support-strategy.md) for platform support details.
 
 ## 📋 Prerequisites
 
-- Linux-based operating system (RHEL 8+, CentOS, Rocky Linux, or Fedora)
+- Linux-based operating system (RHEL 9+, CentOS Stream 9+, Rocky Linux 9+, or Fedora 39+)
 - Git
 - Podman or Docker
 - **8GB+ RAM** (16GB+ recommended for AI features)
