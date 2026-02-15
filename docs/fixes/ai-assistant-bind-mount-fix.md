@@ -1,3 +1,9 @@
+---
+title: AI Assistant Container Bind-Mount Fix
+parent: Fixes
+nav_order: 1
+---
+
 # AI Assistant Container Bind-Mount Fix
 
 ## Issue Summary

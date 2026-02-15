@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Ingest New Docs into RAG parent: How to nav_order: 3
+---
+title: Ingest New Docs into RAG
+parent: How to
+nav_order: 3
+---
 
 # How To: Ingest New Documents into RAG
 

@@ -1,3 +1,9 @@
+---
+title: RAG Operations Guide
+parent: Guides
+nav_order: 1
+---
+
 # RAG Operations Guide
 
 **ADR-0049: Multi-Agent LLM Memory Architecture**

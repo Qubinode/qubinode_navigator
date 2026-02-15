@@ -1,3 +1,9 @@
+---
+title: Multi-Agent LLM Guide
+parent: Guides
+nav_order: 2
+---
+
 # Multi-Agent LLM System Guide
 
 **ADR-0049: Multi-Agent LLM Memory Architecture**

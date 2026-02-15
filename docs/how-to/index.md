@@ -1,6 +1,9 @@
-______________________________________________________________________
-
-## title: How to description: Task-oriented guides for specific goals nav_order: 3 has_children: true
+---
+title: How to
+description: Task-oriented guides for specific goals
+nav_order: 3
+has_children: true
+---
 
 # How to
 

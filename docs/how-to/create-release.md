@@ -1,3 +1,9 @@
+---
+title: Creating a Release
+parent: How to
+nav_order: 2
+---
+
 # Creating a Release
 
 This guide explains how to create a new release of Qubinode Navigator using the automated GitHub Actions release pipeline.

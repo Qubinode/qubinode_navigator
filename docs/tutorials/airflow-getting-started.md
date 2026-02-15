@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## title: Airflow Getting Started parent: Tutorials nav_order: 2
+---
+title: Airflow Getting Started
+parent: Tutorials
+nav_order: 2
+---
 
 # Getting Started with Apache Airflow for Qubinode Navigator
 
@@ -23,8 +25,8 @@ ______________________________________________________________________
 - A host where Qubinode Navigator can run (RHEL 9/10, CentOS Stream 9/10, Rocky Linux 9, etc.).
 - Container runtime and networking set up per your platform guide.
 - Platform-specific inventory and environment files prepared as described in:
-  - [Deploying on Hetzner](../deployments/demo-hetzner-com.markdown)
-  - [Deploying on Red Hat Product Demo System](../deployments/demo-redhat-com.markdown)
+  - [Deploying on Hetzner](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/deployments/demo-hetzner-com.markdown)
+  - [Deploying on Red Hat Product Demo System](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/deployments/demo-redhat-com.markdown)
 - Ports 80/443 available for nginx.
 
 If you havent done a base deployment yet, start with:
@@ -95,8 +97,8 @@ In the Airflow UI:
    - `qubinode_simple_deploy`
    - `multi_cloud_deploy`
    - RAG/AI‑related workflows documented in:
-     - [Airflow Integration Guide](../airflow-integration-guide.md)
-     - [DAG Deployment Workflows](../airflow-dag-deployment-workflows.md)
+     - [Airflow Integration Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-integration-guide.md)
+     - [DAG Deployment Workflows](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-dag-deployment-workflows.md)
 
 To run a DAG:
 
@@ -117,8 +119,8 @@ With Airflow and the AI Assistant running behind nginx:
 
 See also:
 
-- [Airflow Community Ecosystem](../airflow-community-ecosystem.md)
-- [Airflow ↔ RAG Bidirectional Learning](../airflow-rag-bidirectional-learning.md)
+- [Airflow Community Ecosystem](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-community-ecosystem.md)
+- [Airflow ↔ RAG Bidirectional Learning](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-rag-bidirectional-learning.md)
 
 ______________________________________________________________________
 
