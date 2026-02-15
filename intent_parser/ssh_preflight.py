@@ -78,6 +78,7 @@ class PreflightResult:
 # Configuration
 # ---------------------------------------------------------------------------
 
+
 def _get_config() -> Dict[str, str]:
     ssh_user = os.getenv("QUBINODE_SSH_USER", os.getenv("USER", "root"))
     ssh_key = os.getenv("QUBINODE_SSH_KEY_PATH", f"/home/{ssh_user}/.ssh/id_rsa")
@@ -123,8 +124,13 @@ def _set_cached(conn_id: str, result: PreflightResult) -> None:
 # Individual checks
 # ---------------------------------------------------------------------------
 
+
 async def _check_connection_exists(
-    client: Any, api_url: str, auth: tuple, conn_id: str, ssh_user: str,
+    client: Any,
+    api_url: str,
+    auth: tuple,
+    conn_id: str,
+    ssh_user: str,
     ssh_key: str = "",
 ) -> tuple:
     """Check if the SSH connection exists; create it if missing.
@@ -195,9 +201,7 @@ async def _check_connection_exists(
     ), None
 
 
-async def _check_ssh_user(
-    client: Any, api_url: str, auth: tuple, conn_id: str, conn_data: Dict, ssh_user: str
-) -> PreflightCheck:
+async def _check_ssh_user(client: Any, api_url: str, auth: tuple, conn_id: str, conn_data: Dict, ssh_user: str) -> PreflightCheck:
     """Check that the connection login matches the expected SSH user; patch if wrong."""
     current_login = conn_data.get("login", "")
     if current_login == ssh_user:
@@ -224,15 +228,13 @@ async def _check_ssh_user(
         return PreflightCheck(
             name="ssh_user",
             status=CheckStatus.WARNING,
-            message=f"SSH user is '{current_login}' but expected '{ssh_user}'. "
-                    f"PATCH failed with HTTP {patch_resp.status_code}.",
+            message=f"SSH user is '{current_login}' but expected '{ssh_user}'. " f"PATCH failed with HTTP {patch_resp.status_code}.",
         )
     except Exception as exc:
         return PreflightCheck(
             name="ssh_user",
             status=CheckStatus.WARNING,
-            message=f"SSH user is '{current_login}' but expected '{ssh_user}'. "
-                    f"Auto-fix failed: {exc}",
+            message=f"SSH user is '{current_login}' but expected '{ssh_user}'. " f"Auto-fix failed: {exc}",
         )
 
 
@@ -252,15 +254,13 @@ def _check_ssh_key(conn_data: Dict, expected_key: str = "") -> PreflightCheck:
         return PreflightCheck(
             name="ssh_key",
             status=CheckStatus.WARNING,
-            message="No SSH key file configured in connection extras. "
-                    "SSHOperator may rely on ssh-agent or password auth.",
+            message="No SSH key file configured in connection extras. " "SSHOperator may rely on ssh-agent or password auth.",
         )
     if expected_key and key_file != expected_key:
         return PreflightCheck(
             name="ssh_key",
             status=CheckStatus.WARNING,
-            message=f"SSH key mismatch: connection uses '{key_file}' "
-                    f"but QUBINODE_SSH_KEY_PATH is '{expected_key}'.",
+            message=f"SSH key mismatch: connection uses '{key_file}' " f"but QUBINODE_SSH_KEY_PATH is '{expected_key}'.",
         )
     return PreflightCheck(
         name="ssh_key",
@@ -269,9 +269,7 @@ def _check_ssh_key(conn_data: Dict, expected_key: str = "") -> PreflightCheck:
     )
 
 
-async def _check_sshd_reachable(
-    client: Any, api_url: str, auth: tuple, conn_id: str
-) -> PreflightCheck:
+async def _check_sshd_reachable(client: Any, api_url: str, auth: tuple, conn_id: str) -> PreflightCheck:
     """Check if sshd is reachable via the Airflow connection test API or TCP fallback."""
     # Try Airflow's connection test endpoint first
     try:
@@ -309,14 +307,14 @@ async def _check_sshd_reachable(
         return PreflightCheck(
             name="sshd_reachable",
             status=CheckStatus.WARNING,
-            message="Cannot reach sshd on localhost:22. "
-                    "Ensure sshd is running: 'sudo systemctl start sshd'",
+            message="Cannot reach sshd on localhost:22. " "Ensure sshd is running: 'sudo systemctl start sshd'",
         )
 
 
 # ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------
+
 
 async def run_ssh_preflight(force: bool = False) -> PreflightResult:
     """Run SSH pre-flight checks, returning a PreflightResult.
@@ -339,16 +337,18 @@ async def run_ssh_preflight(force: bool = False) -> PreflightResult:
     async with httpx.AsyncClient(timeout=10.0) as client:
         # Check 1: Connection exists
         conn_check, conn_data = await _check_connection_exists(
-            client, cfg["api_url"], auth, conn_id, cfg["ssh_user"],
+            client,
+            cfg["api_url"],
+            auth,
+            conn_id,
+            cfg["ssh_user"],
             ssh_key=cfg["ssh_key"],
         )
         checks.append(conn_check)
 
         if conn_data is not None:
             # Check 2: SSH user
-            user_check = await _check_ssh_user(
-                client, cfg["api_url"], auth, conn_id, conn_data, cfg["ssh_user"]
-            )
+            user_check = await _check_ssh_user(client, cfg["api_url"], auth, conn_id, conn_data, cfg["ssh_user"])
             checks.append(user_check)
 
             # Check 3: SSH key
@@ -356,9 +356,7 @@ async def run_ssh_preflight(force: bool = False) -> PreflightResult:
             checks.append(key_check)
 
         # Check 4: sshd reachable
-        sshd_check = await _check_sshd_reachable(
-            client, cfg["api_url"], auth, conn_id
-        )
+        sshd_check = await _check_sshd_reachable(client, cfg["api_url"], auth, conn_id)
         checks.append(sshd_check)
 
     result = PreflightResult(checks=checks)

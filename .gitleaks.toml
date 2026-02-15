@@ -145,6 +145,7 @@ regexes = [
     '''127\.0\.0\.1''', # Localhost IP
     '''0\.0\.0\.0''', # Bind all interfaces
     '''192\.168\.1\.10''', # Example IP in docs
+    '''192\.168\.1\.112''', # Example IP in ansible vars
     '''Harbor12345''', # Example password in setup scripts
     '''testpass''', # Test password
     '''adminpass''', # Test password

@@ -27,18 +27,16 @@ logger = logging.getLogger("intent-parser.vm-ssh-preflight")
 # ---------------------------------------------------------------------------
 
 _DAG_VM_MAP: Dict[str, Tuple[str, str]] = {
-    "freeipa_deployment":         ("freeipa",          "cloud-user"),
-    "vyos_router_deployment":     ("vyos-router",      "vyos"),
-    "harbor_deployment":          ("harbor",           "cloud-user"),
-    "step_ca_deployment":         ("step-ca",          "cloud-user"),
-    "jumpserver_deployment":      ("jumpserver",       "cloud-user"),
-    "mirror_registry_deployment": ("mirror-registry",  "cloud-user"),
+    "freeipa_deployment": ("freeipa", "cloud-user"),
+    "vyos_router_deployment": ("vyos-router", "vyos"),
+    "harbor_deployment": ("harbor", "cloud-user"),
+    "step_ca_deployment": ("step-ca", "cloud-user"),
+    "jumpserver_deployment": ("jumpserver", "cloud-user"),
+    "mirror_registry_deployment": ("mirror-registry", "cloud-user"),
 }
 
 
-def get_vm_for_dag(
-    dag_id: str, conf: Optional[Dict] = None
-) -> Optional[Tuple[str, str]]:
+def get_vm_for_dag(dag_id: str, conf: Optional[Dict] = None) -> Optional[Tuple[str, str]]:
     """Return ``(vm_name, ssh_user)`` for a DAG, or ``None`` to skip.
 
     Checks ``conf["vm_name"]`` first (user override), then the static map.
@@ -55,6 +53,7 @@ def get_vm_for_dag(
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
+
 
 def _get_config() -> Dict[str, str]:
     mcp_url = os.getenv("MCP_SERVER_URL", "")
@@ -108,14 +107,12 @@ _STATUS_MAP = {
     "no_ip": lambda data: PreflightCheck(
         name="vm_ip",
         status=CheckStatus.WARNING,
-        message=f"VM '{data.get('vm', '?')}' has no IP assigned. "
-                "It may still be booting — the DAG will retry.",
+        message=f"VM '{data.get('vm', '?')}' has no IP assigned. " "It may still be booting — the DAG will retry.",
     ),
     "port_closed": lambda data: PreflightCheck(
         name="vm_ssh_port",
         status=CheckStatus.WARNING,
-        message=f"VM '{data.get('vm', '?')}' ({data.get('ip', '?')}): SSH port 22 is closed. "
-                "sshd may not be running yet.",
+        message=f"VM '{data.get('vm', '?')}' ({data.get('ip', '?')}): SSH port 22 is closed. " "sshd may not be running yet.",
     ),
     "ok": lambda data: PreflightCheck(
         name="vm_ssh_auth",
@@ -132,8 +129,8 @@ _STATUS_MAP = {
         name="vm_ssh_auth",
         status=CheckStatus.WARNING,
         message=f"VM '{data.get('vm', '?')}' ({data.get('ip', '?')}): SSH auth failed "
-                f"after auto-fix attempt. {data.get('error', '')}. "
-                "Check that the correct SSH key pair is in /root/.ssh/ on the host.",
+        f"after auto-fix attempt. {data.get('error', '')}. "
+        "Check that the correct SSH key pair is in /root/.ssh/ on the host.",
     ),
 }
 
@@ -141,6 +138,7 @@ _STATUS_MAP = {
 # ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------
+
 
 async def run_vm_ssh_preflight(
     vm_name: str,
@@ -172,11 +170,13 @@ async def run_vm_ssh_preflight(
             data = resp.json()
     except Exception as exc:
         logger.warning("MCP server unreachable for VM SSH check: %s", exc)
-        checks.append(PreflightCheck(
-            name="mcp_reachable",
-            status=CheckStatus.WARNING,
-            message=f"MCP server unreachable ({exc}). Skipping VM SSH pre-flight.",
-        ))
+        checks.append(
+            PreflightCheck(
+                name="mcp_reachable",
+                status=CheckStatus.WARNING,
+                message=f"MCP server unreachable ({exc}). Skipping VM SSH pre-flight.",
+            )
+        )
         result = PreflightResult(checks=checks, label="VM SSH Pre-flight")
         result.summary = result.format_report()
         return result
@@ -186,11 +186,13 @@ async def run_vm_ssh_preflight(
     if handler:
         checks.append(handler(data))
     else:
-        checks.append(PreflightCheck(
-            name="vm_ssh_unknown",
-            status=CheckStatus.WARNING,
-            message=f"Unexpected VM SSH check status: {status}",
-        ))
+        checks.append(
+            PreflightCheck(
+                name="vm_ssh_unknown",
+                status=CheckStatus.WARNING,
+                message=f"Unexpected VM SSH check status: {status}",
+            )
+        )
 
     result = PreflightResult(checks=checks, label="VM SSH Pre-flight")
     result.summary = result.format_report()

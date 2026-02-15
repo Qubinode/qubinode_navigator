@@ -28,6 +28,7 @@ logger = logging.getLogger("intent-parser.rag-preflight")
 # Configuration
 # ---------------------------------------------------------------------------
 
+
 def _get_config() -> Dict[str, any]:
     return {
         "ai_assistant_url": os.getenv("AI_ASSISTANT_URL", "http://localhost:8080"),
@@ -67,6 +68,7 @@ def _set_cached(result: PreflightResult) -> None:
 # ---------------------------------------------------------------------------
 # Individual checks
 # ---------------------------------------------------------------------------
+
 
 def _check_adr_source_files(qubinode_root: str) -> PreflightCheck:
     """Check if ADR source files and drop-directory files exist."""
@@ -120,9 +122,7 @@ def _check_chunks_file(rag_data_dir: str) -> PreflightCheck:
     )
 
 
-async def _check_rag_document_count(
-    client: httpx.AsyncClient, ai_assistant_url: str
-) -> tuple:
+async def _check_rag_document_count(client: httpx.AsyncClient, ai_assistant_url: str) -> tuple:
     """Check the health endpoint for document count.
 
     Returns (PreflightCheck, needs_reload: bool).
@@ -184,9 +184,7 @@ async def _check_rag_document_count(
     ), False
 
 
-async def _attempt_reload(
-    client: httpx.AsyncClient, ai_assistant_url: str
-) -> PreflightCheck:
+async def _attempt_reload(client: httpx.AsyncClient, ai_assistant_url: str) -> PreflightCheck:
     """Trigger context reload and verify it worked."""
     try:
         resp = await client.post(f"{ai_assistant_url}/orchestrator/context/reload")
@@ -240,6 +238,7 @@ async def _attempt_reload(
 # Main entry point
 # ---------------------------------------------------------------------------
 
+
 async def run_rag_preflight(force: bool = False) -> PreflightResult:
     """Run RAG pre-flight checks, returning a PreflightResult.
 
@@ -268,9 +267,7 @@ async def run_rag_preflight(force: bool = False) -> PreflightResult:
 
     async with httpx.AsyncClient(timeout=15.0) as client:
         # Check 3: Document count from health endpoint
-        doc_check, health_needs_reload = await _check_rag_document_count(
-            client, cfg["ai_assistant_url"]
-        )
+        doc_check, health_needs_reload = await _check_rag_document_count(client, cfg["ai_assistant_url"])
         checks.append(doc_check)
 
         needs_reload = needs_reload or health_needs_reload

@@ -567,6 +567,7 @@ async def _try_intent_fast_path(message: str) -> Optional[OrchestratorResponse]:
     """
     try:
         import sys as _sys
+
         if "/app" not in _sys.path:
             _sys.path.insert(0, "/app")
         from intent_parser import IntentParser, IntentCategory
@@ -600,8 +601,10 @@ async def _try_intent_fast_path(message: str) -> Optional[OrchestratorResponse]:
         if parsed.category == IntentCategory.DAG_TRIGGER:
             try:
                 from intent_parser.vm_ssh_preflight import (
-                    run_vm_ssh_preflight, get_vm_for_dag,
+                    run_vm_ssh_preflight,
+                    get_vm_for_dag,
                 )
+
                 dag_id = (parsed.entities or {}).get("dag_id", "")
                 conf = parsed.parameters or {}
                 vm_info = get_vm_for_dag(dag_id, conf)
@@ -724,6 +727,7 @@ async def orchestrator_chat(request: OrchestratorRequest):
         rag_preflight_report = ""
         try:
             from intent_parser.rag_preflight import run_rag_preflight
+
             rag_preflight_result = await run_rag_preflight()
             rag_preflight_report = rag_preflight_result.format_report()
         except ImportError:
@@ -2310,6 +2314,7 @@ async def rag_preflight_endpoint(force: bool = False):
     """
     try:
         from intent_parser.rag_preflight import run_rag_preflight
+
         result = await run_rag_preflight(force=force)
         return {
             "checks": [

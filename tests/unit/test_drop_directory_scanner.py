@@ -8,10 +8,10 @@ minimum-length filtering, and JSON output.
 import json
 from pathlib import Path
 
-import pytest
 
 # Add ai-assistant/src to path so the scanner can be imported
 import sys
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "ai-assistant" / "src"))
 
 from drop_directory_scanner import DropDirectoryScanner, _classify_document_type
@@ -20,6 +20,7 @@ from drop_directory_scanner import DropDirectoryScanner, _classify_document_type
 # ---------------------------------------------------------------------------
 # Test 1: Discover supported files
 # ---------------------------------------------------------------------------
+
 
 def test_discover_supported_files(tmp_path):
     """Scanner finds .md, .yml, .txt and ignores .py files."""
@@ -44,6 +45,7 @@ def test_discover_supported_files(tmp_path):
 # Test 2: Discover recurses subdirectories
 # ---------------------------------------------------------------------------
 
+
 def test_discover_recurses_subdirs(tmp_path):
     """Scanner finds files in nested subdirectories."""
     nested = tmp_path / "a" / "b" / "c"
@@ -60,6 +62,7 @@ def test_discover_recurses_subdirs(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 3: Chunk markdown by headers
 # ---------------------------------------------------------------------------
+
 
 def test_chunk_markdown_by_headers(tmp_path):
     """Markdown files are split at # headers."""
@@ -89,6 +92,7 @@ def test_chunk_markdown_by_headers(tmp_path):
 # Test 4: Chunk YAML as whole file
 # ---------------------------------------------------------------------------
 
+
 def test_chunk_yaml_whole_file(tmp_path):
     """YAML files produce a single chunk containing the entire file content."""
     src = tmp_path / "configs"
@@ -109,6 +113,7 @@ def test_chunk_yaml_whole_file(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 5: Chunk text by paragraphs
 # ---------------------------------------------------------------------------
+
 
 def test_chunk_text_by_paragraphs(tmp_path):
     """Text files are split at double newlines (paragraph boundaries)."""
@@ -132,6 +137,7 @@ def test_chunk_text_by_paragraphs(tmp_path):
 # Test 6: Classify ADR by filename
 # ---------------------------------------------------------------------------
 
+
 def test_classify_adr_by_filename():
     """Files matching adr-*.md are classified as document_type 'adr'."""
     assert _classify_document_type(Path("adr-0001.md")) == "adr"
@@ -142,6 +148,7 @@ def test_classify_adr_by_filename():
 # ---------------------------------------------------------------------------
 # Test 7: Classify markdown default
 # ---------------------------------------------------------------------------
+
 
 def test_classify_markdown_default():
     """Non-ADR .md files are classified as 'markdown'."""
@@ -154,16 +161,13 @@ def test_classify_markdown_default():
 # Test 8: Short content skipped
 # ---------------------------------------------------------------------------
 
+
 def test_short_content_skipped(tmp_path):
     """Chunks under 50 characters are excluded from output."""
     src = tmp_path / "docs"
     src.mkdir()
     # Two sections: one too short, one long enough
-    content = (
-        "# Short\n\nTiny.\n\n"
-        "# Long Section\n\n"
-        "This section has enough content to pass the fifty character minimum length requirement easily."
-    )
+    content = "# Short\n\nTiny.\n\n" "# Long Section\n\n" "This section has enough content to pass the fifty character minimum length requirement easily."
     (src / "mixed.md").write_text(content)
 
     scanner = DropDirectoryScanner(source_dirs=[src], output_dir=tmp_path / "out")
@@ -178,13 +182,12 @@ def test_short_content_skipped(tmp_path):
 # Test 9: Write chunks produces valid JSON with expected schema
 # ---------------------------------------------------------------------------
 
+
 def test_write_chunks_valid_json(tmp_path):
     """Output file is valid JSON and each chunk has required fields."""
     src = tmp_path / "docs"
     src.mkdir()
-    (src / "adr-0001.md").write_text(
-        "# ADR 0001\n\nThis is a test ADR with enough content to be included as a chunk."
-    )
+    (src / "adr-0001.md").write_text("# ADR 0001\n\nThis is a test ADR with enough content to be included as a chunk.")
 
     scanner = DropDirectoryScanner(source_dirs=[src], output_dir=tmp_path / "out")
     scanner.scan_and_process()
@@ -207,6 +210,7 @@ def test_write_chunks_valid_json(tmp_path):
 # ---------------------------------------------------------------------------
 # Test 10: Empty dirs produce zero chunks without crash
 # ---------------------------------------------------------------------------
+
 
 def test_empty_dirs_produce_zero_chunks(tmp_path):
     """Scanning empty or nonexistent dirs returns 0 files, 0 chunks, no crash."""

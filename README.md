@@ -51,11 +51,11 @@ Qubinode Navigator is an AI-enhanced, container-first infrastructure automation 
 
 Qubinode Navigator offers three deployment scripts for different use cases:
 
-| Method | Script | Best For | Features |
-|--------|--------|----------|----------|
-| **Full Stack** (Recommended) | `./deploy-qubinode-with-airflow.sh` | New users, complete platform | Airflow + AI Assistant + PostgreSQL + Marquez + Nginx |
-| **Development** | `sudo -E ./scripts/development/deploy-qubinode.sh` | Contributors, testing features | Latest development features, debugging tools |
-| **Basic** | `./deploy-qubinode.sh` | Advanced users, minimal setup | Core components only (symlink to development script) |
+| Method                       | Script                                             | Best For                       | Features                                              |
+| ---------------------------- | -------------------------------------------------- | ------------------------------ | ----------------------------------------------------- |
+| **Full Stack** (Recommended) | `./deploy-qubinode-with-airflow.sh`                | New users, complete platform   | Airflow + AI Assistant + PostgreSQL + Marquez + Nginx |
+| **Development**              | `sudo -E ./scripts/development/deploy-qubinode.sh` | Contributors, testing features | Latest development features, debugging tools          |
+| **Basic**                    | `./deploy-qubinode.sh`                             | Advanced users, minimal setup  | Core components only (symlink to development script)  |
 
 > **Note**: `deploy-qubinode.sh` is a symbolic link to `scripts/development/deploy-qubinode.sh`. For the most comprehensive setup including Airflow orchestration, use `deploy-qubinode-with-airflow.sh`.
 

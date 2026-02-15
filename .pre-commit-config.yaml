@@ -32,8 +32,10 @@ repos:
     hooks:
       - id: trailing-whitespace
         name: Trim trailing whitespace
+        exclude: ^\.github/(workflows/.*\.lock\.yml|workflows/agentics-maintenance\.yml|agents/.*\.md)$
       - id: end-of-file-fixer
         name: Fix end of files
+        exclude: ^\.github/(workflows/.*\.lock\.yml|workflows/agentics-maintenance\.yml)$
       - id: check-yaml
         name: Check YAML syntax
         args: ['--unsafe']  # Allow custom tags
@@ -116,6 +118,7 @@ repos:
       - id: yamllint
         name: yamllint (YAML linting)
         args: ['-d', '{extends: relaxed, rules: {line-length: {max: 200}}}']
+        exclude: ^\.github/workflows/(.*\.lock\.yml|agentics-maintenance\.yml)$
 
   # ===========================================================================
   # Markdown: mdformat
@@ -125,6 +128,7 @@ repos:
     hooks:
       - id: mdformat
         name: mdformat (Markdown formatting)
+        exclude: ^\.github/workflows/.*\.md$
         additional_dependencies:
           - mdformat-gfm
           - mdformat-tables

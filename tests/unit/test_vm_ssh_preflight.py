@@ -21,6 +21,7 @@ from intent_parser.vm_ssh_preflight import (
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _mock_response(status_code: int = 200, json_data: dict = None):
     resp = MagicMock()
     resp.status_code = status_code
@@ -74,6 +75,7 @@ def _env_defaults(monkeypatch):
 # get_vm_for_dag tests
 # ---------------------------------------------------------------------------
 
+
 class TestGetVmForDag:
     def test_known_dag(self):
         result = get_vm_for_dag("freeipa_deployment")
@@ -115,8 +117,8 @@ class TestGetVmForDag:
 # run_vm_ssh_preflight tests
 # ---------------------------------------------------------------------------
 
-class TestRunVmSshPreflight:
 
+class TestRunVmSshPreflight:
     @pytest.mark.asyncio
     async def test_status_no_vm(self):
         resp = _mock_response(json_data={"status": "no_vm", "vm": "freeipa"})
@@ -131,9 +133,13 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_status_ok(self):
-        resp = _mock_response(json_data={
-            "status": "ok", "vm": "freeipa", "ip": "192.168.122.10",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "ok",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+            }
+        )
         patcher, client = _patch_httpx(resp)
         with patcher:
             result = await run_vm_ssh_preflight("freeipa")
@@ -154,9 +160,13 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_status_port_closed(self):
-        resp = _mock_response(json_data={
-            "status": "port_closed", "vm": "freeipa", "ip": "192.168.122.10",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "port_closed",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+            }
+        )
         patcher, client = _patch_httpx(resp)
         with patcher:
             result = await run_vm_ssh_preflight("freeipa")
@@ -166,12 +176,14 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_status_auth_failed(self):
-        resp = _mock_response(json_data={
-            "status": "auth_failed",
-            "vm": "freeipa",
-            "ip": "192.168.122.10",
-            "error": "Permission denied (publickey)",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "auth_failed",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+                "error": "Permission denied (publickey)",
+            }
+        )
         patcher, client = _patch_httpx(resp)
         with patcher:
             result = await run_vm_ssh_preflight("freeipa")
@@ -182,12 +194,14 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_status_fixed(self):
-        resp = _mock_response(json_data={
-            "status": "fixed",
-            "vm": "freeipa",
-            "ip": "192.168.122.10",
-            "fix": "injected host public key",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "fixed",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+                "fix": "injected host public key",
+            }
+        )
         patcher, client = _patch_httpx(resp)
         with patcher:
             result = await run_vm_ssh_preflight("freeipa")
@@ -199,9 +213,7 @@ class TestRunVmSshPreflight:
     async def test_mcp_unreachable(self):
         import httpx as httpx_mod
 
-        patcher, client = _patch_httpx_error(
-            httpx_mod.ConnectError("Connection refused")
-        )
+        patcher, client = _patch_httpx_error(httpx_mod.ConnectError("Connection refused"))
         with patcher:
             result = await run_vm_ssh_preflight("freeipa")
 
@@ -212,12 +224,16 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_cache_hit(self):
-        resp = _mock_response(json_data={
-            "status": "ok", "vm": "freeipa", "ip": "192.168.122.10",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "ok",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+            }
+        )
         patcher, client = _patch_httpx(resp)
         with patcher:
-            result1 = await run_vm_ssh_preflight("freeipa")
+            await run_vm_ssh_preflight("freeipa")
             result2 = await run_vm_ssh_preflight("freeipa")
 
         # Should only call MCP once
@@ -228,9 +244,13 @@ class TestRunVmSshPreflight:
     async def test_cache_expiry(self, monkeypatch):
         monkeypatch.setenv("VM_SSH_PREFLIGHT_CACHE_TTL", "1")
 
-        resp = _mock_response(json_data={
-            "status": "ok", "vm": "freeipa", "ip": "192.168.122.10",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "ok",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+            }
+        )
         patcher, client = _patch_httpx(resp)
         with patcher:
             await run_vm_ssh_preflight("freeipa")
@@ -242,9 +262,13 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_force_bypasses_cache(self):
-        resp = _mock_response(json_data={
-            "status": "ok", "vm": "freeipa", "ip": "192.168.122.10",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "ok",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+            }
+        )
         patcher, client = _patch_httpx(resp)
         with patcher:
             await run_vm_ssh_preflight("freeipa")
@@ -254,9 +278,13 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_report_format_all_ok(self):
-        resp = _mock_response(json_data={
-            "status": "ok", "vm": "freeipa", "ip": "192.168.122.10",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "ok",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+            }
+        )
         patcher, _ = _patch_httpx(resp)
         with patcher:
             result = await run_vm_ssh_preflight("freeipa")
@@ -266,12 +294,14 @@ class TestRunVmSshPreflight:
 
     @pytest.mark.asyncio
     async def test_report_format_fixed(self):
-        resp = _mock_response(json_data={
-            "status": "fixed",
-            "vm": "freeipa",
-            "ip": "192.168.122.10",
-            "fix": "injected host public key",
-        })
+        resp = _mock_response(
+            json_data={
+                "status": "fixed",
+                "vm": "freeipa",
+                "ip": "192.168.122.10",
+                "fix": "injected host public key",
+            }
+        )
         patcher, _ = _patch_httpx(resp)
         with patcher:
             result = await run_vm_ssh_preflight("freeipa")

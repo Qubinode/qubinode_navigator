@@ -13,19 +13,35 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set
 
 import yaml
 
 logger = logging.getLogger("intent-parser.dag-registry")
 
 # Words that are too generic to use as service keywords
-_GENERIC_WORDS = frozenset({
-    "qubinode", "infrastructure", "deployment", "deploy", "kcli-pipelines",
-    "ocp4-disconnected-helper", "disconnected", "utility", "workflow",
-    "master", "ci", "openlineage", "adr-0054", "adr-0055", "adr-0049",
-    "enterprise", "kcli", "pipelines",
-})
+_GENERIC_WORDS = frozenset(
+    {
+        "qubinode",
+        "infrastructure",
+        "deployment",
+        "deploy",
+        "kcli-pipelines",
+        "ocp4-disconnected-helper",
+        "disconnected",
+        "utility",
+        "workflow",
+        "master",
+        "ci",
+        "openlineage",
+        "adr-0054",
+        "adr-0055",
+        "adr-0049",
+        "enterprise",
+        "kcli",
+        "pipelines",
+    }
+)
 
 # Minimum tag/keyword length to avoid noise
 _MIN_KEYWORD_LEN = 2
@@ -135,11 +151,13 @@ def _load_manifest() -> List[dict]:
 
     results = []
     for dag_id, meta in (data.get("dags") or {}).items():
-        results.append({
-            "dag_id": dag_id,
-            "tags": meta.get("keywords", []),
-            "description": meta.get("description", ""),
-        })
+        results.append(
+            {
+                "dag_id": dag_id,
+                "tags": meta.get("keywords", []),
+                "description": meta.get("description", ""),
+            }
+        )
     logger.info(f"DAG manifest loaded {len(results)} DAGs from {manifest_path}")
     return results
 

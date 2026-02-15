@@ -2657,6 +2657,7 @@ async def diagnose_issue(
 # VM SSH Check API Endpoint (Second-Hop Validation)
 # =============================================================================
 
+
 async def _run_on_host(cmd: str, timeout: int = 10) -> tuple:
     """Run a command on the host via ``ssh root@localhost``.
 
@@ -2670,9 +2671,12 @@ async def _run_on_host(cmd: str, timeout: int = 10) -> tuple:
 
     proc = await _aio.create_subprocess_exec(
         "ssh",
-        "-o", "BatchMode=yes",
-        "-o", "StrictHostKeyChecking=no",
-        "-o", "ConnectTimeout=5",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "-o",
+        "ConnectTimeout=5",
         "root@localhost",
         cmd,
         stdout=_aio.subprocess.PIPE,
@@ -2735,11 +2739,7 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
         return {"status": "port_closed", "vm": vm_name, "ip": ip}
 
     # Step 3: SSH auth test (host -> VM) using the configured key
-    ssh_test_cmd = (
-        f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no "
-        f"-o ConnectTimeout=5 -i {dag_key} "
-        f"{ssh_user}@{ip} exit"
-    )
+    ssh_test_cmd = f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no " f"-o ConnectTimeout=5 -i {dag_key} " f"{ssh_user}@{ip} exit"
     try:
         rc, _, stderr = await _run_on_host(ssh_test_cmd, timeout=12)
     except Exception as exc:
@@ -2759,11 +2759,7 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
 
     for ci_key in cloud_init_keys:
         # Check if the cloud-init key can reach the VM
-        ci_test = (
-            f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no "
-            f"-o ConnectTimeout=5 -i {ci_key} "
-            f"{ssh_user}@{ip} exit"
-        )
+        ci_test = f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no " f"-o ConnectTimeout=5 -i {ci_key} " f"{ssh_user}@{ip} exit"
         try:
             rc, _, _ = await _run_on_host(ci_test, timeout=12)
         except Exception:

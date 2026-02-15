@@ -193,6 +193,7 @@ ______________________________________________________________________
 ### Prerequisites Check
 
 **System Requirements:**
+
 - **OS**: RHEL 9+, CentOS Stream 9/10+, Rocky Linux 9+, Fedora 39+
 - **RAM**: 8GB minimum, 16GB+ recommended (for AI features)
 - **Disk**: 50GB minimum, 100GB+ recommended

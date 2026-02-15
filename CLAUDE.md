@@ -218,6 +218,15 @@ sudo kcli info vm <name>
 sudo podman ps
 curl http://localhost:8080/orchestrator/status
 curl http://localhost:8888/health
+
+# Agentic Workflows (gh-aw)
+gh aw list                       # List all agentic workflows
+gh aw run doc-noob-tester        # Validate docs for accuracy and consistency
+gh aw run daily-qa               # Run weekly QA health check on demand
+# ci-doctor triggers automatically on CI failure (no manual run needed)
+gh aw compile                    # Recompile after editing .md workflow files
+gh aw logs <workflow-name>       # View logs from a workflow run
+gh aw status                     # Check workflow status
 ```
 
 ## Container Runtime
