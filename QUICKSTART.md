@@ -209,6 +209,14 @@ systemctl status libvirtd
 - **AI Assistant**: Chat at http://YOUR_IP/ai/
 - **Issues**: https://github.com/Qubinode/qubinode_navigator/issues
 
+## Related Documentation
+
+- **[README.md](README.md)** - Project overview and all deployment options
+- **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Development deployment guide
+- **[CLEAN-INSTALL-GUIDE.md](docs/CLEAN-INSTALL-GUIDE.md)** - Complete installation from scratch
+- **[AGENTS.md](AGENTS.md)** - AI coding agent instructions
+- **[MCP-SERVER-GUIDE.md](MCP-SERVER-GUIDE.md)** - MCP server setup
+
 ______________________________________________________________________
 
 **Estimated total time**: 15-25 minutes from clone to running Airflow UI

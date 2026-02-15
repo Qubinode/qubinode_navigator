@@ -51,7 +51,11 @@ git clone https://github.com/Qubinode/qubinode_navigator.git
 cd qubinode_navigator
 
 # Run the one-shot deployment
+# Note: deploy-qubinode.sh is a symlink to scripts/development/deploy-qubinode.sh
 sudo ./deploy-qubinode.sh
+
+# For full production stack with Airflow orchestration:
+# ./deploy-qubinode-with-airflow.sh
 ```
 
 That's it! The script will:
