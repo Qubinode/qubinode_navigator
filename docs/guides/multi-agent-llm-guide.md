@@ -258,7 +258,7 @@ The system follows four policies that guide decision-making:
 | High       | >= 0.8    | Auto-execute         |
 | Medium     | 0.6 - 0.8 | Execute with logging |
 | Low-Medium | 0.4 - 0.6 | Request approval     |
-| Low        | \< 0.4    | Escalate to user     |
+| Low        | < 0.4     | Escalate to user     |
 
 ## Troubleshooting
 

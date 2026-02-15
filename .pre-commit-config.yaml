@@ -132,6 +132,7 @@ repos:
         additional_dependencies:
           - mdformat-gfm
           - mdformat-tables
+          - mdformat-frontmatter
 
 # =============================================================================
 # CI Configuration
