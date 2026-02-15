@@ -328,7 +328,7 @@ The IVFFlat index `lists` parameter affects performance:
 
 | Documents        | Recommended Lists |
 | ---------------- | ----------------- |
-| < 1,000          | 50                |
+| \< 1,000         | 50                |
 | 1,000 - 10,000   | 100               |
 | 10,000 - 100,000 | 200               |
 | > 100,000        | 400+              |
