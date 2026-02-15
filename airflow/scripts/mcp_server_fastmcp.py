@@ -2695,8 +2695,13 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
     3. ssh BatchMode — auth   (on host)
     4. kcli ssh key injection  (on host, only if step 3 failed)
 
+    Uses QUBINODE_SSH_KEY_PATH env var for the primary key (default: id_rsa).
     Returns dict with status and metadata.
     """
+
+    # Determine which SSH key DAGs actually use
+    dag_key = os.getenv("QUBINODE_SSH_KEY_PATH", "/root/.ssh/id_rsa")
+    dag_key_pub = dag_key + ".pub"
 
     # Step 1: Get VM IP via kcli (on host)
     try:
@@ -2729,11 +2734,10 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
     if rc != 0:
         return {"status": "port_closed", "vm": vm_name, "ip": ip}
 
-    # Step 3: SSH auth test (host -> VM)
-    # DAGs use id_rsa; check if it already works
+    # Step 3: SSH auth test (host -> VM) using the configured key
     ssh_test_cmd = (
         f"ssh -o BatchMode=yes -o StrictHostKeyChecking=no "
-        f"-o ConnectTimeout=5 -i /root/.ssh/id_rsa "
+        f"-o ConnectTimeout=5 -i {dag_key} "
         f"{ssh_user}@{ip} exit"
     )
     try:
@@ -2745,11 +2749,12 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
     if rc == 0:
         return {"status": "ok", "vm": vm_name, "ip": ip}
 
-    # Step 4: Auto-fix — inject id_rsa.pub via the cloud-init key
-    # kcli ssh does NOT support remote commands (only interactive sessions).
-    # kcli injects id_ed25519 into VMs via cloud-init, so we use that key
-    # to SSH in and append id_rsa.pub to authorized_keys.
+    # Step 4: Auto-fix — inject the DAG key's public key via a cloud-init key
+    # kcli injects id_ed25519 into VMs via cloud-init. Try that first,
+    # then fall back to other available keys.
     cloud_init_keys = ["/root/.ssh/id_ed25519", "/root/.ssh/id_rsa"]
+    # De-duplicate: don't re-test dag_key (already failed in step 3)
+    cloud_init_keys = [k for k in cloud_init_keys if k != dag_key]
     fix_applied = False
 
     for ci_key in cloud_init_keys:
@@ -2766,14 +2771,14 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
         if rc != 0:
             continue
 
-        # This key works — use it to inject id_rsa.pub
+        # This key works — use it to inject the DAG key's public key
         inject_cmd = (
             f"ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 "
             f"-i {ci_key} {ssh_user}@{ip} "
             f"'mkdir -p ~/.ssh && chmod 700 ~/.ssh && "
             f"cat >> ~/.ssh/authorized_keys && "
             f"chmod 600 ~/.ssh/authorized_keys' "
-            f"< /root/.ssh/id_rsa.pub"
+            f"< {dag_key_pub}"
         )
         try:
             rc, _, inject_err = await _run_on_host(inject_cmd, timeout=15)
@@ -2791,7 +2796,7 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
             "error": stderr.strip() if stderr else "no working cloud-init key found",
         }
 
-    # Retest SSH with id_rsa (the key DAGs actually use)
+    # Retest SSH with the DAG key
     try:
         rc, _, stderr = await _run_on_host(ssh_test_cmd, timeout=12)
     except Exception as exc:
@@ -2807,14 +2812,14 @@ async def _check_vm_ssh_impl(vm_name: str, ssh_user: str = "cloud-user") -> dict
             "status": "fixed",
             "vm": vm_name,
             "ip": ip,
-            "fix": "injected host public key via cloud-init SSH key",
+            "fix": f"injected {dag_key_pub} via cloud-init SSH key",
         }
 
     return {
         "status": "auth_failed",
         "vm": vm_name,
         "ip": ip,
-        "error": stderr.strip() if stderr else "key injected but id_rsa still fails",
+        "error": stderr.strip() if stderr else f"key injected but {dag_key} still fails",
     }
 
 

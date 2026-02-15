@@ -595,8 +595,33 @@ async def _try_intent_fast_path(message: str) -> Optional[OrchestratorResponse]:
         if parsed.confidence < 0.5 or parsed.category not in FAST_PATH_CATEGORIES:
             return None  # Fall through to full orchestrator
 
+        # Run VM SSH preflight for DAG triggers (auto-fix SSH key issues)
+        preflight_report = ""
+        if parsed.category == IntentCategory.DAG_TRIGGER:
+            try:
+                from intent_parser.vm_ssh_preflight import (
+                    run_vm_ssh_preflight, get_vm_for_dag,
+                )
+                dag_id = (parsed.entities or {}).get("dag_id", "")
+                conf = parsed.parameters or {}
+                vm_info = get_vm_for_dag(dag_id, conf)
+                if vm_info:
+                    vm_name, ssh_user = vm_info
+                    vm_result = await run_vm_ssh_preflight(vm_name, ssh_user)
+                    preflight_report = vm_result.format_report()
+                    if preflight_report:
+                        logger.info("VM SSH preflight: %s", preflight_report)
+            except ImportError:
+                logger.debug("VM SSH preflight not available")
+            except Exception as e:
+                logger.warning("VM SSH preflight failed: %s", e)
+
         # Execute via intent parser
         result = await parser.process(message)
+
+        response_text = result.output if result.success else f"Error: {result.error}"
+        if preflight_report:
+            response_text = f"{preflight_report}\n\n{response_text}"
 
         return OrchestratorResponse(
             session_id=str(uuid.uuid4()),
@@ -610,7 +635,7 @@ async def _try_intent_fast_path(message: str) -> Optional[OrchestratorResponse]:
                 "required_providers": [],
                 "escalation_triggers": [],
             },
-            response_text=result.output if result.success else f"Error: {result.error}",
+            response_text=response_text,
             confidence=parsed.confidence,
             escalation_needed=not result.success,
             escalation_reason=result.error if not result.success else None,

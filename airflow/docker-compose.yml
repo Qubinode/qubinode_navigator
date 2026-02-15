@@ -47,6 +47,7 @@ x-airflow-common:
     # Set QUBINODE_SSH_USER env var before starting containers to change the SSH user
     # The key is always at /root/.ssh/id_rsa (synced from admin user's key by deploy script)
     QUBINODE_SSH_USER: ${QUBINODE_SSH_USER:-root}
+    QUBINODE_SSH_KEY_PATH: ${QUBINODE_SSH_KEY_PATH:-/root/.ssh/id_rsa}
     AIRFLOW_CONN_LOCALHOST_SSH: ${AIRFLOW_CONN_LOCALHOST_SSH:-}
     # Override default SSH connection ID if needed (default: localhost_ssh)
     # QUBINODE_SSH_CONN_ID: 'localhost_ssh'

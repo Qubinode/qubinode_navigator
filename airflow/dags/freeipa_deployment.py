@@ -326,9 +326,20 @@ INVENTORY_EOF
 
     # Install Ansible collections from vendored requirements
     echo ""
-    echo "Installing Ansible collections..."
     if [ -f "{FREEIPA_PLAYBOOK_DIR}/collections/requirements.yaml" ]; then
-        ansible-galaxy install --force -r {FREEIPA_PLAYBOOK_DIR}/collections/requirements.yaml 2>/dev/null || true
+        echo "[INFO] Installing Ansible collections..."
+        for attempt in 1 2 3; do
+            if ansible-galaxy collection install --force -r {FREEIPA_PLAYBOOK_DIR}/collections/requirements.yaml 2>&1; then
+                echo "[OK] Ansible collections installed"
+                break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+                echo "[ERROR] Failed to install Ansible collections after 3 attempts"
+                exit 1
+            fi
+            echo "[WARN] Collection install attempt $attempt failed, retrying in 10s..."
+            sleep 10
+        done
     fi
 
     echo ""
@@ -380,6 +391,11 @@ install_freeipa = SSHOperator(
     echo "  DNS Forwarder: $DNS_FORWARDER"
     echo "  VM IP: $IP"
 
+    # Password variable chain:
+    #   vault.yml key               -> DAG shell var   -> --extra-vars name       -> vars/main.yml maps to
+    #   freeipa_server_admin_password -> FREEIPA_PASS    -> freeipa_admin_password  -> freeipa_server_admin_password
+    #   freeipa_server_dm_password    -> FREEIPA_DM_PASS -> freeipa_ds_password     -> freeipa_server_ds_password
+
     # Extract passwords from vault.yml (if present) for Ansible extra-vars
     FREEIPA_PASS=""
     FREEIPA_DM_PASS=""
@@ -389,6 +405,28 @@ install_freeipa = SSHOperator(
         FREEIPA_DM_PASS=$(grep "freeipa_server_dm_password:" "$VAULT_FILE" | awk "{{print \\$2}}" | tr -d "'" || echo "")
         [ -n "$FREEIPA_PASS" ] && echo "[OK] Vault password loaded"
     fi
+
+    # Validate passwords were extracted
+    if [ -z "$FREEIPA_PASS" ]; then
+        echo "[ERROR] Could not extract freeipa_server_admin_password from $VAULT_FILE"
+        echo "[ERROR] Expected format: freeipa_server_admin_password: 'YourPassword'"
+        exit 1
+    fi
+    if [ -z "$FREEIPA_DM_PASS" ]; then
+        echo "[ERROR] Could not extract freeipa_server_dm_password from $VAULT_FILE"
+        exit 1
+    fi
+
+    # Validate passwords don't contain shell/template-hazardous characters
+    for pw_name in FREEIPA_PASS FREEIPA_DM_PASS; do
+        pw_val="${{!pw_name}}"
+        if echo "$pw_val" | grep -qF '$'; then
+            echo "[ERROR] Password '$pw_name' contains '\\$' which breaks ipa-ldap-updater"
+            echo "[ERROR] Please use a password without \\$ characters"
+            exit 1
+        fi
+    done
+    echo "[OK] Vault passwords validated (no hazardous characters)"
 
     cd $PLAYBOOK_DIR
     ANSIBLE_HOST_KEY_CHECKING=False \

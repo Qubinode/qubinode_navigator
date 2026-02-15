@@ -79,11 +79,14 @@ class PreflightResult:
 # ---------------------------------------------------------------------------
 
 def _get_config() -> Dict[str, str]:
+    ssh_user = os.getenv("QUBINODE_SSH_USER", os.getenv("USER", "root"))
+    ssh_key = os.getenv("QUBINODE_SSH_KEY_PATH", f"/home/{ssh_user}/.ssh/id_rsa")
     return {
         "api_url": os.getenv("AIRFLOW_API_URL", "http://localhost:8888"),
         "user": os.getenv("AIRFLOW_USER") or os.getenv("AIRFLOW_API_USER") or "admin",
         "password": os.getenv("AIRFLOW_PASSWORD") or os.getenv("AIRFLOW_API_PASSWORD") or "admin",
-        "ssh_user": os.getenv("QUBINODE_SSH_USER", os.getenv("USER", "root")),
+        "ssh_user": ssh_user,
+        "ssh_key": ssh_key,
         "conn_id": os.getenv("QUBINODE_SSH_CONN_ID", "localhost_ssh"),
         "cache_ttl": int(os.getenv("SSH_PREFLIGHT_CACHE_TTL", "300")),
     }
@@ -121,12 +124,14 @@ def _set_cached(conn_id: str, result: PreflightResult) -> None:
 # ---------------------------------------------------------------------------
 
 async def _check_connection_exists(
-    client: Any, api_url: str, auth: tuple, conn_id: str, ssh_user: str
+    client: Any, api_url: str, auth: tuple, conn_id: str, ssh_user: str,
+    ssh_key: str = "",
 ) -> tuple:
     """Check if the SSH connection exists; create it if missing.
 
     Returns (PreflightCheck, conn_data_or_None).
     """
+    key_file = ssh_key or f"/home/{ssh_user}/.ssh/id_rsa"
     try:
         resp = await client.get(
             f"{api_url}/api/v1/connections/{conn_id}",
@@ -155,7 +160,7 @@ async def _check_connection_exists(
             "host": "localhost",
             "login": ssh_user,
             "port": 22,
-            "extra": json.dumps({"key_file": f"/home/{ssh_user}/.ssh/id_rsa"}),
+            "extra": json.dumps({"key_file": key_file}),
         }
         try:
             create_resp = await client.post(
@@ -231,8 +236,8 @@ async def _check_ssh_user(
         )
 
 
-def _check_ssh_key(conn_data: Dict) -> PreflightCheck:
-    """Check if the connection has an SSH key file configured (report only)."""
+def _check_ssh_key(conn_data: Dict, expected_key: str = "") -> PreflightCheck:
+    """Check if the connection has the correct SSH key file configured."""
     extra_raw = conn_data.get("extra", "{}")
     if isinstance(extra_raw, str):
         try:
@@ -243,17 +248,24 @@ def _check_ssh_key(conn_data: Dict) -> PreflightCheck:
         extra = extra_raw
 
     key_file = extra.get("key_file", "")
-    if key_file:
+    if not key_file:
         return PreflightCheck(
             name="ssh_key",
-            status=CheckStatus.OK,
-            message=f"SSH key configured: {key_file}",
+            status=CheckStatus.WARNING,
+            message="No SSH key file configured in connection extras. "
+                    "SSHOperator may rely on ssh-agent or password auth.",
+        )
+    if expected_key and key_file != expected_key:
+        return PreflightCheck(
+            name="ssh_key",
+            status=CheckStatus.WARNING,
+            message=f"SSH key mismatch: connection uses '{key_file}' "
+                    f"but QUBINODE_SSH_KEY_PATH is '{expected_key}'.",
         )
     return PreflightCheck(
         name="ssh_key",
-        status=CheckStatus.WARNING,
-        message="No SSH key file configured in connection extras. "
-                "SSHOperator may rely on ssh-agent or password auth.",
+        status=CheckStatus.OK,
+        message=f"SSH key configured: {key_file}",
     )
 
 
@@ -327,7 +339,8 @@ async def run_ssh_preflight(force: bool = False) -> PreflightResult:
     async with httpx.AsyncClient(timeout=10.0) as client:
         # Check 1: Connection exists
         conn_check, conn_data = await _check_connection_exists(
-            client, cfg["api_url"], auth, conn_id, cfg["ssh_user"]
+            client, cfg["api_url"], auth, conn_id, cfg["ssh_user"],
+            ssh_key=cfg["ssh_key"],
         )
         checks.append(conn_check)
 
@@ -339,7 +352,7 @@ async def run_ssh_preflight(force: bool = False) -> PreflightResult:
             checks.append(user_check)
 
             # Check 3: SSH key
-            key_check = _check_ssh_key(conn_data)
+            key_check = _check_ssh_key(conn_data, expected_key=cfg["ssh_key"])
             checks.append(key_check)
 
         # Check 4: sshd reachable
