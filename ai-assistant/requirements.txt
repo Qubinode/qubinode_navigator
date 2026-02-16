@@ -11,7 +11,7 @@ anthropic==0.79.0
 anyio==4.12.1
 argcomplete==3.6.3
 attrs==25.4.0
-authlib==1.6.7
+authlib==1.6.8
 beartype==0.22.9
 boto3==1.42.44
 botocore==1.42.44
