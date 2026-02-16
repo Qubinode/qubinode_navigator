@@ -130,7 +130,7 @@ pydantic-core==2.41.5
 pydantic-evals==0.8.1
 pydantic-graph==0.8.1
 pydantic-settings==2.13.0
-pydocket==0.17.5
+pydocket==0.17.7
 pygments==2.19.2
 pyjwt[crypto]==2.10.1
 pyperclip==1.11.0
