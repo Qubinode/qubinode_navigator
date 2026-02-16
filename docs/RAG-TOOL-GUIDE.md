@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # RAG Operations Tool - Implementation Guide
 
 ## Overview

@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # RAG Tool Quick Reference Card
 
 ## Tool Name
