@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # Qubinode Navigator Documentation
 
 This directory contains the Jekyll-based documentation website for Qubinode Navigator.

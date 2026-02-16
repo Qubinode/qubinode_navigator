@@ -10,7 +10,7 @@ nav_order: 3
 >
 > - Validation: `IN PROGRESS` – Example DAG workflows and missing-piece analysis are evolving.
 > - Last reviewed: 2025-11-21
-> - Community: If you adapt these patterns or close some of the identified gaps, please contribute updates via [Contributing to docs](./how-to/contribute.md).
+> - Community: If you adapt these patterns or close some of the identified gaps, please contribute updates via [Contributing to docs](../how-to/contribute.md).
 
 ## Overview
 
@@ -660,10 +660,10 @@ open http://localhost:8080
 
 ## 📚 Related Documentation
 
-- [ADR-0036](./adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
-- [Airflow Vision & Architecture](./AIRFLOW-COMPLETE-VISION.md)
-- [Community Ecosystem](./airflow-community-ecosystem.md)
-- [Bidirectional Learning](./airflow-rag-bidirectional-learning.md)
+- [ADR-0036](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
+- [Airflow Vision & Architecture](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/AIRFLOW-COMPLETE-VISION.md)
+- [Community Ecosystem](../guides/airflow-community-ecosystem.md)
+- [Bidirectional Learning](../guides/airflow-rag-bidirectional-learning.md)
 
 ______________________________________________________________________
 

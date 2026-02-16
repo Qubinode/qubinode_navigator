@@ -769,8 +769,8 @@ ______________________________________________________________________
 
 1. **Review the Documentation**
 
-   - [ADR-0036](../adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
-   - [Integration Guide](./airflow-integration-guide.md)
+   - [ADR-0036](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
+   - [Integration Guide](../tutorials/airflow-integration-guide.md)
 
 1. **Set Up Your Environment**
 

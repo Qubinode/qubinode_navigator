@@ -12,7 +12,7 @@ This document provides a quick overview of the Apache Airflow integration with t
 >
 > - Validation: `IN PROGRESS` – Airflow integration is under active development and may evolve.
 > - Last reviewed: 2025-11-21
-> - Community: If you deploy this successfully or find gaps, please help improve this guide via [Contributing to docs](./how-to/contribute.md).
+> - Community: If you deploy this successfully or find gaps, please help improve this guide via [Contributing to docs](../how-to/contribute.md).
 
 ## 📋 Overview
 
@@ -21,7 +21,7 @@ Apache Airflow has been integrated as an **optional** workflow orchestration eng
 ## 🎯 Key Features
 
 - **DAG-based Workflows**: Define complex deployment workflows with dependencies
-- **Web UI**: Visual workflow monitoring and debugging (port 8080)
+- **Web UI**: Visual workflow monitoring and debugging (port 8888)
 - **Custom Plugins**: Extensible plugin system for domain-specific logic
 - **Multi-Cloud**: Deploy to Qubinode, AWS, GCP, and Azure from a single interface
 - **Optional**: Feature flag controlled - zero impact when disabled
@@ -44,15 +44,15 @@ docker-compose -f docker-compose-airflow.yml up -d
 
 ### 3. Access UI
 
-Open browser to: **http://localhost:8080**
+Open browser to: **http://localhost:8888**
 
 - Username: `admin`
 - Password: `admin` (change immediately!)
 
 ## 📁 Documentation
 
-- **[ADR-0036](./adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)** - Architectural decision record
-- **[Integration Guide](./airflow-integration-guide.md)** - Detailed installation and configuration
+- **[ADR-0036](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)** - Architectural decision record
+- **[Integration Guide](../tutorials/airflow-integration-guide.md)** - Detailed installation and configuration
 - **[Plugin Development](./airflow-integration-guide.md#creating-custom-plugins)** - Custom plugin creation guide
 
 ## 🔧 Directory Structure
@@ -130,7 +130,7 @@ ENABLE_AIRFLOW=true
 
 # Airflow settings
 AIRFLOW_HOME=/opt/airflow
-AIRFLOW__WEBSERVER__WEB_SERVER_PORT=8080
+AIRFLOW__WEBSERVER__WEB_SERVER_PORT=8888
 AIRFLOW__CORE__EXECUTOR=LocalExecutor
 AIRFLOW__CORE__LOAD_EXAMPLES=False
 
@@ -168,7 +168,7 @@ docker-compose ps
 docker-compose logs airflow-webserver
 
 # Verify port
-netstat -tlnp | grep 8080
+netstat -tlnp | grep 8888
 ```
 
 ### DAGs Not Appearing
@@ -256,8 +256,8 @@ We welcome contributions! Areas for contribution:
 ## 📞 Support
 
 - **GitHub Issues**: https://github.com/Qubinode/qubinode_navigator/issues
-- **Documentation**: [Airflow Integration Guide](./airflow-integration-guide.md)
-- **ADR**: [ADR-0036](./adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
+- **Documentation**: [Airflow Integration Guide](../tutorials/airflow-integration-guide.md)
+- **ADR**: [ADR-0036](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md)
 
 ## 📄 License
 

@@ -23,7 +23,7 @@ This guide provides step-by-step instructions for integrating Apache Airflow wit
 - Docker or Podman installed
 - Docker Compose or Podman Compose
 - At least 4GB free RAM
-- Ports 8080 (Airflow UI) and 5432 (PostgreSQL) available
+- Ports 8888 (Airflow UI) and 5432 (PostgreSQL) available
 - AI Assistant container running (see ADR-0027)
 
 ## Installation Methods
@@ -55,7 +55,7 @@ services:
     image: apache/airflow:2.8.0-python3.11
     command: webserver
     ports:
-      - "8080:8080"
+      - "8888:8888"
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -77,7 +77,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "--fail", "http://localhost:8888/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -116,7 +116,7 @@ services:
       - "8000:8000"
     environment:
       ENABLE_AIRFLOW: "true"
-      AIRFLOW_API_URL: "http://airflow-webserver:8080/api/v1"
+      AIRFLOW_API_URL: "http://airflow-webserver:8888/api/v1"
     volumes:
       - ./airflow/dags:/opt/airflow/dags:ro
     depends_on:
@@ -185,7 +185,7 @@ docker-compose -f docker-compose-airflow.yml up -d
 docker-compose -f docker-compose-airflow.yml logs -f airflow-webserver
 
 # 4. Access UI
-# Open browser: http://localhost:8080
+# Open browser: http://localhost:8888
 # Username: admin
 # Password: admin
 ```
@@ -606,11 +606,11 @@ docker-compose ps airflow-webserver
 docker-compose logs airflow-webserver
 
 # Verify port is listening
-netstat -tlnp | grep 8080
+netstat -tlnp | grep 8888
 
 # Check firewall
 sudo firewall-cmd --list-ports
-sudo firewall-cmd --add-port=8080/tcp --permanent
+sudo firewall-cmd --add-port=8888/tcp --permanent
 sudo firewall-cmd --reload
 ```
 
@@ -678,7 +678,7 @@ docker-compose exec airflow-webserver airflow variables list
 
 ## Next Steps
 
-1. Review [ADR-0036](./adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md) for architectural decisions
+1. Review [ADR-0036](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md) for architectural decisions
 1. Explore [Airflow Documentation](https://airflow.apache.org/docs/)
 1. Join [Airflow Slack Community](https://apache-airflow-slack.herokuapp.com/)
 1. Create custom plugins for your use case

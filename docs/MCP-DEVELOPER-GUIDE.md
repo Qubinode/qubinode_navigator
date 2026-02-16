@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # MCP Developer Integration Guide
 
 **For LLM Developers and Tool Builders**
