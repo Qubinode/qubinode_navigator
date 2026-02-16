@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # Getting Started with Qubinode Navigator
 
 **From zero to running infrastructure in 15 minutes**

@@ -1,3 +1,7 @@
+---
+nav_exclude: true
+---
+
 # AI Assistant Model Configuration Guide
 
 ## Quick Start

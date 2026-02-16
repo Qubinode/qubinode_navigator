@@ -516,9 +516,9 @@ learning_metrics = {
 
 ## 📚 Related Documentation
 
-- [ADR-0036](./adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md) - Airflow Integration
+- [ADR-0036](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/adrs/adr-0036-apache-airflow-workflow-orchestration-integration.md) - Airflow Integration
 - [Community Ecosystem](./airflow-community-ecosystem.md) - Sharing and Collaboration
-- [Integration Guide](./airflow-integration-guide.md) - Setup Instructions
+- [Integration Guide](../tutorials/airflow-integration-guide.md) - Setup Instructions
 
 ______________________________________________________________________
 
