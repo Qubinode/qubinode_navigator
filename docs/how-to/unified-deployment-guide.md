@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: Unified Deployment Guide
+parent: How to
+nav_order: 7
+---
 
 # Qubinode Navigator Unified Deployment with Nginx
 

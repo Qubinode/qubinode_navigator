@@ -10,8 +10,8 @@ OpenShift Agent Based Installer Helper
 >
 > These instructions describe OneDev-based agent pipelines. For new work, model these flows as **Airflow DAGs** and manage them via the Airflow integration.
 >
-> - Airflow overview: [AIRFLOW-INTEGRATION.md](../AIRFLOW-INTEGRATION.md)
-> - DAG workflows: [airflow-dag-deployment-workflows.md](../airflow-dag-deployment-workflows.md)
+> - Airflow overview: [AIRFLOW-INTEGRATION.md](../explanation/airflow-integration.md)
+> - DAG workflows: [airflow-dag-deployment-workflows.md](../reference/airflow-dag-deployment-workflows.md)
 
 # Prerequisites
 

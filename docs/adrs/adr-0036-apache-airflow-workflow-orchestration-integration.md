@@ -329,7 +329,7 @@ Pre-built workflows for RAG system management:
 
 **Continuous Improvement**: The system learns from every execution, automatically updating documentation (ADRs) and improving recommendations over time.
 
-See [Bidirectional Learning Guide](../airflow-rag-bidirectional-learning.md) for detailed information.
+See [Bidirectional Learning Guide](../guides/airflow-rag-bidirectional-learning.md) for detailed information.
 
 ## References
 
@@ -337,7 +337,7 @@ See [Bidirectional Learning Guide](../airflow-rag-bidirectional-learning.md) for
 - [Airflow Best Practices](https://airflow.apache.org/docs/apache-airflow/stable/best-practices.html)
 - [Airflow Community Providers](https://github.com/apache/airflow/tree/main/airflow/providers)
 - [Kubernetes Sidecar Pattern](https://kubernetes.io/docs/concepts/workloads/pods/)
-- [Community Ecosystem Guide](../airflow-community-ecosystem.md)
+- [Community Ecosystem Guide](../guides/airflow-community-ecosystem.md)
 - ADR-0001: Container-First Execution Model
 - ADR-0027: CPU-Based AI Deployment Assistant Architecture
 - ADR-0032: AI Assistant Community Distribution Strategy

@@ -97,8 +97,8 @@ In the Airflow UI:
    - `qubinode_simple_deploy`
    - `multi_cloud_deploy`
    - RAG/AI‑related workflows documented in:
-     - [Airflow Integration Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-integration-guide.md)
-     - [DAG Deployment Workflows](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-dag-deployment-workflows.md)
+     - [Airflow Integration Guide](./airflow-integration-guide.md)
+     - [DAG Deployment Workflows](../reference/airflow-dag-deployment-workflows.md)
 
 To run a DAG:
 
@@ -119,8 +119,8 @@ With Airflow and the AI Assistant running behind nginx:
 
 See also:
 
-- [Airflow Community Ecosystem](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-community-ecosystem.md)
-- [Airflow ↔ RAG Bidirectional Learning](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-rag-bidirectional-learning.md)
+- [Airflow Community Ecosystem](../guides/airflow-community-ecosystem.md)
+- [Airflow ↔ RAG Bidirectional Learning](../guides/airflow-rag-bidirectional-learning.md)
 
 ______________________________________________________________________
 

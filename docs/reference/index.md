@@ -22,4 +22,6 @@ This section contains reference documentation following the Diataxis framework.
 
 ## Contents
 
-- [Example: api-documentation.md](./api-documentation.md)
+- [API Documentation](./api-documentation.md) – Main APIs and integration surfaces
+- [Deployment Integration Guide](./deployment-integration-guide.md) – How the one-shot deployment script integrates with existing patterns
+- [DAG Deployment Workflows](./airflow-dag-deployment-workflows.md) – DAG workflows and missing-piece analysis

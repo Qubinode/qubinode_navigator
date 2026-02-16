@@ -401,7 +401,7 @@ spec:
 - [GitHub Webhooks](https://docs.github.com/en/developers/webhooks-and-events/webhooks)
 - [GitLab Webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html)
 - ADR-0036: Apache Airflow Workflow Orchestration Integration
-- [DAG Deployment Workflows](../airflow-dag-deployment-workflows.md)
+- [DAG Deployment Workflows](../reference/airflow-dag-deployment-workflows.md)
 
 ## Decision Log
 

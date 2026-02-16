@@ -13,8 +13,8 @@ This repository provides a plan which deploys a vm where:
 >
 > These pipelines were designed around OneDev. For new baremetal OpenShift deployments, consider modelling these as **Airflow DAGs** and managing them via the Airflow sidecar.
 >
-> - Airflow overview: [AIRFLOW-INTEGRATION.md](../AIRFLOW-INTEGRATION.md)
-> - DAG workflows: [airflow-dag-deployment-workflows.md](../airflow-dag-deployment-workflows.md)
+> - Airflow overview: [AIRFLOW-INTEGRATION.md](../explanation/airflow-integration.md)
+> - DAG workflows: [airflow-dag-deployment-workflows.md](../reference/airflow-dag-deployment-workflows.md)
 
 # Prerequisites
 

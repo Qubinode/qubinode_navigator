@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: Airflow Integration Guide
+parent: Tutorials
+nav_order: 5
+---
 
 # Apache Airflow Integration Guide
 

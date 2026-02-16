@@ -413,7 +413,7 @@ ai_assistant:
 
 ## Related Documentation
 
-- [AI Assistant Deployment Strategy](AI_ASSISTANT_DEPLOYMENT_STRATEGY.md)
+- [AI Assistant Deployment Strategy](explanation/ai-assistant-deployment-strategy.md)
 - [Container Build Process](../ai-assistant/scripts/build.sh)
 - [CI/CD Pipeline](../.github/workflows/ai-assistant-ci.yml)
 - [Plugin Configuration](../config/ai_assistant_deployment.yml)

@@ -12,8 +12,8 @@ This repository provides a plan which deploys a vm where:
 >
 > This universal installer workflow is still documented for OneDev users. New deployments should converge on **Airflow DAGs** and the AI Assistant for orchestration.
 >
-> - Airflow overview: [AIRFLOW-INTEGRATION.md](../AIRFLOW-INTEGRATION.md)
-> - DAG workflows: [airflow-dag-deployment-workflows.md](../airflow-dag-deployment-workflows.md)
+> - Airflow overview: [AIRFLOW-INTEGRATION.md](../explanation/airflow-integration.md)
+> - DAG workflows: [airflow-dag-deployment-workflows.md](../reference/airflow-dag-deployment-workflows.md)
 
 # Prerequisites
 

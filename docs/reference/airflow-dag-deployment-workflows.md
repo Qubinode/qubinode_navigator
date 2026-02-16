@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: DAG Deployment Workflows
+parent: Reference
+nav_order: 3
+---
 
 # DAG Deployment Workflows & Missing Pieces
 

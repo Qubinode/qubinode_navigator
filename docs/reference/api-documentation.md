@@ -33,14 +33,14 @@ The following scripts are primarily for **developers** and historical workflows 
 
 See also:
 
-- [Unified Deployment Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/UNIFIED-DEPLOYMENT-GUIDE.md)
-- [Deployment Integration Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/DEPLOYMENT_INTEGRATION_GUIDE.md)
+- [Unified Deployment Guide](../how-to/unified-deployment-guide.md)
+- [Deployment Integration Guide](./deployment-integration-guide.md)
 
 ## 2. AI Assistant REST API
 
 The AI Assistant container exposes a REST API used for health checks and AI-powered operations.
 
-Key characteristics (see [AI Assistant Deployment Strategy](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/AI_ASSISTANT_DEPLOYMENT_STRATEGY.md)):
+Key characteristics (see [AI Assistant Deployment Strategy](../explanation/ai-assistant-deployment-strategy.md)):
 
 - Default image: `quay.io/takinosh/qubinode-ai-assistant:latest`.
 - Default port: `8080` (container) – typically mapped to a host port.
@@ -73,9 +73,9 @@ The project integrates with **Apache Airflow 2.x** using Airflow's standard REST
 
 Reference docs:
 
-- [Airflow Integration Overview](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/AIRFLOW-INTEGRATION.md)
-- [Airflow Integration Guide](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-integration-guide.md)
-- [DAG Deployment Workflows](https://github.com/Qubinode/qubinode_navigator/blob/main/docs/airflow-dag-deployment-workflows.md)
+- [Airflow Integration Overview](../explanation/airflow-integration.md)
+- [Airflow Integration Guide](../tutorials/airflow-integration-guide.md)
+- [DAG Deployment Workflows](./airflow-dag-deployment-workflows.md)
 
 From an API perspective:
 

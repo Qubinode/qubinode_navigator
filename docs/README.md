@@ -5,7 +5,7 @@ This directory contains the Jekyll-based documentation website for Qubinode Navi
 ## Which Guide Should I Use?
 
 - **Quick 15-min setup?** - [QUICKSTART.md](../QUICKSTART.md)
-- **Fresh OS install?** - [CLEAN-INSTALL-GUIDE.md](CLEAN-INSTALL-GUIDE.md)
+- **Fresh OS install?** - [Clean Install Guide](how-to/clean-install-guide.md)
 - **Development/contributing?** - [GETTING_STARTED.md](GETTING_STARTED.md)
 - **Production deployment?** - [Deploy to Production](how-to/deploy-to-production.md)
 - **MCP server integration?** - [MCP Production Setup](tutorials/mcp-production-and-client.md)

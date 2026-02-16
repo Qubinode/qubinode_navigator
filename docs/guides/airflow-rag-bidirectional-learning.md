@@ -1,6 +1,8 @@
-______________________________________________________________________
-
-## nav_exclude: true
+---
+title: Airflow RAG Bidirectional Learning
+parent: Guides
+nav_order: 5
+---
 
 # Airflow ↔ RAG Bidirectional Learning System
 

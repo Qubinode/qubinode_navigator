@@ -8,8 +8,8 @@ ______________________________________________________________________
 >
 > This guide describes Step CA deployment via OneDev Kcli pipelines. For new environments, consider modelling these steps as an **Airflow DAG** managed by the Airflow sidecar.
 >
-> - Airflow overview: [AIRFLOW-INTEGRATION.md](../AIRFLOW-INTEGRATION.md)
-> - DAG workflows: [airflow-dag-deployment-workflows.md](../airflow-dag-deployment-workflows.md)
+> - Airflow overview: [AIRFLOW-INTEGRATION.md](../explanation/airflow-integration.md)
+> - DAG workflows: [airflow-dag-deployment-workflows.md](../reference/airflow-dag-deployment-workflows.md)
 
 ## Requirements
 

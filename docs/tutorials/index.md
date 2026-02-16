@@ -26,3 +26,4 @@ This section contains tutorials documentation following the Diataxis framework.
 - [Airflow Getting Started](./airflow-getting-started.md) – Deploy Qubinode with Apache Airflow orchestration
 - [MCP Production & Client Setup](./mcp-production-and-client.md) – Deploy MCP services and configure clients like Claude Desktop
 - [RAG Document Ingestion](./rag-document-ingestion.md) – Ingest your own docs into the RAG system for AI-enhanced querying
+- [Airflow Integration Guide](./airflow-integration-guide.md) – Step-by-step Apache Airflow integration with the AI Assistant
