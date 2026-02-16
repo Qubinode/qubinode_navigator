@@ -46,6 +46,7 @@ fsspec==2026.2.0
 genai-prices==0.0.52
 google-auth[requests]==2.48.0
 google-genai==1.62.0
+googleapis-common-protos==1.72.0
 greenlet==3.3.1
 griffe==1.15.0
 groq==1.0.0
@@ -91,7 +92,7 @@ markupsafe==3.0.3
 marshmallow==3.26.2
 mcp==1.26.0
 mdurl==0.1.2
-mistralai==1.9.11
+mistralai==1.12.2
 more-itertools==10.8.0
 multidict==6.7.1
 mypy-extensions==1.1.0
@@ -100,6 +101,11 @@ numpy==2.4.2
 openai==2.17.0
 openapi-pydantic==0.5.1
 opentelemetry-api==1.39.1
+opentelemetry-exporter-otlp-proto-common==1.39.1
+opentelemetry-exporter-otlp-proto-http==1.39.1
+opentelemetry-proto==1.39.1
+opentelemetry-sdk==1.39.1
+opentelemetry-semantic-conventions==0.60b1
 orjson==3.11.7
 packaging==25.0
 pathable==0.4.4
