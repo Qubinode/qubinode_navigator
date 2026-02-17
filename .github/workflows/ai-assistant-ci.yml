@@ -1675,7 +1675,7 @@ jobs:
 
     steps:
       - name: Download benchmark results
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v7.0.0
         continue-on-error: true  # Don't fail if artifact doesn't exist
         with:
           name: performance-benchmarks
