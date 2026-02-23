@@ -143,7 +143,7 @@ python-multipart==0.0.22
 pytz==2025.2
 pyyaml==6.0.3
 qdrant-client==1.17.0
-redis==7.1.1
+redis==7.2.0
 referencing==0.36.2
 regex==2026.1.15
 requests==2.32.5
