@@ -142,7 +142,7 @@ python-json-logger==4.0.0
 python-multipart==0.0.22
 pytz==2025.2
 pyyaml==6.0.3
-qdrant-client==1.16.2
+qdrant-client==1.17.0
 redis==7.1.1
 referencing==0.36.2
 regex==2026.1.15
