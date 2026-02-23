@@ -76,7 +76,7 @@ jsonpatch==1.33
 jsonpointer==3.0.0
 jsonref==1.1.0
 jsonschema==4.26.0
-jsonschema-path==0.3.4
+jsonschema-path==0.4.1
 jsonschema-specifications==2025.9.1
 keyring==25.7.0
 langchain==0.3.27
@@ -108,7 +108,7 @@ opentelemetry-sdk==1.39.1
 opentelemetry-semantic-conventions==0.60b1
 orjson==3.11.7
 packaging==25.0
-pathable==0.4.4
+pathable==0.5.0
 pathvalidate==3.3.1
 platformdirs==4.9.2
 pluggy==1.6.0
