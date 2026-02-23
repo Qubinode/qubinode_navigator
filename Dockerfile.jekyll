@@ -1,4 +1,4 @@
-FROM docker.io/library/ruby:4.0-alpine
+FROM docker.io/library/ruby:3.1.4-alpine
 
 # Install dependencies for native gem compilation
 RUN apk add --no-cache \
