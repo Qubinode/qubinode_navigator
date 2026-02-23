@@ -48,7 +48,9 @@ google-auth[requests]==2.48.0
 google-genai==1.64.0
 googleapis-common-protos==1.72.0
 greenlet==3.3.2
-griffe==1.15.0
+griffe==2.0.0
+griffecli==2.0.0
+griffelib==2.0.0
 groq==1.0.0
 grpcio==1.78.1
 h11==0.16.0
