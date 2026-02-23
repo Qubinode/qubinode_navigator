@@ -25,7 +25,7 @@ cohere==5.20.5
 colorama==0.4.6
 croniter==6.0.0
 cryptography==46.0.5
-cyclopts==4.5.2
+cyclopts==4.5.4
 dataclasses-json==0.6.7
 diskcache==5.6.3
 distro==1.9.0
