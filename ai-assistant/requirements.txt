@@ -129,7 +129,7 @@ pydantic-ai-slim[ag-ui,anthropic,bedrock,cli,cohere,evals,google,groq,huggingfac
 pydantic-core==2.41.5
 pydantic-evals==0.8.1
 pydantic-graph==0.8.1
-pydantic-settings==2.13.0
+pydantic-settings==2.13.1
 pydocket==0.17.9
 pygments==2.19.2
 pyjwt[crypto]==2.10.1
