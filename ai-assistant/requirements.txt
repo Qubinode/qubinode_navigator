@@ -43,7 +43,7 @@ fastuuid==0.14.0
 filelock==3.24.3
 frozenlist==1.8.0
 fsspec==2026.2.0
-genai-prices==0.0.53
+genai-prices==0.0.54
 google-auth[requests]==2.48.0
 google-genai==1.64.0
 googleapis-common-protos==1.72.0
