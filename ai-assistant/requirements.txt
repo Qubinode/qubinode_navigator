@@ -40,7 +40,7 @@ fastapi==0.131.0
 fastavro==1.12.1
 fastmcp==2.14.5
 fastuuid==0.14.0
-filelock==3.24.3
+filelock==3.25.0
 frozenlist==1.8.0
 fsspec==2026.2.0
 genai-prices==0.0.54
