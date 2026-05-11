@@ -110,7 +110,7 @@ orjson==3.11.7
 packaging==25.0
 pathable==0.5.0
 pathvalidate==3.3.1
-platformdirs==4.9.2
+platformdirs==4.9.4
 pluggy==1.6.0
 portalocker==3.2.0
 prometheus-client==0.24.1
