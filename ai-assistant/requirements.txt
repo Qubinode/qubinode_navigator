@@ -61,7 +61,7 @@ httpx[http2]==0.28.1
 httpx-sse==0.4.3
 huggingface-hub[inference]==0.33.5
 hyperframe==6.1.0
-idna==3.11
+idna==3.15
 importlib-metadata==8.7.1
 iniconfig==2.3.0
 invoke==2.2.1
