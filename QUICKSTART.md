@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-- **OS**: RHEL 9, CentOS Stream 9, Rocky Linux 9, or Fedora 39+
+- **OS**: RHEL 9/10, CentOS Stream 9/10, Rocky Linux 9, or Fedora 39+
 - **RAM**: 8GB minimum (16GB+ recommended)
 - **Disk**: 50GB+ free space
 - **CPU**: Virtualization enabled (VT-x/AMD-V)
@@ -216,7 +216,7 @@ systemctl status libvirtd
 
 - **[README.md](README.md)** - Project overview and all deployment options
 - **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Development deployment guide
-- **[CLEAN-INSTALL-GUIDE.md](docs/CLEAN-INSTALL-GUIDE.md)** - Complete installation from scratch
+- **[CLEAN-INSTALL-GUIDE.md](docs/how-to/clean-install-guide.md)** - Complete installation from scratch
 - **[AGENTS.md](AGENTS.md)** - AI coding agent instructions
 - **[MCP-SERVER-GUIDE.md](MCP-SERVER-GUIDE.md)** - MCP server setup
 

@@ -73,6 +73,7 @@ After running `./scripts/development/deploy-qubinode.sh`, you'll have:
 | ---------------- | ------------------- | ------------------------------------ |
 | **AI Assistant** | http://YOUR_IP:8080 | RAG-powered chat + Orchestrator API  |
 | **Airflow UI**   | http://YOUR_IP:8888 | Workflow monitoring & DAG management |
+| **MCP Server**   | http://YOUR_IP:8889 | Tool API for LLM integration         |
 | **PostgreSQL**   | localhost:5432      | Airflow metadata database            |
 
 ### Architecture Overview

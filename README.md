@@ -47,6 +47,7 @@ Qubinode Navigator is an AI-enhanced, container-first infrastructure automation 
 - **50GB+ disk space** (100GB+ recommended)
 - Hardware virtualization enabled (VT-x/AMD-V)
 - **Network**: Internet access for container images and packages
+- **Container Registries**: Access to quay.io for pulling execution environment images
 - **Repositories**: kcli-pipelines and openshift-agent-install (cloned automatically by deploy scripts)
 
 ## 🚀 Quick Start
@@ -179,5 +180,5 @@ This project is licensed under the terms specified in the [LICENSE](LICENSE) fil
 
 ## 🔗 Related Projects
 
-- [qubinode_kvmhost_setup_collection](qubinode_kvmhost_setup_collection/) - Ansible collection for KVM host setup
+- [qubinode_kvmhost_setup_collection](https://github.com/Qubinode/qubinode_kvmhost_setup_collection) - Ansible collection for KVM host setup
 - [Ansible Navigator](https://ansible-navigator.readthedocs.io/) - Container-based Ansible execution
