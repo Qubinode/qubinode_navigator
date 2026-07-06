@@ -1,6 +1,6 @@
 # Core Ansible dependencies for modern tooling and CVE-2024-11079 mitigation
 ansible-core>=2.18.1
-ansible-navigator>=25.5.0
+ansible-navigator>=26.6.0
 ansible-builder>=3.1.0
 ansible-runner
 
