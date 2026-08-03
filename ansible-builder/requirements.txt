@@ -16,4 +16,4 @@ hvac
 # Build and packaging tools
 setuptools
 wheel
-pip>=20.3
+pip>=26.2
